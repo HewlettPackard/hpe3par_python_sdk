@@ -19,8 +19,8 @@ setup(
   tests_require=["nose", "werkzeug", "nose-testconfig", "requests"],
   license="Apache License, Version 2.0",
   packages=find_packages(),
-  #provides=['hpe3parclient'],
-  #url="http://packages.python.org/python-3parclient",
+  provides=['hpe3parclient'],
+  url="http://packages.python.org/python-3parclient",
   classifiers=[
      'Development Status :: 5 - Production/Stable',
      'Intended Audience :: Developers',
