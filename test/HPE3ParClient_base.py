@@ -23,7 +23,7 @@ import inspect
 from testconfig import config
 import datetime
 from functools import wraps
-from lib import client
+from hpe3par_sdk import client
 #from hpe3parclient import client, file_client
 
 TIME = datetime.datetime.now().strftime('%H%M%S')
