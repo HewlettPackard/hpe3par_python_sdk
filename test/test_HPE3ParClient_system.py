@@ -104,16 +104,15 @@ class HPE3ParClientSystemTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
     def test_query_task(self):
         self.printHeader("query_task")
-
         tasks = self.cl.getAllTasks()
         self.assertIsNotNone(tasks)
-        self.assertGreater(tasks['total'], 0)
+        self.assertGreater(len(tasks), 0)
 
-        first_task = tasks['members'].pop()
+        first_task = tasks.pop()
         self.assertIsNotNone(first_task)
 
-        task = self.cl.getTask(first_task['id'])
-        self.assertEqual(first_task, task)
+        task = self.cl.getTask(first_task.task_id)
+        self.assertEqual(first_task.task_id, task.task_id)
         self.printFooter("query_task")
 
     def test_query_task_negative(self):

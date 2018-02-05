@@ -11,7 +11,7 @@ class HPE3ParClient(object):
 
     """
     def __init__(self, api_url, debug=False, secure=False, timeout=None,
-                 suppress_ssl_warnings=False):        
+                 suppress_ssl_warnings=False):
         self.api_url = api_url
         self.client = client.HPE3ParClient(api_url, debug, secure, timeout, suppress_ssl_warnings)
 
@@ -605,7 +605,11 @@ class HPE3ParClient(object):
         :returns: list of all Tasks
 
         """
-        return self.client.getAllTasks()
+        Tasks=[]
+        tasks_list = self.client.getAllTasks()['members']
+        for tasks in tasks_list:
+            Tasks.append(Task(tasks))
+        return Tasks
 
     def getTask(self, taskId):
         """Get the status of a task.
@@ -627,7 +631,7 @@ class HPE3ParClient(object):
             - INV_INPUT_WRONG_TYPE - Task ID is not an integer.
 
         """
-        return self.client.getTask(taskId)
+        return Task(self.client.getTask(taskId))
 
     def _findTask(self, name, active=True):
         return self.client._findTask(name, active)
@@ -734,7 +738,7 @@ class HPE3ParClient(object):
 
         """
         return self.client.getPatch(patch_id)
-    
+
     def promoteVirtualCopy(self, snapshot, optional=None):
         """Revert a volume to snapshot.
         :param snapshot: the snapshot name
@@ -798,7 +802,7 @@ class HPE3ParClient(object):
             is not in progress.
         """
         return self.client.promoteVirtualCopy(snapshot, optional)
-    
+
     def stopOfflinePhysicalCopy(self, name):
         """Stopping a offline physical copy operation.
 
@@ -939,7 +943,7 @@ class HPE3ParClient(object):
         hosts = self.client.getHostSets()['members']
         for host in hosts:
             host_list.append(HostSet(host))
-        return host_list    
+        return host_list
 
     def getHostSet(self, name):
         """
@@ -1591,9 +1595,9 @@ class HPE3ParClient(object):
         :returns: the location of the VLUN
 
         """
-        
+
         return self.client.createVLUN(volumeName, lun, hostname, portPos, noVcn, overrideLowerPriority, auto)
-        
+
     def deleteVLUN(self, volumeName, lunID, hostname=None, port=None):
         """Delete a VLUN.
 
