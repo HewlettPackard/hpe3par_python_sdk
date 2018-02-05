@@ -1,4 +1,4 @@
-import lib
+import hpe3par_sdk
 
 try:
     from setuptools import setup, find_packages
