@@ -1,4 +1,5 @@
 from hpe3parclient import client
+from hpe3parclient import exceptions
 from models import *
 
 class HPE3ParClient(object):
@@ -1636,10 +1637,7 @@ class HPE3ParClient(object):
         :raises: :class:`~hpe3parclient.exceptions.HTTPForbidden`
             - PERM_DENIED - Permission denied
         """
-	print "client"
-	print self.client
-	print "port"
-	print port
+
         self.client.deleteVLUN(volumeName, lunID, hostname, port)
 
     # VolumeSet methods
@@ -1765,7 +1763,6 @@ class HPE3ParClient(object):
         :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
             - INV_INPUT_DUP_NAME - Invalid input (duplicate name).
         """
-	#response, body = self.client.createVolumeSet(name, domain, comment, setmembers)
         response = self.client.createVolumeSet(name, domain, comment, setmembers)
 
     def deleteVolumeSet(self, name):
@@ -1784,8 +1781,7 @@ class HPE3ParClient(object):
         :raises: :class:`~hpe3parclient.exceptions.HTTPConflict`
             - VVSET_QOS_TARGET - The object is already part of the set.
         """
-	response = self.client.deleteVolumeSet(name)
-        #response, body = self.client.deleteVolumeSet(name)
+        response = self.client.deleteVolumeSet(name)
 
     def modifyVolumeSet(self, name, action=None, newName=None, comment=None,
                         flashCachePolicy=None, setmembers=None):
@@ -3310,3 +3306,17 @@ class HPE3ParClient(object):
         :returns: dict
         """
         return self.client._format_srstatld_output(out)
+        
+    def volumeExists(self, name):
+        try:
+            self.getVolume(name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+        
+    def hostExists(self, name):
+        try:
+            self.getHost(name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
