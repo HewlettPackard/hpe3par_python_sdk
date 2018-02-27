@@ -1,5 +1,6 @@
 from hpe3parclient import client
 from hpe3parclient import exceptions
+from hpe3parclient import http
 from models import *
 
 class HPE3ParClient(object):
@@ -3317,6 +3318,27 @@ class HPE3ParClient(object):
     def hostExists(self, name):
         try:
             self.getHost(name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+        
+    def vlunExists(self, volume_name, lunid, hostname, port):
+        try:
+            vlun_id = ''
+            if volume_name != None:
+                vlun_id = volume_name
+            if lunid != None:
+                vlun_id = "%s,%s" % (vlun_id, lunid)
+            if hostname != None:
+                vlun_id = '%s,%s' % (vlun_id, hostname)
+            if port != None:
+                if hostname == None:
+                    vlun_id = '%s,' % vlun_id
+
+                vlun_id = '%s,%s:%s:%s'  % (vlun_id, str(port['node']), str(port['slot']), str(port['cardPort']))
+            if (volume_name == None or len(volume_name) == 0) or lunid == None and (hostname == None or port == None):
+                raise "Some or all parameters are missing : volume_name, lunid, hostname or port"
+            self.client.http.get('/vluns/%s' % vlun_id)
         except exceptions.HTTPNotFound:
             return False
         return True
