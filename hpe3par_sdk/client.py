@@ -3,6 +3,8 @@ from hpe3parclient import exceptions
 from hpe3parclient import http
 from models import *
 
+import time
+
 class HPE3ParClient(object):
 
     """ The 3PAR REST API Client.
@@ -637,6 +639,27 @@ class HPE3ParClient(object):
 
     def _findTask(self, name, active=True):
         return self.client._findTask(name, active)
+        
+    def waitForTaskToEnd(self, taskId, pollRateSecs):
+        task = self.getTask(taskId)
+        while task != None: #loop begin
+            state = task.status
+            if state == client.HPE3ParClient.TASK_DONE:
+                break
+            elif state == client.HPE3ParClient.TASK_CANCELLED:
+                break
+            elif state == client.HPE3ParClient.TASK_FAILED:
+                msg = 'Task '%s' has FAILED!!!' % task.taskId
+                raise msg
+            elif state == client.HPE3ParClient.TASK_ACTIVE:
+                time.sleep(poll_rate_secs)
+                task = self.getTask(task.taskId);
+        
+        #Return the Task Result
+        if task != None && task.status != None && task.status == 'DONE':
+            return True
+        else
+            return False
 
     def _convert_cli_output_to_collection_like_wsapi(self, cli_output):
         """Convert CLI output into a response that looks the WS-API would.
