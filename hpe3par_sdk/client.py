@@ -7,6 +7,8 @@ import time
 
 class HPE3ParClient(object):
 
+    TUNE_VOLUME = 6
+
     """ The 3PAR REST API Client.
 
     :param api_url: The url to the WSAPI service on 3PAR
@@ -3330,6 +3332,13 @@ class HPE3ParClient(object):
         :returns: dict
         """
         return self.client._format_srstatld_output(out)
+        
+    def tuneVolume(self, volName, tune_operation, optional=None):
+        info = { 'action': self.TUNE_VOLUME, 'tuneOperation': tune_operation }
+        if optional:
+            info =  self.client._mergeDict(info, optional)
+        response, body = self.client.http.put('/volumes/%s' % volName, body=info)
+        return self.getTask(body['taskid'])
         
     def volumeExists(self, name):
         try:
