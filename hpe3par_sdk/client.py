@@ -649,7 +649,7 @@ class HPE3ParClient(object):
             elif state == client.HPE3ParClient.TASK_CANCELLED:
                 break
             elif state == client.HPE3ParClient.TASK_FAILED:
-                msg = 'Task '%s' has FAILED!!!' % task.taskId
+                msg = "Task '%s' has FAILED!!!" % task.taskId
                 raise msg
             elif state == client.HPE3ParClient.TASK_ACTIVE:
                 time.sleep(poll_rate_secs)
