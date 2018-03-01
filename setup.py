@@ -8,19 +8,19 @@ except ImportError:
 
 setup(
   name='hpe3par_python_sdk',
-  #version=hpe3parclient.version,
+  #version=hpe3parclient.version
   description="HPE 3PAR HTTP REST Client",
   author="Walter A. Boring IV",
   author_email="walter.boring@hpe.com",
   maintainer="Walter A. Boring IV",
   keywords=["hpe", "3par", "rest"],
   requires=['paramiko', 'eventlet', 'requests'],
-  install_requires=['paramiko', 'eventlet', 'requests'],
+  install_requires=['paramiko', 'eventlet', 'requests','hp3parclient'],
   tests_require=["nose", "werkzeug", "nose-testconfig", "requests"],
   license="Apache License, Version 2.0",
   packages=find_packages(),
-  provides=['hpe3parclient'],
-  url="http://packages.python.org/python-3parclient",
+  #provides=['hpe3parclient'],
+  #url="http://packages.python.org/python-3parclient",
   classifiers=[
      'Development Status :: 5 - Production/Stable',
      'Intended Audience :: Developers',
