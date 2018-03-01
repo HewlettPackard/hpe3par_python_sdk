@@ -642,7 +642,7 @@ class HPE3ParClient(object):
     def _findTask(self, name, active=True):
         return self.client._findTask(name, active)
         
-    def waitForTaskToEnd(self, taskId, pollRateSecs):
+    def waitForTaskToEnd(self, taskId, pollRateSecs=15):
         task = self.getTask(taskId)
         while task != None: #loop begin
             state = task.status
@@ -654,8 +654,8 @@ class HPE3ParClient(object):
                 msg = "Task '%s' has FAILED!!!" % task.taskId
                 raise msg
             elif state == client.HPE3ParClient.TASK_ACTIVE:
-                time.sleep(poll_rate_secs)
-                task = self.getTask(task.taskId);
+                time.sleep(pollRateSecs)
+                task = self.getTask(task.task_id);
         
         #Return the Task Result
         if task != None and task.status != None and task.status == 'DONE':
