@@ -656,7 +656,7 @@ class HPE3ParClient(object):
                 task = self.getTask(task.taskId);
         
         #Return the Task Result
-        if task != None && task.status != None && task.status == 'DONE':
+        if task != None and task.status != None and task.status == 'DONE':
             return True
         else
             return False
