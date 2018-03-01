@@ -658,7 +658,7 @@ class HPE3ParClient(object):
         #Return the Task Result
         if task != None and task.status != None and task.status == 'DONE':
             return True
-        else
+        else:
             return False
 
     def _convert_cli_output_to_collection_like_wsapi(self, cli_output):
