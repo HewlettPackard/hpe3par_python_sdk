@@ -8,6 +8,25 @@ import time
 class HPE3ParClient(object):
 
     TUNE_VOLUME = 6
+    TPVV = 1
+    FPVV = 2
+    TDVV = 3
+
+    #Array of raid type enum and associated set sizes
+    R0 = [1, [1]]
+    R1 = [2, [2, 3, 4]]
+    R5 = [3, [3, 4, 5, 6, 7, 8, 9]]
+    R6 = [4, [6, 8, 10, 12, 16]]
+    
+    #Disk types
+    FC = 1
+    NL = 2
+    SSD = 3
+    
+    #CPG High Availability
+    PORT = 1
+    CAGE = 2
+    MAG = 3
 
     """ The 3PAR REST API Client.
 
@@ -3339,6 +3358,13 @@ class HPE3ParClient(object):
             info =  self.client._mergeDict(info, optional)
         response, body = self.client.http.put('/volumes/%s' % volName, body=info)
         return self.getTask(body['taskid'])
+        
+    def cpgExists(self, name):
+        try:
+            self.getCPG(name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
         
     def volumeExists(self, name):
         try:
