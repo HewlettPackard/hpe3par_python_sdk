@@ -12,11 +12,12 @@ class HPE3ParClient(object):
     FPVV = 2
     TDVV = 3
 
-    #Array of raid type enum and associated set sizes
-    R0 = [1, [1]]
-    R1 = [2, [2, 3, 4]]
-    R5 = [3, [3, 4, 5, 6, 7, 8, 9]]
-    R6 = [4, [6, 8, 10, 12, 16]]
+    #Map of raid type enum and associated set sizes
+    RAID_MAP = {'R0': {'raid_value': 1, 'set_sizes': [1]}, 
+                'R1': {'raid_value': 2, 'set_sizes': [2, 3, 4]} , 
+                'R5': {'raid_value': 3, 'set_sizes': [3, 4, 5, 6, 7, 8, 9]}, 
+                'R6': {'raid_value': 4, 'set_sizes': [6, 8, 10, 12, 16]}
+               }
     
     #Disk types
     FC = 1
