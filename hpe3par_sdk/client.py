@@ -3381,6 +3381,20 @@ class HPE3ParClient(object):
             return False
         return True
         
+    def hostSetExists(self, name):
+        try:
+            self.getHostSet(name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+        
+    def volumeSetExists(self, name):
+        try:
+            self.getVolumeSet(name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+        
     def vlunExists(self, volume_name, lunid, hostname, port):
         try:
             vlun_id = ''
@@ -3401,3 +3415,19 @@ class HPE3ParClient(object):
         except exceptions.HTTPNotFound:
             return False
         return True
+        
+    #Takes a list of host setmembers and adds them to a hostset
+    def addHostsToHostSet(self, name, setmembers):
+        self.client.modifyHostSet(name, action=client.HPE3ParClient.SET_MEM_ADD, setmembers=setmembers)
+    
+    #Takes a list of host setmembers and removes them from a hostset
+    def removeHostsFromHostSet(self, name, setmembers):
+        self.client.modifyHostSet(name, action=client.HPE3ParClient.SET_MEM_REMOVE, setmembers=setmembers)
+    
+    #Takes a list of volume setmembers and adds them to a volumeset
+    def addVolumesToVolumeSet(self, name, setmembers):
+        self.client.modifyVolumeSet(name, action=client.HPE3ParClient.SET_MEM_ADD, setmembers=setmembers)
+
+    #Takes a list of volume setmembers and removes them from a volumeset
+    def removeVolumesFromVolumeSet(self, name, setmembers):
+        self.client.modifyVolumeSet(name, action=client.HPE3ParClient.SET_MEM_REMOVE, setmembers=setmembers)
