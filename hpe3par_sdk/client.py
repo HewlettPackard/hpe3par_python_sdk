@@ -28,6 +28,19 @@ class HPE3ParClient(object):
     PORT = 1
     CAGE = 2
     MAG = 3
+    
+    #Host Persona
+    GENERIC = 1
+    GENERIC_ALUA = 2
+    GENERIC_LEGACY = 3
+    HPUX_LEGACY = 4
+    AIX_LEGACY = 5
+    EGENERA = 6
+    ONTAP_LEGACY = 7
+    VMWARE = 8
+    OPENVMS = 9
+    HPUX = 10
+    WINDOWS_SERVER = 11
 
     """ The 3PAR REST API Client.
 
