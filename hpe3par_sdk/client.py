@@ -3472,6 +3472,13 @@ class HPE3ParClient(object):
             return False
         return True
         
+    def flashCacheExists(self):
+        try:
+            self.getFlashCache()
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+        
     #Takes a list of host setmembers and adds them to a hostset
     def addHostsToHostSet(self, name, setmembers):
         self.client.modifyHostSet(name, action=client.HPE3ParClient.SET_MEM_ADD, setmembers=setmembers)
