@@ -41,6 +41,19 @@ class HPE3ParClient(object):
     OPENVMS = 9
     HPUX = 10
     WINDOWS_SERVER = 11
+	
+	#QoS priority Enumeration
+    LOW = 1
+    NORMAL = 2
+    HIGH = 3
+  
+	#Qos Zero None Operation
+    ZERO = 1
+    NOLIMIT = 2
+
+    #QoS target Type
+    VVSET = 1
+    SYS = 2
 
     """ The 3PAR REST API Client.
 
@@ -3468,6 +3481,13 @@ class HPE3ParClient(object):
             if (volume_name == None or len(volume_name) == 0) or lunid == None and (hostname == None or port == None):
                 raise "Some or all parameters are missing : volume_name, lunid, hostname or port"
             self.client.http.get('/vluns/%s' % vlun_id)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+        
+    def qosRuleExists(self, targetName, targetType):
+        try:
+            self.queryQoSRule(targetName, targetType)
         except exceptions.HTTPNotFound:
             return False
         return True
