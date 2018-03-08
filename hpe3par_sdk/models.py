@@ -1024,3 +1024,25 @@ class Port(object):
             self.iscsi_portinfo = ISCSIPortInfo(object_hash.get('iSCSIPortInfo'))
         else:
             self.iscsi_portinfo = None
+
+class FlashCache(object):
+
+    def __init__(self, object_hash):
+        if not object_hash:
+            return
+
+        # [type - Number 1: Simulator 2: Real]
+        # Encrypted CHAP secret of target.
+        self.mode = object_hash.get('mode')
+
+        # [type - Number]
+        # The total size of the Flash Cache on the entire system. This might differ from the sizeGib input in the create Flash Cache request if the system has more than two nodes.
+        self.sizeGiB = object_hash.get('sizeGiB')
+
+        # [type - HPE3PARClient::CPGState]
+        # State of flash cache
+        self.state = object_hash.get('state')
+
+        # [type - Number]
+        # The used size of the Flash Cache.
+        self.usedSizeGiB = object_hash.get('usedSizeGiB')

@@ -1,7 +1,59 @@
 from hpe3parclient import client
+from hpe3parclient import exceptions
+from hpe3parclient import http
 from models import *
 
+import time
+
 class HPE3ParClient(object):
+
+    TUNE_VOLUME = 6
+    TPVV = 1
+    FPVV = 2
+    TDVV = 3
+
+    #Map of raid type enum and associated set sizes
+    RAID_MAP = {'R0': {'raid_value': 1, 'set_sizes': [1]}, 
+                'R1': {'raid_value': 2, 'set_sizes': [2, 3, 4]} , 
+                'R5': {'raid_value': 3, 'set_sizes': [3, 4, 5, 6, 7, 8, 9]}, 
+                'R6': {'raid_value': 4, 'set_sizes': [6, 8, 10, 12, 16]}
+               }
+    
+    #Disk types
+    FC = 1
+    NL = 2
+    SSD = 3
+    
+    #CPG High Availability
+    PORT = 1
+    CAGE = 2
+    MAG = 3
+    
+    #Host Persona
+    GENERIC = 1
+    GENERIC_ALUA = 2
+    GENERIC_LEGACY = 3
+    HPUX_LEGACY = 4
+    AIX_LEGACY = 5
+    EGENERA = 6
+    ONTAP_LEGACY = 7
+    VMWARE = 8
+    OPENVMS = 9
+    HPUX = 10
+    WINDOWS_SERVER = 11
+	
+	#QoS priority Enumeration
+    LOW = 1
+    NORMAL = 2
+    HIGH = 3
+  
+	#Qos Zero None Operation
+    ZERO = 1
+    NOLIMIT = 2
+
+    #QoS target Type
+    VVSET = 1
+    SYS = 2
 
     """ The 3PAR REST API Client.
 
@@ -172,6 +224,49 @@ class HPE3ParClient(object):
 
         """
         return self.client.getOverallSystemCapacity()
+
+
+    def createFlashCache(self, sizeInGib, mode):
+        """Creates a new FlashCache
+        
+        :param sizeInGib: Specifies the node pair size of the Flash Cache on 
+                          the system.
+        :type: int
+        :param: mode    : Simulator: 1
+                          Real: 2 (default)
+        :type: int
+
+        :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
+            - NO_SPACE - Not enough space is available for the operation.
+        :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
+            - INV_INPUT_EXCEEDS_RANGE - A JSON input object contains a name-value pair with a numeric value that exceeds the expected range. Flash Cache exceeds the expected range. The HTTP ref member contains the name.
+        :raises: :class:`~hpe3parclient.exceptions.HTTPConflict`
+           - EXISTENT_FLASH_CACHE - The Flash Cache already exists.
+        :raises: :class:`~hpe3parclient.exceptions.HTTPForbidden`
+            - FLASH_CACHE_NOT_SUPPORTED - Flash Cache is not supported.
+        :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
+            - INV_FLASH_CACHE_SIZE - Invalid Flash Cache size. The size must be a multiple of 16 G.
+        """
+        return self.client.createFlashCache(sizeInGib, mode)
+        
+    def getFlashCache(self):
+        """Get information about flash cache on the 3Par array.
+
+        :returns: list of Hosts
+        """
+        return FlashCache(self.client.getFlashCache())
+        
+    def deleteFlashCache(self):
+        """Deletes an existing Flash Cache
+
+        :raises: :class:`~hpe3parclient.exceptions.HTTPForbidden`
+            - FLASH_CACHE_IS_BEING_REMOVED - Unable to delete the Flash Cache, the Flash Cache is being removed.
+        :raises: :class:`~hpe3parclient.exceptions.HTTPForbidden`
+            - FLASH_CACHE_NOT_SUPPORTED - Flash Cache is not supported on this system.
+        :raises: :class:`~hpe3parclient.exceptions.HTTPNotFound`
+           - NON_EXISTENT_FLASH_CACHE - The Flash Cache does not exist.
+        """
+        return self.client.deleteFlashCache()
 
     # Volume methods
     def getVolumes(self):
@@ -635,6 +730,27 @@ class HPE3ParClient(object):
 
     def _findTask(self, name, active=True):
         return self.client._findTask(name, active)
+        
+    def waitForTaskToEnd(self, taskId, pollRateSecs=15):
+        task = self.getTask(taskId)
+        while task != None: #loop begin
+            state = task.status
+            if state == client.HPE3ParClient.TASK_DONE:
+                break
+            elif state == client.HPE3ParClient.TASK_CANCELLED:
+                break
+            elif state == client.HPE3ParClient.TASK_FAILED:
+                msg = "Task '%s' has FAILED!!!" % task.taskId
+                raise msg
+            elif state == client.HPE3ParClient.TASK_ACTIVE:
+                time.sleep(pollRateSecs)
+                task = self.getTask(task.task_id);
+        
+        #Return the Task Result
+        if task != None and task.status != None and task.status == 'DONE':
+            return True
+        else:
+            return False
 
     def _convert_cli_output_to_collection_like_wsapi(self, cli_output):
         """Convert CLI output into a response that looks the WS-API would.
@@ -1636,10 +1752,7 @@ class HPE3ParClient(object):
         :raises: :class:`~hpe3parclient.exceptions.HTTPForbidden`
             - PERM_DENIED - Permission denied
         """
-	print "client"
-	print self.client
-	print "port"
-	print port
+
         self.client.deleteVLUN(volumeName, lunID, hostname, port)
 
     # VolumeSet methods
@@ -1765,7 +1878,6 @@ class HPE3ParClient(object):
         :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
             - INV_INPUT_DUP_NAME - Invalid input (duplicate name).
         """
-	#response, body = self.client.createVolumeSet(name, domain, comment, setmembers)
         response = self.client.createVolumeSet(name, domain, comment, setmembers)
 
     def deleteVolumeSet(self, name):
@@ -1784,8 +1896,7 @@ class HPE3ParClient(object):
         :raises: :class:`~hpe3parclient.exceptions.HTTPConflict`
             - VVSET_QOS_TARGET - The object is already part of the set.
         """
-	response = self.client.deleteVolumeSet(name)
-        #response, body = self.client.deleteVolumeSet(name)
+        response = self.client.deleteVolumeSet(name)
 
     def modifyVolumeSet(self, name, action=None, newName=None, comment=None,
                         flashCachePolicy=None, setmembers=None):
@@ -3310,3 +3421,96 @@ class HPE3ParClient(object):
         :returns: dict
         """
         return self.client._format_srstatld_output(out)
+        
+    def tuneVolume(self, volName, tune_operation, optional=None):
+        info = { 'action': self.TUNE_VOLUME, 'tuneOperation': tune_operation }
+        if optional:
+            info =  self.client._mergeDict(info, optional)
+        response, body = self.client.http.put('/volumes/%s' % volName, body=info)
+        return self.getTask(body['taskid'])
+        
+    def cpgExists(self, name):
+        try:
+            self.getCPG(name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+        
+    def volumeExists(self, name):
+        try:
+            self.getVolume(name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+        
+    def hostExists(self, name):
+        try:
+            self.getHost(name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+        
+    def hostSetExists(self, name):
+        try:
+            self.getHostSet(name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+        
+    def volumeSetExists(self, name):
+        try:
+            self.getVolumeSet(name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+        
+    def vlunExists(self, volume_name, lunid, hostname, port):
+        try:
+            vlun_id = ''
+            if volume_name != None:
+                vlun_id = volume_name
+            if lunid != None:
+                vlun_id = "%s,%s" % (vlun_id, lunid)
+            if hostname != None:
+                vlun_id = '%s,%s' % (vlun_id, hostname)
+            if port != None:
+                if hostname == None:
+                    vlun_id = '%s,' % vlun_id
+
+                vlun_id = '%s,%s:%s:%s'  % (vlun_id, str(port['node']), str(port['slot']), str(port['cardPort']))
+            if (volume_name == None or len(volume_name) == 0) or lunid == None and (hostname == None or port == None):
+                raise "Some or all parameters are missing : volume_name, lunid, hostname or port"
+            self.client.http.get('/vluns/%s' % vlun_id)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+        
+    def qosRuleExists(self, targetName, targetType):
+        try:
+            self.queryQoSRule(targetName, targetType)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+        
+    def flashCacheExists(self):
+        try:
+            self.getFlashCache()
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+        
+    #Takes a list of host setmembers and adds them to a hostset
+    def addHostsToHostSet(self, name, setmembers):
+        self.client.modifyHostSet(name, action=client.HPE3ParClient.SET_MEM_ADD, setmembers=setmembers)
+    
+    #Takes a list of host setmembers and removes them from a hostset
+    def removeHostsFromHostSet(self, name, setmembers):
+        self.client.modifyHostSet(name, action=client.HPE3ParClient.SET_MEM_REMOVE, setmembers=setmembers)
+    
+    #Takes a list of volume setmembers and adds them to a volumeset
+    def addVolumesToVolumeSet(self, name, setmembers):
+        self.client.modifyVolumeSet(name, action=client.HPE3ParClient.SET_MEM_ADD, setmembers=setmembers)
+
+    #Takes a list of volume setmembers and removes them from a volumeset
+    def removeVolumesFromVolumeSet(self, name, setmembers):
+        self.client.modifyVolumeSet(name, action=client.HPE3ParClient.SET_MEM_REMOVE, setmembers=setmembers)
