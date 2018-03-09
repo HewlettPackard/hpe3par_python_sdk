@@ -41,13 +41,20 @@ class HPE3ParClient(object):
     OPENVMS = 9
     HPUX = 10
     WINDOWS_SERVER = 11
-	
-	#QoS priority Enumeration
-    LOW = 1
-    NORMAL = 2
-    HIGH = 3
+    
+    #QoS priority Enumeration
+    class QOSPriority:
+        LOW = 1
+        NORMAL = 2
+        HIGH = 3
+    
+    #Task Priority Enumeration
+    class TaskPriority:
+        HIGH = 1
+        MEDIUM = 2
+        LOW = 3
   
-	#Qos Zero None Operation
+    #Qos Zero None Operation
     ZERO = 1
     NOLIMIT = 2
 
