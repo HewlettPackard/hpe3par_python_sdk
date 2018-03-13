@@ -1016,6 +1016,14 @@ class HPE3ParClient(object):
 
         """
         return self.client.stopOfflinePhysicalCopy(name)
+        
+    def resyncPhysicalCopy(self, volume_name):
+        """Resynchronizes a physical copy.
+
+        :param name - The name of the volume
+        :type - string
+        """
+        return self.client.resyncPhysicalCopy(volume_name)
 
     def createSnapshot(self, name, copyOfName, optional=None):
         """Create a snapshot of an existing Volume.
@@ -3505,7 +3513,23 @@ class HPE3ParClient(object):
         except exceptions.HTTPNotFound:
             return False
         return True
+
+    def onlinePhysicalCopyExists(self, src_name, phy_copy_name):
+        try:
+            if self.volumeExists(src_name) and self.volumeExists(phy_copy_name) and self._findTask(phy_copy_name,True) != None:
+                return True
+        except exceptions.HTTPNotFound:
+            return False
+        return False
         
+    def offlinePhysicalCopyExists(self, src_name, phy_copy_name):
+        try:
+            if self.volumeExists(src_name) and self.volumeExists(phy_copy_name) and self._find_task(src_name + "->" + phy_copy_name, True) != None:
+                return true
+        except exceptions.HTTPNotFound:
+            return False
+        return False
+      
     #Takes a list of host setmembers and adds them to a hostset
     def addHostsToHostSet(self, name, setmembers):
         self.client.modifyHostSet(name, action=client.HPE3ParClient.SET_MEM_ADD, setmembers=setmembers)
