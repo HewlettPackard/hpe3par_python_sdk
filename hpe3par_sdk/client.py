@@ -3524,8 +3524,8 @@ class HPE3ParClient(object):
         
     def offlinePhysicalCopyExists(self, src_name, phy_copy_name):
         try:
-            if self.volumeExists(src_name) and self.volumeExists(phy_copy_name) and self._find_task(src_name + "->" + phy_copy_name, True) != None:
-                return true
+            if self.volumeExists(src_name) and self.volumeExists(phy_copy_name) and self._findTask(src_name + "->" + phy_copy_name, True) != None:
+                return True
         except exceptions.HTTPNotFound:
             return False
         return False
