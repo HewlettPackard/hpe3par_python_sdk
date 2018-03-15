@@ -63,9 +63,9 @@ class HPE3ParClient(object):
 
     """
     def __init__(self, api_url, debug=False, secure=False, timeout=None,
-                 suppress_ssl_warnings=False):
+                 suppress_ssl_warnings=False, app_type='python-3parclient'):
         self.api_url = api_url
-        self.client = client.HPE3ParClient(api_url, debug, secure, timeout, suppress_ssl_warnings)
+        self.client = client.HPE3ParClient(api_url, debug, secure, timeout, suppress_ssl_warnings, app_type)
 
     def setSSHOptions(self, ip, login, password, port=22,
                       conn_timeout=None, privatekey=None,
