@@ -41,13 +41,20 @@ class HPE3ParClient(object):
     OPENVMS = 9
     HPUX = 10
     WINDOWS_SERVER = 11
-	
-	#QoS priority Enumeration
-    LOW = 1
-    NORMAL = 2
-    HIGH = 3
+    
+    #QoS priority Enumeration
+    class QOSPriority:
+        LOW = 1
+        NORMAL = 2
+        HIGH = 3
+    
+    #Task Priority Enumeration
+    class TaskPriority:
+        HIGH = 1
+        MEDIUM = 2
+        LOW = 3
   
-	#Qos Zero None Operation
+    #Qos Zero None Operation
     ZERO = 1
     NOLIMIT = 2
 
@@ -376,7 +383,7 @@ class HPE3ParClient(object):
         """
         return self.client.deleteVolume(name)
 
-    def modifyVolume(self, name, volumeMods):
+    def modifyVolume(self, name, volumeMods, app_type=None):
         """Modify a volume.
 
         :param name: the name of the volume
@@ -487,7 +494,7 @@ class HPE3ParClient(object):
             snapshot.
 
         """
-        return self.client.modifyVolume(name, volumeMods)
+        return self.client.modifyVolume(name, volumeMods, app_type)
 
     def growVolume(self, name, amount):
         """Grow an existing volume by 'amount' Mebibytes.
@@ -1009,6 +1016,14 @@ class HPE3ParClient(object):
 
         """
         return self.client.stopOfflinePhysicalCopy(name)
+        
+    def resyncPhysicalCopy(self, volume_name):
+        """Resynchronizes a physical copy.
+
+        :param name - The name of the volume
+        :type - string
+        """
+        return self.client.resyncPhysicalCopy(volume_name)
 
     def createSnapshot(self, name, copyOfName, optional=None):
         """Create a snapshot of an existing Volume.
@@ -3498,7 +3513,23 @@ class HPE3ParClient(object):
         except exceptions.HTTPNotFound:
             return False
         return True
+
+    def onlinePhysicalCopyExists(self, src_name, phy_copy_name):
+        try:
+            if self.volumeExists(src_name) and self.volumeExists(phy_copy_name) and self._findTask(phy_copy_name,True) != None:
+                return True
+        except exceptions.HTTPNotFound:
+            return False
+        return False
         
+    def offlinePhysicalCopyExists(self, src_name, phy_copy_name):
+        try:
+            if self.volumeExists(src_name) and self.volumeExists(phy_copy_name) and self._findTask(src_name + "-*" + phy_copy_name, True) != None:
+                return True
+        except exceptions.HTTPNotFound:
+            return False
+        return False
+      
     #Takes a list of host setmembers and adds them to a hostset
     def addHostsToHostSet(self, name, setmembers):
         self.client.modifyHostSet(name, action=client.HPE3ParClient.SET_MEM_ADD, setmembers=setmembers)
