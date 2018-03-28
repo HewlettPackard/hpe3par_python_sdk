@@ -383,7 +383,7 @@ class HPE3ParClient(object):
         """
         return self.client.deleteVolume(name)
 
-    def modifyVolume(self, name, volumeMods):
+    def modifyVolume(self, name, volumeMods, app_type=None):
         """Modify a volume.
 
         :param name: the name of the volume
@@ -494,7 +494,7 @@ class HPE3ParClient(object):
             snapshot.
 
         """
-        return self.client.modifyVolume(name, volumeMods)
+        return self.client.modifyVolume(name, volumeMods, app_type)
 
     def growVolume(self, name, amount):
         """Grow an existing volume by 'amount' Mebibytes.
