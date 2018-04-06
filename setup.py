@@ -15,7 +15,7 @@ setup(
   maintainer="Walter A. Boring IV",
   keywords=["hpe", "3par", "rest"],
   requires=['paramiko', 'eventlet', 'requests'],
-  install_requires=['paramiko', 'eventlet', 'requests','hp3parclient'],
+  install_requires=['paramiko', 'eventlet', 'requests','python-3parclient'],
   tests_require=["nose", "werkzeug", "nose-testconfig", "requests"],
   license="Apache License, Version 2.0",
   packages=find_packages(),
