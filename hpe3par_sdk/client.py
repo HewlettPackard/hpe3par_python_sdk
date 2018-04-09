@@ -727,7 +727,7 @@ not supported.""" % (ex_message)
         if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
             for attribute in ['compression', 'allowRemoteCopyParent', 'skipZero']:
                 if attribute in optional.keys():
-                    del optional['compression']
+                    del optional[attribute]
         return self.client.copyVolume(src_name, dest_name, dest_cpg, optional)
 
     def isOnlinePhysicalCopy(self, name):
