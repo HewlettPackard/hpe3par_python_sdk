@@ -1,11 +1,16 @@
 from hpe3parclient import client
 from hpe3parclient import exceptions
 from hpe3parclient import http
+from distutils.version import StrictVersion
 from models import *
 
 import time
 
 class HPE3ParClient(object):
+
+    WSAPI_MIN_SUPPORTED_VERSION = '1.5.0'
+    WSAPI_MIN_VERSION_VLUN_QUERY_SUPPORT = '1.4.2'
+    WSAPI_MIN_VERSION_COMPRESSION_SUPPORT = '1.6.0'
 
     TUNE_VOLUME = 6
     TPVV = 1
@@ -61,6 +66,11 @@ class HPE3ParClient(object):
     #QoS target Type
     VVSET = 1
     SYS = 2
+    
+    VLUN_QUERY_SUPPORTED = False
+    HOST_AND_VV_SET_FILTER_SUPPORTED = False
+    
+    CURRENT_WSAPI_VERSION = None
 
     """ The 3PAR REST API Client.
 
@@ -73,6 +83,36 @@ class HPE3ParClient(object):
                  suppress_ssl_warnings=False):
         self.api_url = api_url
         self.client = client.HPE3ParClient(api_url, debug, secure, timeout, suppress_ssl_warnings)
+        self.check_WSAPI_version()
+        
+    
+    def check_WSAPI_version(self):
+        try:
+            api_version = self.getWsApiVersion()
+            self.compare_version(api_version)
+        except Exception as exception:
+            ex_message = str(exception)
+            if ex_message and 'SSL Certificate Verification Failed' in ex_message:
+                raise exceptions.SSLCertFailed()
+            else:
+                msg = """Error: %s - Error communicating with 3PAR WSAPI. 
+Check proxy settings. If error persists, either the
+3PAR WSAPI is not running OR the version of the WSAPI is
+not supported.""" % (ex_message)
+                raise exceptions.ConnectionError(msg)
+                
+    def compare_version(self, api_version):
+        self.CURRENT_WSAPI_VERSION = '{}.{}.{}'.format(api_version['major'], api_version['minor'], api_version['revision'])
+        if StrictVersion(self.CURRENT_WSAPI_VERSION) < StrictVersion(self.WSAPI_MIN_SUPPORTED_VERSION):
+            err_msg = 'Unsupported 3PAR WS API version %s, min supported version is %s' % (self.CURRENT_WSAPI_VERSION, self.WSAPI_MIN_SUPPORTED_VERSION)
+            raise exceptions.UnsupportedVersion(err_msg)
+            
+        if StrictVersion(self.CURRENT_WSAPI_VERSION) >= StrictVersion(self.WSAPI_MIN_VERSION_VLUN_QUERY_SUPPORT):
+            self.VLUN_QUERY_SUPPORTED = True
+            
+        if StrictVersion(self.CURRENT_WSAPI_VERSION) >=  StrictVersion(self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT):
+            self.HOST_AND_VV_SET_FILTER_SUPPORTED = True
+            
 
     def setSSHOptions(self, ip, login, password, port=22,
                       conn_timeout=None, privatekey=None,
@@ -359,6 +399,9 @@ class HPE3ParClient(object):
             - EXISTENT_SV - Volume Exists already
 
         """
+        if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
+            if 'compression' in optional.keys():
+                del optional['compression']
         return self.client.createVolume(name, cpgName, sizeMiB, optional)
 
     def deleteVolume(self, name):
@@ -681,6 +724,10 @@ class HPE3ParClient(object):
             - NON_EXISTENT_VVCOPY - Physical copy not found.
 
         """
+        if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
+            for attribute in ['compression', 'allowRemoteCopyParent', 'skipZero']:
+                if attribute in optional.keys():
+                    del optional[attribute]
         return self.client.copyVolume(src_name, dest_name, dest_cpg, optional)
 
     def isOnlinePhysicalCopy(self, name):
@@ -924,6 +971,9 @@ class HPE3ParClient(object):
             - INV_OPERATION_VV_PROMOTE_IS_NOT_IN_PROGRESS - Volume promotion
             is not in progress.
         """
+        if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
+            if 'allowRemoteCopyParent' in optional.keys():
+                del optional['allowRemoteCopyParent']
         return self.client.promoteVirtualCopy(snapshot, optional)
 
     def stopOfflinePhysicalCopy(self, name):
@@ -1052,6 +1102,9 @@ class HPE3ParClient(object):
             - PERM_DENIED - Permission denied
 
         """
+        if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
+            if 'allowRemoteCopyParent' in optional.keys():
+                del optional['allowRemoteCopyParent']
         return self.client.createSnapshot(name, copyOfName, optional)
 
     # Host Set methods
@@ -2218,6 +2271,9 @@ class HPE3ParClient(object):
         :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
           - UNLICENSED_FEATURE - The system is not licensed for QoS.
         """
+        if qosRules is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_SUPPORTED_VERSION:
+            if 'latencyGoaluSecs' in qos_rules.keys():
+                del qos_rules['latencyGoaluSecs']
         return self.client.createQoSRules(targetName, qosRules, target_type)
 
     def modifyQoSRules(self, targetName, qosRules, targetType='vvset'):
@@ -2306,6 +2362,9 @@ class HPE3ParClient(object):
         :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
                      UNLICENSED_FEATURE - The system is not licensed for QoS.
         """
+        if qosRules is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_SUPPORTED_VERSION:
+            if 'latencyGoaluSecs' in qos_rules.keys():
+                del qos_rules['latencyGoaluSecs']
         return self.client.modifyQoSRules(targetName, qosRules, targetType)
 
     def deleteQoSRules(self, targetName, targetType='vvset'):
@@ -3439,6 +3498,10 @@ class HPE3ParClient(object):
         
     def tuneVolume(self, volName, tune_operation, optional=None):
         info = { 'action': self.TUNE_VOLUME, 'tuneOperation': tune_operation }
+
+        if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
+            if 'compression' in optional.keys():
+                del optional['compression']
         if optional:
             info =  self.client._mergeDict(info, optional)
         response, body = self.client.http.put('/volumes/%s' % volName, body=info)
