@@ -1,53 +1,35 @@
 from hpe3parclient import client
 from hpe3parclient import exceptions
 from hpe3parclient import http
-from distutils.version import StrictVersion
-
-from models import FlashCache
-from models import VirtualVolume
-from models import Task
-from models import HostSet
-from models import Host
-from models import VLUN
-from models import Port
-from models import CPG
-from models import LDLayoutCapacity
-from models import VolumeSet
-from models import QoSRule
-
+from models import *
 
 import time
 
-
 class HPE3ParClient(object):
-
-    WSAPI_MIN_SUPPORTED_VERSION = '1.5.0'
-    WSAPI_MIN_VERSION_VLUN_QUERY_SUPPORT = '1.4.2'
-    WSAPI_MIN_VERSION_COMPRESSION_SUPPORT = '1.6.0'
 
     TUNE_VOLUME = 6
     TPVV = 1
     FPVV = 2
     TDVV = 3
 
-    # Map of raid type enum and associated set sizes
-    RAID_MAP = {'R0': {'raid_value': 1, 'set_sizes': [1]},
-                'R1': {'raid_value': 2, 'set_sizes': [2, 3, 4]},
-                'R5': {'raid_value': 3, 'set_sizes': [3, 4, 5, 6, 7, 8, 9]},
+    #Map of raid type enum and associated set sizes
+    RAID_MAP = {'R0': {'raid_value': 1, 'set_sizes': [1]}, 
+                'R1': {'raid_value': 2, 'set_sizes': [2, 3, 4]} , 
+                'R5': {'raid_value': 3, 'set_sizes': [3, 4, 5, 6, 7, 8, 9]}, 
                 'R6': {'raid_value': 4, 'set_sizes': [6, 8, 10, 12, 16]}
-                }
-
-    # Disk types
+               }
+    
+    #Disk types
     FC = 1
     NL = 2
     SSD = 3
-
-    # CPG High Availability
+    
+    #CPG High Availability
     PORT = 1
     CAGE = 2
     MAG = 3
-
-    # Host Persona
+    
+    #Host Persona
     GENERIC = 1
     GENERIC_ALUA = 2
     GENERIC_LEGACY = 3
@@ -59,31 +41,19 @@ class HPE3ParClient(object):
     OPENVMS = 9
     HPUX = 10
     WINDOWS_SERVER = 11
-    
-    # QoS priority Enumeration
-    class QOSPriority:
-        LOW = 1
-        NORMAL = 2
-        HIGH = 3
-    
-    # Task Priority Enumeration
-    class TaskPriority:
-        HIGH = 1
-        MEDIUM = 2
-        LOW = 3
+	
+	#QoS priority Enumeration
+    LOW = 1
+    NORMAL = 2
+    HIGH = 3
   
-    # Qos Zero None Operation
+	#Qos Zero None Operation
     ZERO = 1
     NOLIMIT = 2
 
-    # QoS target Type
+    #QoS target Type
     VVSET = 1
     SYS = 2
-    
-    VLUN_QUERY_SUPPORTED = False
-    HOST_AND_VV_SET_FILTER_SUPPORTED = False
-    
-    CURRENT_WSAPI_VERSION = None
 
     """ The 3PAR REST API Client.
 
@@ -92,41 +62,10 @@ class HPE3ParClient(object):
     :type api_url: str
 
     """
-
     def __init__(self, api_url, debug=False, secure=False, timeout=None,
                  suppress_ssl_warnings=False):
         self.api_url = api_url
         self.client = client.HPE3ParClient(api_url, debug, secure, timeout, suppress_ssl_warnings)
-        self.check_WSAPI_version()
-        
-    
-    def check_WSAPI_version(self):
-        try:
-            api_version = self.getWsApiVersion()
-            self.compare_version(api_version)
-        except Exception as exception:
-            ex_message = str(exception)
-            if ex_message and 'SSL Certificate Verification Failed' in ex_message:
-                raise exceptions.SSLCertFailed()
-            else:
-                msg = """Error: %s - Error communicating with 3PAR WSAPI. 
-Check proxy settings. If error persists, either the
-3PAR WSAPI is not running OR the version of the WSAPI is
-not supported.""" % (ex_message)
-                raise exceptions.ConnectionError(msg)
-                
-    def compare_version(self, api_version):
-        self.CURRENT_WSAPI_VERSION = '{}.{}.{}'.format(api_version['major'], api_version['minor'], api_version['revision'])
-        if StrictVersion(self.CURRENT_WSAPI_VERSION) < StrictVersion(self.WSAPI_MIN_SUPPORTED_VERSION):
-            err_msg = 'Unsupported 3PAR WS API version %s, min supported version is %s' % (self.CURRENT_WSAPI_VERSION, self.WSAPI_MIN_SUPPORTED_VERSION)
-            raise exceptions.UnsupportedVersion(err_msg)
-            
-        if StrictVersion(self.CURRENT_WSAPI_VERSION) >= StrictVersion(self.WSAPI_MIN_VERSION_VLUN_QUERY_SUPPORT):
-            self.VLUN_QUERY_SUPPORTED = True
-            
-        if StrictVersion(self.CURRENT_WSAPI_VERSION) >=  StrictVersion(self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT):
-            self.HOST_AND_VV_SET_FILTER_SUPPORTED = True
-            
 
     def setSSHOptions(self, ip, login, password, port=22,
                       conn_timeout=None, privatekey=None,
@@ -286,10 +225,11 @@ not supported.""" % (ex_message)
         """
         return self.client.getOverallSystemCapacity()
 
+
     def createFlashCache(self, sizeInGib, mode):
         """Creates a new FlashCache
-
-        :param sizeInGib: Specifies the node pair size of the Flash Cache on
+        
+        :param sizeInGib: Specifies the node pair size of the Flash Cache on 
                           the system.
         :type: int
         :param: mode    : Simulator: 1
@@ -299,36 +239,30 @@ not supported.""" % (ex_message)
         :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
             - NO_SPACE - Not enough space is available for the operation.
         :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
-            - INV_INPUT_EXCEEDS_RANGE - A JSON input object contains a
-            name-value pair with a numeric value that exceeds the expected
-            range. Flash Cache exceeds the expected range. The HTTP ref member
-            contains the name.
+            - INV_INPUT_EXCEEDS_RANGE - A JSON input object contains a name-value pair with a numeric value that exceeds the expected range. Flash Cache exceeds the expected range. The HTTP ref member contains the name.
         :raises: :class:`~hpe3parclient.exceptions.HTTPConflict`
            - EXISTENT_FLASH_CACHE - The Flash Cache already exists.
         :raises: :class:`~hpe3parclient.exceptions.HTTPForbidden`
             - FLASH_CACHE_NOT_SUPPORTED - Flash Cache is not supported.
         :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
-            - INV_FLASH_CACHE_SIZE - Invalid Flash Cache size. The size must
-            be a multiple of 16 G.
+            - INV_FLASH_CACHE_SIZE - Invalid Flash Cache size. The size must be a multiple of 16 G.
         """
         return self.client.createFlashCache(sizeInGib, mode)
-
+        
     def getFlashCache(self):
         """Get information about flash cache on the 3Par array.
 
         :returns: list of Hosts
         """
         return FlashCache(self.client.getFlashCache())
-
+        
     def deleteFlashCache(self):
         """Deletes an existing Flash Cache
 
         :raises: :class:`~hpe3parclient.exceptions.HTTPForbidden`
-            - FLASH_CACHE_IS_BEING_REMOVED - Unable to delete the Flash Cache,
-            the Flash Cache is being removed.
+            - FLASH_CACHE_IS_BEING_REMOVED - Unable to delete the Flash Cache, the Flash Cache is being removed.
         :raises: :class:`~hpe3parclient.exceptions.HTTPForbidden`
-            - FLASH_CACHE_NOT_SUPPORTED - Flash Cache is not supported on this
-            system.
+            - FLASH_CACHE_NOT_SUPPORTED - Flash Cache is not supported on this system.
         :raises: :class:`~hpe3parclient.exceptions.HTTPNotFound`
            - NON_EXISTENT_FLASH_CACHE - The Flash Cache does not exist.
         """
@@ -418,9 +352,6 @@ not supported.""" % (ex_message)
             - EXISTENT_SV - Volume Exists already
 
         """
-        if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
-            if 'compression' in optional.keys():
-                del optional['compression']
         return self.client.createVolume(name, cpgName, sizeMiB, optional)
 
     def deleteVolume(self, name):
@@ -445,7 +376,7 @@ not supported.""" % (ex_message)
         """
         return self.client.deleteVolume(name)
 
-    def modifyVolume(self, name, volumeMods, app_type=None):
+    def modifyVolume(self, name, volumeMods):
         """Modify a volume.
 
         :param name: the name of the volume
@@ -556,7 +487,7 @@ not supported.""" % (ex_message)
             snapshot.
 
         """
-        return self.client.modifyVolume(name, volumeMods, app_type)
+        return self.client.modifyVolume(name, volumeMods)
 
     def growVolume(self, name, amount):
         """Grow an existing volume by 'amount' Mebibytes.
@@ -743,10 +674,6 @@ not supported.""" % (ex_message)
             - NON_EXISTENT_VVCOPY - Physical copy not found.
 
         """
-        if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
-            for attribute in ['compression', 'allowRemoteCopyParent', 'skipZero']:
-                if attribute in optional.keys():
-                    del optional[attribute]
         return self.client.copyVolume(src_name, dest_name, dest_cpg, optional)
 
     def isOnlinePhysicalCopy(self, name):
@@ -773,7 +700,7 @@ not supported.""" % (ex_message)
         :returns: list of all Tasks
 
         """
-        Tasks = []
+        Tasks=[]
         tasks_list = self.client.getAllTasks()['members']
         for tasks in tasks_list:
             Tasks.append(Task(tasks))
@@ -803,10 +730,10 @@ not supported.""" % (ex_message)
 
     def _findTask(self, name, active=True):
         return self.client._findTask(name, active)
-
+        
     def waitForTaskToEnd(self, taskId, pollRateSecs=15):
         task = self.getTask(taskId)
-        while task is not None:  # loop begin
+        while task != None: #loop begin
             state = task.status
             if state == client.HPE3ParClient.TASK_DONE:
                 break
@@ -817,11 +744,10 @@ not supported.""" % (ex_message)
                 raise msg
             elif state == client.HPE3ParClient.TASK_ACTIVE:
                 time.sleep(pollRateSecs)
-                task = self.getTask(task.task_id)
-
-        # Return the Task Result
-        if (task is not None and task.status is not None and
-                task.status == 'DONE'):
+                task = self.getTask(task.task_id);
+        
+        #Return the Task Result
+        if task != None and task.status != None and task.status == 'DONE':
             return True
         else:
             return False
@@ -906,8 +832,7 @@ not supported.""" % (ex_message)
             ret = {'total': 0, 'members': []}
 
         """
-        return self.client._convert_cli_output_to_collection_like_wsapi(
-            cli_output)
+        return self.client._convert_cli_output_to_collection_like_wsapi(cli_output)
 
     def getPatches(self, history=True):
         """Get all the patches currently affecting the system.
@@ -992,9 +917,6 @@ not supported.""" % (ex_message)
             - INV_OPERATION_VV_PROMOTE_IS_NOT_IN_PROGRESS - Volume promotion
             is not in progress.
         """
-        if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
-            if 'allowRemoteCopyParent' in optional.keys():
-                del optional['allowRemoteCopyParent']
         return self.client.promoteVirtualCopy(snapshot, optional)
 
     def stopOfflinePhysicalCopy(self, name):
@@ -1087,14 +1009,6 @@ not supported.""" % (ex_message)
 
         """
         return self.client.stopOfflinePhysicalCopy(name)
-        
-    def resyncPhysicalCopy(self, volume_name):
-        """Resynchronizes a physical copy.
-
-        :param name - The name of the volume
-        :type - string
-        """
-        return self.client.resyncPhysicalCopy(volume_name)
 
     def createSnapshot(self, name, copyOfName, optional=None):
         """Create a snapshot of an existing Volume.
@@ -1123,9 +1037,6 @@ not supported.""" % (ex_message)
             - PERM_DENIED - Permission denied
 
         """
-        if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
-            if 'allowRemoteCopyParent' in optional.keys():
-                del optional['allowRemoteCopyParent']
         return self.client.createSnapshot(name, copyOfName, optional)
 
     # Host Set methods
@@ -1207,7 +1118,7 @@ not supported.""" % (ex_message)
         :raises: :class:`~hpe3parclient.exceptions.HTTPConflict`
             - EXPORTED_VLUN - The host set has exported VLUNs.
         """
-        self.client.deleteHostSet(name)
+        resp = self.client.deleteHostSet(name)
 
     def modifyHostSet(self, name, action=None, newName=None, comment=None,
                       setmembers=None):
@@ -1255,8 +1166,7 @@ not supported.""" % (ex_message)
             - INV_INPUT_ILLEGAL_CHAR - Invalid contains one or more illegal
             characters.
         """
-        return self.client.modifyHostSet(name, action, newName, comment,
-                                         setmembers)
+        return self.client.modifyHostSet(name, action, newName, comment, setmembers)
 
     def addHostToHostSet(self, set_name, name):
         """
@@ -1508,7 +1418,7 @@ not supported.""" % (ex_message)
             - PERM_DENIED - Permission denied
 
         """
-        self.client.deleteHost(name)
+        response = self.client.deleteHost(name)
 
     def findHost(self, iqn=None, wwn=None):
         """Find a host from an iSCSI initiator or FC WWN.
@@ -1728,7 +1638,7 @@ not supported.""" % (ex_message)
             - PERM_DENIED - Permission denied
 
         """
-        self.client.deleteCPG(name)
+        response  = self.client.deleteCPG(name)
 
     # VLUN methods
     #
@@ -1802,8 +1712,7 @@ not supported.""" % (ex_message)
 
         """
 
-        return self.client.createVLUN(volumeName, lun, hostname, portPos,
-                                      noVcn, overrideLowerPriority, auto)
+        return self.client.createVLUN(volumeName, lun, hostname, portPos, noVcn, overrideLowerPriority, auto)
 
     def deleteVLUN(self, volumeName, lunID, hostname=None, port=None):
         """Delete a VLUN.
@@ -1969,8 +1878,7 @@ not supported.""" % (ex_message)
         :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
             - INV_INPUT_DUP_NAME - Invalid input (duplicate name).
         """
-        self.client.createVolumeSet(
-            name, domain, comment, setmembers)
+        response = self.client.createVolumeSet(name, domain, comment, setmembers)
 
     def deleteVolumeSet(self, name):
         """
@@ -1988,7 +1896,7 @@ not supported.""" % (ex_message)
         :raises: :class:`~hpe3parclient.exceptions.HTTPConflict`
             - VVSET_QOS_TARGET - The object is already part of the set.
         """
-        self.client.deleteVolumeSet(name)
+        response = self.client.deleteVolumeSet(name)
 
     def modifyVolumeSet(self, name, action=None, newName=None, comment=None,
                         flashCachePolicy=None, setmembers=None):
@@ -2045,8 +1953,7 @@ not supported.""" % (ex_message)
             - INV_INPUT_ILLEGAL_CHAR - Invalid contains one or more illegal
             characters.
         """
-        return self.client.modifyVolumeSet(name, action, newName, comment,
-                                           flashCachePolicy, setmembers)
+        return self.client.modifyVolumeSet(name, action, newName, comment, flashCachePolicy, setmembers)
 
     # QoS Priority Optimization methods
     def addVolumeToVolumeSet(self, set_name, name):
@@ -2163,8 +2070,7 @@ not supported.""" % (ex_message)
             - INV_OPERATION_SNAPSHOT_NOT_SAME_TYPE - Some snapshots in the
             volume set are read-only, some are read-write
         """
-        return self.client.createSnapshotOfVolumeSet(name, copyOfName,
-                                                     optional)
+        return self.client.createSnapshotOfVolumeSet(name, copyOfName, optional)
 
     # QoS Priority Optimization methods
     def setQOSRule(self, set_name, max_io=None, max_bw=None):
@@ -2297,9 +2203,6 @@ not supported.""" % (ex_message)
         :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
           - UNLICENSED_FEATURE - The system is not licensed for QoS.
         """
-        if qosRules is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_SUPPORTED_VERSION:
-            if 'latencyGoaluSecs' in qos_rules.keys():
-                del qos_rules['latencyGoaluSecs']
         return self.client.createQoSRules(targetName, qosRules, target_type)
 
     def modifyQoSRules(self, targetName, qosRules, targetType='vvset'):
@@ -2388,9 +2291,6 @@ not supported.""" % (ex_message)
         :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
                      UNLICENSED_FEATURE - The system is not licensed for QoS.
         """
-        if qosRules is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_SUPPORTED_VERSION:
-            if 'latencyGoaluSecs' in qos_rules.keys():
-                del qos_rules['latencyGoaluSecs']
         return self.client.modifyQoSRules(targetName, qosRules, targetType)
 
     def deleteQoSRules(self, targetName, targetType='vvset'):
@@ -3108,8 +3008,7 @@ not supported.""" % (ex_message)
             group is in the failover state. Both systems are in the primary
             state.
         """
-        return self.client.addVolumeToRemoteCopyGroup(name, volumeName,
-                                                      targets, optional)
+        return self.client.addVolumeToRemoteCopyGroup(name, volumeName, targets, optional)
 
     def removeVolumeFromRemoteCopyGroup(self, name, volumeName,
                                         optional=None,
@@ -3167,9 +3066,7 @@ not supported.""" % (ex_message)
             - RCOPY_TARGET_IS_NOT_READY - The remote-copy group target is
             not ready.
         """
-        return self.client.removeVolumeFromRemoteCopyGroup(name, volumeName,
-                                                           optional,
-                                                           removeFromTarget)
+        return self.client.removeVolumeFromRemoteCopyGroup(name, volumeName, optional, removeFromTarget)
 
     def startRemoteCopy(self, name, optional=None):
         """
@@ -3445,8 +3342,7 @@ not supported.""" % (ex_message)
             - RCOPY_GROUP_OPERATION_ONLY_ON_SECONDARY_SIDE - Operation should
             only be issued on secondary side.
         """
-        return self.client.recoverRemoteCopyGroupFromDisaster(name, action,
-                                                              optional)
+        return self.client.recoverRemoteCopyGroupFromDisaster(name, action, optional)
 
     def toggleRemoteCopyConfigMirror(self, target, mirror_config=True):
         """
@@ -3525,128 +3421,96 @@ not supported.""" % (ex_message)
         :returns: dict
         """
         return self.client._format_srstatld_output(out)
-
+        
     def tuneVolume(self, volName, tune_operation, optional=None):
         info = { 'action': self.TUNE_VOLUME, 'tuneOperation': tune_operation }
-
-        if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
-            if 'compression' in optional.keys():
-                del optional['compression']
         if optional:
-            info = self.client._mergeDict(info, optional)
-        response, body = self.client.http.put(
-            '/volumes/%s' % volName, body=info)
+            info =  self.client._mergeDict(info, optional)
+        response, body = self.client.http.put('/volumes/%s' % volName, body=info)
         return self.getTask(body['taskid'])
-
+        
     def cpgExists(self, name):
         try:
             self.getCPG(name)
         except exceptions.HTTPNotFound:
             return False
         return True
-
+        
     def volumeExists(self, name):
         try:
             self.getVolume(name)
         except exceptions.HTTPNotFound:
             return False
         return True
-
+        
     def hostExists(self, name):
         try:
             self.getHost(name)
         except exceptions.HTTPNotFound:
             return False
         return True
-
+        
     def hostSetExists(self, name):
         try:
             self.getHostSet(name)
         except exceptions.HTTPNotFound:
             return False
         return True
-
+        
     def volumeSetExists(self, name):
         try:
             self.getVolumeSet(name)
         except exceptions.HTTPNotFound:
             return False
         return True
-
+        
     def vlunExists(self, volume_name, lunid, hostname, port):
         try:
             vlun_id = ''
-            if volume_name is not None:
+            if volume_name != None:
                 vlun_id = volume_name
-            if lunid is not None:
+            if lunid != None:
                 vlun_id = "%s,%s" % (vlun_id, lunid)
-            if hostname is not None:
+            if hostname != None:
                 vlun_id = '%s,%s' % (vlun_id, hostname)
-            if port is not None:
-                if hostname is None:
+            if port != None:
+                if hostname == None:
                     vlun_id = '%s,' % vlun_id
 
-                vlun_id = '%s,%s:%s:%s' % (vlun_id, str(port['node']), str(
-                    port['slot']), str(port['cardPort']))
-            if ((volume_name is None or len(volume_name) == 0) or
-                    lunid is None and (hostname is None or port is None)):
-                raise "Some or all parameters are missing : volume_name, \
-lunid, hostname or port"
+                vlun_id = '%s,%s:%s:%s'  % (vlun_id, str(port['node']), str(port['slot']), str(port['cardPort']))
+            if (volume_name == None or len(volume_name) == 0) or lunid == None and (hostname == None or port == None):
+                raise "Some or all parameters are missing : volume_name, lunid, hostname or port"
             self.client.http.get('/vluns/%s' % vlun_id)
         except exceptions.HTTPNotFound:
             return False
         return True
-
+        
     def qosRuleExists(self, targetName, targetType):
         try:
             self.queryQoSRule(targetName, targetType)
         except exceptions.HTTPNotFound:
             return False
         return True
-
+        
     def flashCacheExists(self):
         try:
             self.getFlashCache()
         except exceptions.HTTPNotFound:
             return False
         return True
-
-    def onlinePhysicalCopyExists(self, src_name, phy_copy_name):
-        try:
-            if self.volumeExists(src_name) and self.volumeExists(phy_copy_name) and self._findTask(phy_copy_name,True) != None:
-                return True
-        except exceptions.HTTPNotFound:
-            return False
-        return False
         
-    def offlinePhysicalCopyExists(self, src_name, phy_copy_name):
-        try:
-            if self.volumeExists(src_name) and self.volumeExists(phy_copy_name) and self._findTask(src_name + "-*" + phy_copy_name, True) != None:
-                return True
-        except exceptions.HTTPNotFound:
-            return False
-        return False
-      
     #Takes a list of host setmembers and adds them to a hostset
     def addHostsToHostSet(self, name, setmembers):
-        self.client.modifyHostSet(
-            name, action=client.HPE3ParClient.SET_MEM_ADD,
-            setmembers=setmembers)
-
-    # Takes a list of host setmembers and removes them from a hostset
+        self.client.modifyHostSet(name, action=client.HPE3ParClient.SET_MEM_ADD, setmembers=setmembers)
+    
+    #Takes a list of host setmembers and removes them from a hostset
     def removeHostsFromHostSet(self, name, setmembers):
-        self.client.modifyHostSet(
-            name, action=client.HPE3ParClient.SET_MEM_REMOVE,
-            setmembers=setmembers)
-
-    # Takes a list of volume setmembers and adds them to a volumeset
+        self.client.modifyHostSet(name, action=client.HPE3ParClient.SET_MEM_REMOVE, setmembers=setmembers)
+    
+    #Takes a list of volume setmembers and adds them to a volumeset
     def addVolumesToVolumeSet(self, name, setmembers):
-        self.client.modifyVolumeSet(
-            name, action=client.HPE3ParClient.SET_MEM_ADD,
-            setmembers=setmembers)
+        self.client.modifyVolumeSet(name, action=client.HPE3ParClient.SET_MEM_ADD, setmembers=setmembers)
 
-    # Takes a list of volume setmembers and removes them from a volumeset
+    #Takes a list of volume setmembers and removes them from a volumeset
     def removeVolumesFromVolumeSet(self, name, setmembers):
-        self.client.modifyVolumeSet(
-            name, action=client.HPE3ParClient.SET_MEM_REMOVE,
-            setmembers=setmembers)
+        self.client.modifyVolumeSet(name, action=client.HPE3ParClient.SET_MEM_REMOVE, setmembers=setmembers)
