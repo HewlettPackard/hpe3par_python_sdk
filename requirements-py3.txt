@@ -1,2 +1,0 @@
-eventlet
-paramiko>=1.13.0
