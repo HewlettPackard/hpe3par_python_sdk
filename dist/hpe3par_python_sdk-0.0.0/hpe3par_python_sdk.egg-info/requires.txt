@@ -1,4 +1,0 @@
-paramiko
-eventlet
-requests
-python-3parclient

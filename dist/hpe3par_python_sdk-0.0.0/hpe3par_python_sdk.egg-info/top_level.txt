@@ -1,2 +1,0 @@
-hpe3par_sdk
-test
