@@ -443,6 +443,10 @@ not supported.""" % (ex_message)
             - IN_USE - The volume is in use by VV set, VLUN, etc
 
         """
+        try:
+            self.client.removeVolumeMetaData(name,'type')
+        except:
+            pass
         return self.client.deleteVolume(name)
 
     def modifyVolume(self, name, volumeMods, app_type=None):
