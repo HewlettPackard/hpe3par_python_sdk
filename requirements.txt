@@ -1,4 +1,1 @@
-eventlet
-paramiko>=1.13.0
-requests
 python-3parclient
