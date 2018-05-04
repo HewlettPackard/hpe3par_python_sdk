@@ -11,3 +11,15 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
+
+version_tuple = (1, 0, 0)
+
+
+def get_version_string():
+    """Current version of HPE3PARClient."""
+    if isinstance(version_tuple[-1], str):
+        return '.'.join(map(str, version_tuple[:-1])) + version_tuple[-1]
+    return '.'.join(map(str, version_tuple))
+
+
+version = get_version_string()
