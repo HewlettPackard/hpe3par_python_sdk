@@ -3608,9 +3608,8 @@ not supported.""" % (ex_message)
                     port['slot']), str(port['cardPort']))
             if ((volume_name is None or len(volume_name) == 0) or
                     lunid is None and (hostname is None or port is None)):
-                raise Exception("Some or all parameters are missing : volume_name, \
-lunid, hostname or port")
-            print vlun_id
+                raise Exception("Some or all parameters are missing : \
+volume_name, lunid, hostname or port")
             self.client.http.get('/vluns/%s' % vlun_id)
         except exceptions.HTTPNotFound:
             return False
