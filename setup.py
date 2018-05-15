@@ -5,14 +5,18 @@ try:
 except ImportError:
     from distutils.core import setup, find_packages
 
+with open('README.md', 'r') as file:
+    readme = file.read()
 
 setup(
   name='hpe3par_sdk',
   version=hpe3par_sdk.version,
-  description="HPE 3PAR HTTP REST Client",
-  author="Hewlett Packard Enterprise EcoStor",
-  author_email="Ecostor@groups.ext.hpe.com",
-  maintainer="Hewlett Packard Enterprise EcoStor",
+  description="HPE 3PAR Software Development Kit for Python",
+  long_description=readme,
+  long_description_content_type="text/markdown",
+  author="Hewlett Packard Enterprise",
+  author_email="ecostor@groups.ext.hpe.com",
+  maintainer="Hewlett Packard Enterprise",
   keywords=["hpe", "3par", "rest"],
   install_requires=['python-3parclient'],
   tests_require=["paramiko", "eventlet", "requests", "nose", "werkzeug", "nose-testconfig"],
