@@ -12,7 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-version_tuple = (1, 0, 0)
+version_tuple = (1, 0, 1)
 
 
 def get_version_string():

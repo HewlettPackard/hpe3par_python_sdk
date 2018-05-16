@@ -194,7 +194,13 @@ not supported.""" % (ex_message)
         :returns: None
 
         """
-        self.client.logout()
+        try:
+            self.client.logout()
+        #Making logout idempotent by not throwing HTTP Forbidden error
+        except exceptions.HTTPForbidden:
+            pass
+        except Exception:
+            raise Exception
 
     def getStorageSystemInfo(self):
         """Get the Storage System Information
