@@ -23,7 +23,7 @@ setup(
   license="Apache License, Version 2.0",
   packages=find_packages(),
   provides=['hpe3par_sdk'],
-  url="http://packages.python.org/hpe3par_sdk",
+  url="https://github.com/HewlettPackard/hpe3par_python_sdk",
   classifiers=[
      'Development Status :: 5 - Production/Stable',
      'Intended Audience :: Developers',
