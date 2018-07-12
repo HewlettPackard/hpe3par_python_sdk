@@ -126,7 +126,11 @@ class HPE3ParClientBaseTestCase(unittest.TestCase):
                 pass
 
             time.sleep(1)
-            self.cl = client.HPE3ParClient(self.flask_url)
+            if self.withFilePersona:
+                pass
+                #self.cl = file_client.HPE3ParFilePersonaClient(self.flask_url)
+            else:
+                self.cl = client.HPE3ParClient(self.flask_url)
 
             if self.withSSH:
 
