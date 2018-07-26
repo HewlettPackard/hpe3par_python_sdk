@@ -142,7 +142,6 @@ class HPE3ParClientHostSetTestCase(HPE3ParClient_base
         self.assertEqual(cpg.name, cpg_name)
 
         volume = self.cl.getVolume(volume_name1)
-        print(volume.name)
         self.assertEqual(volume.name, volume_name1)
 
         volume = self.cl.getVolume(volume_name2)
@@ -154,20 +153,9 @@ class HPE3ParClientHostSetTestCase(HPE3ParClient_base
         self.assertIn(volume_name2,
                       [vlun.volume_name for vlun in host_vluns])
 
-        for vlun in self.cl.getVLUNs():
-            print("123")
-            print(vlun.volume_name)
-
-        print(self.cl.getVLUNs())
-        print(volume_name1)
-        print(volume_name2)
         vlun = self.cl.getVLUN(volume_name1)
-        print("1")
-        print(vlun.volume_name)
         self.assertEqual(vlun.volume_name, volume_name1)
         vlun = self.cl.getVLUN(volume_name2)
-        print("2")
-        print(vlun.volume_name)
         self.assertEqual(vlun.volume_name, volume_name2)
 
         #
