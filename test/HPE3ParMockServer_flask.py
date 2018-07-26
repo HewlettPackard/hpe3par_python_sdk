@@ -1034,7 +1034,6 @@ def get_volume(volume_name):
     for volume in volumes['members']:
         if volume['name'] == volume_name:
             resp = flask.make_response(json.dumps(volume), 200)
-            print(resp)
             return resp
 
     throw_error(404, NON_EXISTENT_VOL, "volume doesn't exist")
