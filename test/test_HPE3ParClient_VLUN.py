@@ -84,7 +84,6 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
     def tearDown(self):
 
         try:
-	    print "coming here"
             self.cl.deleteVLUN(VOLUME_NAME1, LUN_1, HOST_NAME1, self.port)
         except Exception:
             pass
@@ -146,6 +145,7 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.assertIsNotNone(vlun1)
         volName = vlun1.volume_name
         self.assertEqual(VOLUME_NAME1, volName)
+        #self.assertEqual(VOLUME_NAME1, '')
         # add another
         self.cl.createVLUN(VOLUME_NAME2, LUN_2, HOST_NAME2)
         # check
@@ -159,11 +159,11 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         #self.printHeader('create_VLUN_tooLarge')
 
        # lun = 100000
-	#raise exceptions.HTTPBadRequest("Raised something")
-	#print self.cl.createVLUN(VOLUME_NAME1, lun, HOST_NAME1, PORT)
+        #raise exceptions.HTTPBadRequest("Raised something")
+        #print self.cl.createVLUN(VOLUME_NAME1, lun, HOST_NAME1, PORT)
        #   Bad request (HTTP 400) 28 - LUN is greater than 16384.
        # self.assertRaisesRegexp(exceptions.HTTPBadRequest,"Bad request (HTTP 400) 28 - LUN is greater than 16384.",self.cl.createVLUN, VOLUME_NAME1, lun, HOST_NAME1, PORT)
-	#with self.assertRaises(exceptions.HTTPBadRequest):
+        #with self.assertRaises(exceptions.HTTPBadRequest):
         #    self.cl.createVLUN(VOLUME_NAME1, lun, HOST_NAME1, PORT)
 
        # self.printFooter('create_VLUN_tooLarge')
@@ -201,15 +201,13 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.assertRaises(exceptions.HTTPNotFound, self.cl.getVLUN, 'badName')
         self.printFooter('get_VLUN_bad')
     def check_value_in_listof_objects(self, objects_list, key, value):
-	print "key"
-	print key
         for object in objects_list:
             if key == 'lun':
                 if object.lun == value:
-	            return True
+                    return True
             if key == 'volumeName':
                 if object.volume_name == value:
-		    return True
+                    return True
 
     def test_2_get_VLUNs(self):
         self.printHeader('get_VLUNs')
@@ -221,7 +219,6 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.cl.createVLUN(VOLUME_NAME2, LUN_2, HOST_NAME2)
         # get all
         vluns = self.cl.getVLUNs()
-        print type(vluns)
         v1 = self.cl.getVLUN(VOLUME_NAME1)
         v2 = self.cl.getVLUN(VOLUME_NAME2)
         self.assertTrue(self.check_value_in_listof_objects(vluns, 'lun', v1.lun))

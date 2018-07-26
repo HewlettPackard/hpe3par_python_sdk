@@ -1017,6 +1017,7 @@ def delete_volumes(volume_name):
 def get_volumes():
     debugRequest(flask.request)
     resp = flask.make_response(json.dumps(volumes), 200)
+    print(resp)
     return resp
 
 
@@ -1033,6 +1034,7 @@ def get_volume(volume_name):
     for volume in volumes['members']:
         if volume['name'] == volume_name:
             resp = flask.make_response(json.dumps(volume), 200)
+            print(resp)
             return resp
 
     throw_error(404, NON_EXISTENT_VOL, "volume doesn't exist")
@@ -1697,9 +1699,7 @@ def get_overall_capacity():
 @app.route('/api', methods=['GET'])
 def get_version():
     debugRequest(flask.request)
-    version = {'major': 1,
-               'minor': 3,
-               'build': 30201256}
+    version = {"major": 1, "minor": 6, "revision": 3, "build": 30301418}
     resp = flask.make_response(json.dumps(version), 200)
     return resp
 

@@ -122,7 +122,7 @@ class HPE3ParClientHostSetTestCase(HPE3ParClient_base
         volumes_to_delete.extend([volume_name1, volume_name2])
         self.cl.createVolume(volume_name1, cpg_name, VOLUME_SIZE)
         self.cl.createVolume(volume_name2, cpg_name, VOLUME_SIZE)
-	self.port={"node": 2,"slot": 2,"cardPort": 4}
+        self.port={"node": 2,"slot": 2,"cardPort": 4}
 
         # Create VLUNs
         vlun1 = [volume_name1, LUN_1, host_name, self.port]
@@ -142,6 +142,7 @@ class HPE3ParClientHostSetTestCase(HPE3ParClient_base
         self.assertEqual(cpg.name, cpg_name)
 
         volume = self.cl.getVolume(volume_name1)
+        print(volume.name)
         self.assertEqual(volume.name, volume_name1)
 
         volume = self.cl.getVolume(volume_name2)
@@ -153,9 +154,20 @@ class HPE3ParClientHostSetTestCase(HPE3ParClient_base
         self.assertIn(volume_name2,
                       [vlun.volume_name for vlun in host_vluns])
 
+        for vlun in self.cl.getVLUNs():
+            print("123")
+            print(vlun.volume_name)
+
+        print(self.cl.getVLUNs())
+        print(volume_name1)
+        print(volume_name2)
         vlun = self.cl.getVLUN(volume_name1)
+        print("1")
+        print(vlun.volume_name)
         self.assertEqual(vlun.volume_name, volume_name1)
         vlun = self.cl.getVLUN(volume_name2)
+        print("2")
+        print(vlun.volume_name)
         self.assertEqual(vlun.volume_name, volume_name2)
 
         #
@@ -232,7 +244,7 @@ class HPE3ParClientHostSetTestCase(HPE3ParClient_base
         self.cl.createVolume(volume_name2, cpg_name, VOLUME_SIZE)
 
         # Create VLUNs
-	self.port = {"node": 2,"slot": 2,"cardPort": 4}
+        self.port = {"node": 2,"slot": 2,"cardPort": 4}
         vlun1 = [volume_name1, LUN_1, host_name, self.port]
         vlun2 = [volume_name2, LUN_2, host_name, self.port]
         vluns_to_delete.extend([vlun1, vlun2])
