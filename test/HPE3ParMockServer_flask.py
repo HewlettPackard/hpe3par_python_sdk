@@ -1017,7 +1017,6 @@ def delete_volumes(volume_name):
 def get_volumes():
     debugRequest(flask.request)
     resp = flask.make_response(json.dumps(volumes), 200)
-    print(resp)
     return resp
 
 
