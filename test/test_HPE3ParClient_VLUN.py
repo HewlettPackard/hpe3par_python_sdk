@@ -145,7 +145,6 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.assertIsNotNone(vlun1)
         volName = vlun1.volume_name
         self.assertEqual(VOLUME_NAME1, volName)
-        #self.assertEqual(VOLUME_NAME1, '')
         # add another
         self.cl.createVLUN(VOLUME_NAME2, LUN_2, HOST_NAME2)
         # check
