@@ -200,8 +200,6 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.assertRaises(exceptions.HTTPNotFound, self.cl.getVLUN, 'badName')
         self.printFooter('get_VLUN_bad')
     def check_value_in_listof_objects(self, objects_list, key, value):
-        print "key"
-        print key
         for object in objects_list:
             if key == 'lun':
                 if object.lun == value:
@@ -220,7 +218,6 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.cl.createVLUN(VOLUME_NAME2, LUN_2, HOST_NAME2)
         # get all
         vluns = self.cl.getVLUNs()
-        print type(vluns)
         v1 = self.cl.getVLUN(VOLUME_NAME1)
         v2 = self.cl.getVLUN(VOLUME_NAME2)
         self.assertTrue(self.check_value_in_listof_objects(vluns, 'lun', v1.lun))
