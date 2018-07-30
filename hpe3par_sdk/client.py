@@ -17,17 +17,17 @@ from hpe3parclient import exceptions
 from hpe3parclient import http
 from distutils.version import StrictVersion
 
-from models import FlashCache
-from models import VirtualVolume
-from models import Task
-from models import HostSet
-from models import Host
-from models import VLUN
-from models import Port
-from models import CPG
-from models import LDLayoutCapacity
-from models import VolumeSet
-from models import QoSRule
+from hpe3par_sdk.models import FlashCache
+from hpe3par_sdk.models import VirtualVolume
+from hpe3par_sdk.models import Task
+from hpe3par_sdk.models import HostSet
+from hpe3par_sdk.models import Host
+from hpe3par_sdk.models import VLUN
+from hpe3par_sdk.models import Port
+from hpe3par_sdk.models import CPG
+from hpe3par_sdk.models import LDLayoutCapacity
+from hpe3par_sdk.models import VolumeSet
+from hpe3par_sdk.models import QoSRule
 
 
 import time

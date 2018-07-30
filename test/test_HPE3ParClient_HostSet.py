@@ -122,7 +122,7 @@ class HPE3ParClientHostSetTestCase(HPE3ParClient_base
         volumes_to_delete.extend([volume_name1, volume_name2])
         self.cl.createVolume(volume_name1, cpg_name, VOLUME_SIZE)
         self.cl.createVolume(volume_name2, cpg_name, VOLUME_SIZE)
-	self.port={"node": 2,"slot": 2,"cardPort": 4}
+        self.port={"node": 2,"slot": 2,"cardPort": 4}
 
         # Create VLUNs
         vlun1 = [volume_name1, LUN_1, host_name, self.port]
@@ -232,7 +232,7 @@ class HPE3ParClientHostSetTestCase(HPE3ParClient_base
         self.cl.createVolume(volume_name2, cpg_name, VOLUME_SIZE)
 
         # Create VLUNs
-	self.port = {"node": 2,"slot": 2,"cardPort": 4}
+        self.port = {"node": 2,"slot": 2,"cardPort": 4}
         vlun1 = [volume_name1, LUN_1, host_name, self.port]
         vlun2 = [volume_name2, LUN_2, host_name, self.port]
         vluns_to_delete.extend([vlun1, vlun2])
