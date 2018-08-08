@@ -1,11 +1,11 @@
 # (C) Copyright 2018 Hewlett Packard Enterprise Development LP
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
 # a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -28,6 +28,8 @@ from models import CPG
 from models import LDLayoutCapacity
 from models import VolumeSet
 from models import QoSRule
+from models import RemoteCopyInfo
+from models import RemoteCopyGroup
 
 
 import time
@@ -73,19 +75,19 @@ class HPE3ParClient(object):
     OPENVMS = 9
     HPUX = 10
     WINDOWS_SERVER = 11
-    
+
     # QoS priority Enumeration
     class QOSPriority:
         LOW = 1
         NORMAL = 2
         HIGH = 3
-    
+
     # Task Priority Enumeration
     class TaskPriority:
         HIGH = 1
         MEDIUM = 2
         LOW = 3
-  
+
     # Qos Zero None Operation
     ZERO = 1
     NOLIMIT = 2
@@ -93,10 +95,10 @@ class HPE3ParClient(object):
     # QoS target Type
     VVSET = 1
     SYS = 2
-    
+
     VLUN_QUERY_SUPPORTED = False
     HOST_AND_VV_SET_FILTER_SUPPORTED = False
-    
+
     CURRENT_WSAPI_VERSION = None
 
     """ The 3PAR REST API Client.
@@ -112,8 +114,8 @@ class HPE3ParClient(object):
         self.api_url = api_url
         self.client = client.HPE3ParClient(api_url, debug, secure, timeout, suppress_ssl_warnings)
         self.check_WSAPI_version()
-        
-    
+
+
     def check_WSAPI_version(self):
         try:
             api_version = self.getWsApiVersion()
@@ -123,24 +125,24 @@ class HPE3ParClient(object):
             if ex_message and 'SSL Certificate Verification Failed' in ex_message:
                 raise exceptions.SSLCertFailed()
             else:
-                msg = """Error: %s - Error communicating with 3PAR WSAPI. 
+                msg = """Error: %s - Error communicating with 3PAR WSAPI.
 Check proxy settings. If error persists, either the
 3PAR WSAPI is not running OR the version of the WSAPI is
 not supported.""" % (ex_message)
                 raise exceptions.ConnectionError(msg)
-                
+
     def compare_version(self, api_version):
         self.CURRENT_WSAPI_VERSION = '{}.{}.{}'.format(api_version['major'], api_version['minor'], api_version['revision'])
         if StrictVersion(self.CURRENT_WSAPI_VERSION) < StrictVersion(self.WSAPI_MIN_SUPPORTED_VERSION):
             err_msg = 'Unsupported 3PAR WS API version %s, min supported version is %s' % (self.CURRENT_WSAPI_VERSION, self.WSAPI_MIN_SUPPORTED_VERSION)
             raise exceptions.UnsupportedVersion(err_msg)
-            
+
         if StrictVersion(self.CURRENT_WSAPI_VERSION) >= StrictVersion(self.WSAPI_MIN_VERSION_VLUN_QUERY_SUPPORT):
             self.VLUN_QUERY_SUPPORTED = True
-            
+
         if StrictVersion(self.CURRENT_WSAPI_VERSION) >=  StrictVersion(self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT):
             self.HOST_AND_VV_SET_FILTER_SUPPORTED = True
-            
+
 
     def setSSHOptions(self, ip, login, password, port=22,
                       conn_timeout=None, privatekey=None,
@@ -1111,7 +1113,7 @@ not supported.""" % (ex_message)
 
         """
         return self.client.stopOfflinePhysicalCopy(name)
-        
+
     def resyncPhysicalCopy(self, volume_name):
         """Resynchronizes a physical copy.
 
@@ -3642,7 +3644,7 @@ volume_name, lunid, hostname or port")
         except exceptions.HTTPNotFound:
             return False
         return False
-        
+
     def offlinePhysicalCopyExists(self, src_name, phy_copy_name):
         try:
             if self.volumeExists(src_name) and self.volumeExists(phy_copy_name) and self._findTask(src_name + "-*" + phy_copy_name, True) != None:
@@ -3650,7 +3652,7 @@ volume_name, lunid, hostname or port")
         except exceptions.HTTPNotFound:
             return False
         return False
-      
+
     #Takes a list of host setmembers and adds them to a hostset
     def addHostsToHostSet(self, name, setmembers):
         self.client.modifyHostSet(
@@ -3674,3 +3676,16 @@ volume_name, lunid, hostname or port")
         self.client.modifyVolumeSet(
             name, action=client.HPE3ParClient.SET_MEM_REMOVE,
             setmembers=setmembers)
+
+    def getRemoteCopyInfo(self):
+        return RemoteCopyInfo(self.client.getRemoteCopyInfo())
+
+    def getRemoteCopyGroups(self):
+        remoteCopyGroups = []
+        remoteCopyGroups_list = self.client.getRemoteCopyGroups()['members']
+        for remoteCopyGroup in remoteCopyGroups_list:
+            remoteCopyGroups.append(RemoteCopyGroup(remoteCopyGroup))
+        return remoteCopyGroups
+
+    def getRemoteCopyGroup(self, name):
+        return RemoteCopyGroup(self.client.getRemoteCopyGroup(name))

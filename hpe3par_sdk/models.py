@@ -1,11 +1,11 @@
 # (C) Copyright 2018 Hewlett Packard Enterprise Development LP
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
 # a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -17,110 +17,110 @@ class VirtualVolume(object):
     def __init__(self, object_hash):
         if object_hash is None:
             return
-    
+
         self.additional_states = object_hash.get('additionalStates')
 
         if object_hash.get('adminSpace'):
             self.admin_space = Space(object_hash['adminSpace'])
         else:
             self.admin_space = None
-        
+
         self.base_id = object_hash.get('baseId')
-        
+
         self.comment = object_hash.get('comment')
 
         if object_hash.get('capacityEfficiency'):
             self.capacity_efficiency = CapEfficiency(object_hash['capacityEfficiency'])
-        else:    
+        else:
             self.capacity_efficiency = None
-        
+
         self.copy_of = object_hash.get('copyOf')
-        
+
         self.copy_type = object_hash.get('copyType')
-        
+
         self.creation_time8601 = object_hash.get('creationTime8601')
-        
+
         self.creation_time_sec = object_hash.get('creationTimeSec')
-        
+
         self.degraded_states = object_hash.get('degradedStates')
-        
+
         self.domain = object_hash.get('domain')
-        
+
         self.expiration_time8601 = object_hash.get('expirationTime8601')
-        
+
         self.expiration_time_sec = object_hash.get('expirationTimeSec')
-        
+
         self.failed_states = object_hash.get('failedStates')
-        
+
         self.compression_state = object_hash.get('compressionState')
-        
+
         self.deduplication_state = object_hash.get('deduplicationState')
-        
+
         self.id = object_hash.get('id')
-        
+
         self.links = object_hash.get('links')
-        
+
         self.name = object_hash.get('name')
-        
+
         self.parent_id = object_hash.get('parentId')
-        
+
         self.phys_parent_id = object_hash.get('physParentId')
-        
+
         if object_hash.get('policies'):
             self.policies = Policy(object_hash.get('policies'))
         else:
             self.policies = None
-        
+
         self.provisioning_type = object_hash.get('provisioningType')
-        
+
         self.read_only = object_hash.get('readOnly')
-        
+
         self.retention_time8601 = object_hash.get('retentionTime8601')
-        
+
         self.retention_time_sec = object_hash.get('retentionTimeSec')
-        
+
         self.ro_child_id = object_hash.get('roChildId')
-        
+
         self.rw_child_id = object_hash.get('rwChildId')
-        
+
         self.host_write_mib = object_hash.get('hostWriteMiB')
-        
+
         self.total_used_mib = object_hash.get('totalUsedMiB')
-        
+
         self.total_reserved_mib = object_hash.get('totalReservedMiB')
-        
+
         self.size_mib = object_hash.get('sizeMiB')
-        
+
         self.snap_cpg = object_hash.get('snapCPG')
-        
+
         if object_hash.get('snapshotSpace'):
             self.snapshot_space = Space(object_hash.get('snapshotSpace'))
         else:
             self.snapshot_space = None
-        
+
         self.ss_spc_alloc_limit_pct = object_hash.get('ssSpcAllocLimitPct')
-        
+
         self.ss_spc_alloc_warning_pct = object_hash.get('ssSpcAllocWarningPct')
-        
+
         self.state = object_hash.get('state')
-        
+
         self.user_cpg = object_hash.get('userCPG')
-        
+
         if object_hash.get('userSpace'):
             self.user_space = Space(object_hash.get('userSpace'))
         else:
             self.user_space = None
-        
+
         self.usr_spc_alloc_limit_pct = object_hash.get('usrSpcAllocLimitPct')
-        
+
         self.usr_spc_alloc_warning_pct = object_hash.get('usrSpcAllocWarningPct')
-        
+
         self.uuid = object_hash.get('uuid')
-        
+
         self.shared_parent_id = object_hash.get('sharedParentID')
-        
+
         self.udid = object_hash.get('udid')
-        
+
         self.wwn = object_hash.get('wwn')
 
 class Space(object):
@@ -130,11 +130,11 @@ class Space(object):
             return
 
         self.reserved_MiB = object_hash.get('reservedMiB')
-        
+
         self.raw_reserved_MiB = object_hash.get('rawReservedMiB')
-        
+
         self.used_MiB = object_hash.get('usedMiB')
-        
+
         self.free_MiB = object_hash.get('freeMiB')
 
 class CapEfficiency(object):
@@ -142,15 +142,15 @@ class CapEfficiency(object):
     def __init__(self, object_hash):
         if object_hash is None:
             return
-        
+
         self.compaction = object_hash.get('compaction')
-        
+
         self.compression = object_hash.get('compression')
-        
+
         self.data_reduction = object_hash.get('dataReduction')
-        
+
         self.over_provisioning = object_hash.get('overProvisioning')
-        
+
         self.deduplication = object_hash.get('deduplication')
 
 class Policy(object):
@@ -158,19 +158,19 @@ class Policy(object):
     def __init__(self, object_hash):
         if object_hash is None:
             return
-        
+
         self.stale_ss = object_hash.get('staleSS')
-        
+
         self.one_host = object_hash.get('oneHost')
-        
+
         self.zero_detect = object_hash.get('zeroDetect')
-        
+
         self.system = object_hash.get('system')
-        
+
         self.caching = object_hash.get('caching')
-        
+
         self.fsvc = object_hash.get('fsvc')
-        
+
         self.host_dif = object_hash.get('hostDIF')
 
 class VolumeSet(object):
@@ -178,21 +178,21 @@ class VolumeSet(object):
     def __init__(self, object_hash):
         if object_hash is None:
             return
-        
+
         self.name = object_hash.get('name')
-        
+
         self.uuid = object_hash.get('uuid')
-        
+
         self.id = object_hash.get('id')
-        
+
         self.comment = object_hash.get('comment')
-        
+
         self.domain = object_hash.get('domain')
-        
+
         self.setmembers = object_hash.get('setmembers')
-        
+
         self.flash_cache_policy = object_hash.get('flashCachePolicy')
-        
+
         self.qos_enabled = object_hash.get('qosEnabled')
 
 class FCPath(object):
@@ -824,7 +824,7 @@ class DiskPattern(object):
         # # Specifies one or more physical disks. Disks are identified by one or more integers. Multiple disks are separated with a single comma (1,2,3). A range of disks is separated with a hyphen (0 3). Disks must match the specified ID(s).
         # attr_accessor :disk_list
         self.disk_list = object_hash.get('diskList')
-        
+
         # # [type - Number]
         # # Specifies that physical disks with total chunklets less than the number specified be selected.
         self.total_chunklets_greater_than = object_hash.get('totalChunkletsGreaterThan')
@@ -853,19 +853,19 @@ class DiskPattern(object):
         # [type - Number]
         # Disks must be of the specified speed.
         self.rpm = object_hash.get('RPM')
-        
+
 class Task(object):
-    
+
     def __init__(self, object_hash):
         if object_hash is None:
             return
-    
+
         self.task_id = object_hash.get('id')
-    
+
         self.status = object_hash.get('status')
-    
+
         self.name = object_hash.get('name')
-    
+
         self.type = object_hash.get('type')
 
 class HostSet(object):
@@ -873,19 +873,19 @@ class HostSet(object):
     def __init__(self, object_hash):
         if object_hash is None:
             return
-        
+
         self.name = object_hash.get('name')
-        
+
         self.uuid = object_hash.get('uuid')
-        
+
         self.id = object_hash.get('id')
-        
+
         self.comment = object_hash.get('comment')
-        
+
         self.domain = object_hash.get('domain')
-        
+
         self.setmembers = object_hash.get('setmembers')
-        
+
 class LDLayoutCapacity(object):
 
     def __init__(self, object_hash):
@@ -893,17 +893,17 @@ class LDLayoutCapacity(object):
             return
 
         self.rawfree_in_mib = object_hash.get('rawFreeMiB')
-        
+
         self.usable_free_in_mib = object_hash.get('usableFreeMiB')
-        
+
         self.overprovisioned_virtualsize_in_mib = object_hash.get('overProvisionedVirtualSizeMiB')
 
         self.overprovisioned_used_in_mib = object_hash.get('overProvisionedUsedMiB')
-        
+
         self.overprovisioned_allocated_in_mib = object_hash.get('overProvisionedAllocatedMiB')
-        
+
         self.overprovisioned_free_in_mib = object_hash.get('overProvisionedFreeMiB')
-        
+
         self.capacitefficiency = CapEfficiency(object_hash.get('capacityEfficiency'))
 
 class ISCSIPortInfo(object):
@@ -911,47 +911,47 @@ class ISCSIPortInfo(object):
     def __init__(self, object_hash):
         if not object_hash:
             return
-        
+
         # [type - String]
         # iSCSI port only, not included in the JSON object for other ports.
         self.ip_addr = object_hash.get('ipAddr')
-        
+
         # [type - String]
         # iSCSI port only, not included in the JSON object for other ports.
         self.iscsi_name = object_hash.get('iSCSIName')
-        
+
         # [type - String]
         # Netmask for Ethernet port.
         self.netmask = object_hash.get('netmask')
-        
+
         # [type - String]
         # IP address of the gateway.
         self.gateway = object_hash.get('gateway')
-        
+
         # [type - Number]
         # MTU size in bytes.
         self.mtu = object_hash.get('mtu')
-        
+
         # [type - Boolean]
         # Send Targets Group Tag of the iSCSI target
         self.stgt = object_hash.get('stgt')
-        
+
         # [type - Number]
         # TCP port number for the iSNS server.
         self.isns_port = object_hash.get('iSNSPort')
-        
+
         # [type - String]
         # iSNS server IP address.
         self.isns_addr = object_hash.get('iSNSAddr')
-        
+
         # [type - String]
         # Data transfer rate for the iSCSI port
         self.rate = object_hash.get('rate')
-        
+
         # [type - Number]
         # Target portal group tag.
         self.tpgt = object_hash.get('tpgt')
-        
+
         # [type - Boolean]
         # Indicates whether the port supports VLANs.
         self.vlans = object_hash.get('vlans')
@@ -1060,3 +1060,173 @@ class FlashCache(object):
         # [type - Number]
         # The used size of the Flash Cache.
         self.usedSizeGiB = object_hash.get('usedSizeGiB')
+
+
+class RemoteCopyInfo(object):
+
+    def __init__(self, object_hash):
+        if not object_hash:
+            return
+
+        # [type - Number]
+        # Remote Copy system mode.
+        self.mode = object_hash.get('mode')
+
+        # [type - Number]
+        # Remote Copy system state.
+        self.status = object_hash.get('status')
+
+        # [type - Number]
+        # Remote Copy configuration error message. Under normal conditions, this is empty and does not add to the JSON body.
+        self.configErrDescription = object_hash.get('configErrDescription')
+
+        # [type - Number]
+        # Links include the following URLs:
+        # self
+        # remotecopygroup
+        # remotecopytargets
+        # remotecopylinks
+        if object_hash.get('links') is not None:
+            self.links = []
+            for object in object_hash.get('links'):
+                self.links.append(Link(object))
+
+        # [type - boolean]
+        # true—Asynchronous streaming replication enabled.
+        # false—Asynchronous streaming replication disabled.
+        self.status = object_hash.get('status')
+
+
+class RemoteCopyGroup(object):
+
+    def __init__(self, object_hash):
+        if not object_hash:
+            return
+
+        self.name = object_hash.get('name')
+
+        self.id = object_hash.get('id')
+
+        self.domain = object_hash.get('domain')
+
+        self.recoveryPointObjmSecs = object_hash.get('recoveryPointObjmSecs')
+
+        self.remoteGroupName = object_hash.get('remoteGroupName')
+
+        self.localUsrCPG = object_hash.get('localUsrCPG')
+
+        self.localSnpCPG = object_hash.get('localSnpCPG')
+
+        self.volumes = []
+        for object in object_hash.get('volumes'):
+            self.volumes.append(Volumes(object))
+
+        self.targets = []
+        for object in object_hash.get('targets'):
+            self.targets.append(Targets(object))
+  
+        if object_hash.get('links') is not None:
+            self.links = []
+            for object in object_hash.get('links'):
+                self.links.append(Link(object))
+
+
+class Volumes(object):
+    def __init__(self, object_hash):
+        if not object_hash:
+            return
+
+        self.localVolumeName = object_hash.get('localVolumeName')
+
+        self.localVolumeId = object_hash.get('localVolumeID')
+
+        self.remoteVolumes = []
+        for object in object_hash.get('remoteVolumes'):
+            self.remoteVolumes.append(RemoteVolume(object))
+
+        if object_hash.get('links') is not None:
+            self.links = []
+            for object in object_hash.get('links'):
+                self.links.append(Link(object))
+
+
+class RemoteVolume(object):
+    def __init__(self, object_hash):
+        if not object_hash:
+            return
+
+        self.targetName = object_hash.get('targetName')
+
+        self.remoteVolumeName = object_hash.get('remoteVolumeName')
+
+        self.remoteVolumeID = object_hash.get('remoteVolumeID')
+
+        self.resyncSnapshotName = object_hash.get('resyncSnapshotName')
+
+        self.syncSnapshotName = object_hash.get('syncSnapshotName')
+
+        self.syncStatus = object_hash.get('syncStatus')
+
+        self.volumeIteration = object_hash.get('volumeIteration')
+
+        self.sycnIteration = object_hash.get('sycnIteration')
+
+        self.resycnIteration = object_hash.get('resycnIteration')
+
+        self.volumeLastSnapTime = object_hash.get('volumeLastSnapTime')
+
+        self.volumeLastSnapTimeSec = object_hash.get('volumeLastSnapTimeSec')
+
+        self.volumeLastSyncTimeSec = object_hash.get('volumeLastSyncTimeSec')
+
+        self.volumeLastSyncTime = object_hash.get('volumeLastSyncTime')
+
+        self.volumeSyncOffset = object_hash.get('volumeSyncOffset')
+
+        self.volumeSyncLength = object_hash.get('volumeSyncLength')
+
+        self.asyncOutstanding = object_hash.get('asyncOutstanding')
+
+
+class Targets(object):
+    def __init__(self, object_hash):
+        if not object_hash:
+            return
+
+        self.targetName = object_hash.get('targetName')
+
+        self.target = object_hash.get('target')
+
+        self.roleReversed = object_hash.get('roleReversed')
+
+        self.state = object_hash.get('state')
+
+        self.mode = object_hash.get('mode')
+
+        self.syncPeriod = object_hash.get('syncPeriod')
+
+        self.groupLastSyncTimeSec = object_hash.get('groupLastSyncTimeSec')
+
+        self.groupLastSyncTime = object_hash.get('groupLastSyncTime')
+
+        self.policy = Policy(object_hash.get('policy'))
+
+        self.remoteSnpCPG = object_hash.get('remoteSnpCPG')
+
+        self.remoteUsrCPG = object_hash.get('remoteUsrCPG')
+
+        self.snapFrequency = object_hash.get('snapFrequency')
+
+        if object_hash.get('links') is not None:
+            self.links = []
+            for object in object_hash.get('links'):
+                self.links.append(Link(object))
+
+
+class Link(object):
+    def __init__(self, object_hash):
+        if not object_hash:
+            return
+
+        self.href = object_hash.get('href')
+        self.rel = object_hash.get('rel')
