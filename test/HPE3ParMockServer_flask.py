@@ -1697,7 +1697,9 @@ def get_overall_capacity():
 @app.route('/api', methods=['GET'])
 def get_version():
     debugRequest(flask.request)
-    version = {"major": 1, "minor": 6, "revision": 3, "build": 30301418}
+    version = {'major': 1,
+               'minor': 3,
+               'build': 30201256}
     resp = flask.make_response(json.dumps(version), 200)
     return resp
 

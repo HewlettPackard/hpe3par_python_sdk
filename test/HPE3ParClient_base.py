@@ -125,9 +125,9 @@ class HPE3ParClientBaseTestCase(unittest.TestCase):
             except Exception:
                 pass
 
-            time.sleep(1)
+            time.sleep(5)
             if self.withFilePersona:
-                pass
+		pass
                 #self.cl = file_client.HPE3ParFilePersonaClient(self.flask_url)
             else:
                 self.cl = client.HPE3ParClient(self.flask_url)
@@ -209,8 +209,10 @@ class HPE3ParClientBaseTestCase(unittest.TestCase):
 
         if not self.port:
             ports = self.cl.getPorts()
-        for port in ports:
-            #print port.mode
+	    print "hello"
+	    print vars(self.cl)
+	    for port in ports:
+	        print port.mode
             ports = [port for port in ports if port.linkState == 4 and  ( port.device is not None or not port.device) and port.mode == 2]
             self.port = ports[0].port_pos
 
