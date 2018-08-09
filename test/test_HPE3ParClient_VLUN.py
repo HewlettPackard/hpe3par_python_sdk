@@ -158,7 +158,9 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
         # lun = 100000
         #   Bad request (HTTP 400) 28 - LUN is greater than 16384.
-        # self.assertRaisesRegexp(exceptions.HTTPBadRequest,"Bad request (HTTP 400) 28 - LUN is greater than 16384.",self.cl.createVLUN, VOLUME_NAME1, lun, HOST_NAME1, PORT)
+        # self.assertRaisesRegexp(exceptions.HTTPBadRequest,
+        #     "Bad request (HTTP 400) 28 - LUN is greater than 16384.",
+        #     self.cl.createVLUN, VOLUME_NAME1, lun, HOST_NAME1, PORT)
         # with self.assertRaises(exceptions.HTTPBadRequest):
         #    self.cl.createVLUN(VOLUME_NAME1, lun, HOST_NAME1, PORT)
 
@@ -314,7 +316,8 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
             'bogusHost')
         self.printFooter('get_host_vluns_unknown_host')
 
-    @unittest.skipIf(config['TEST']['unit'].lower() == 'false', "only works with flask server")
+    @unittest.skipIf(config['TEST']['unit'].lower() == 'false', "only \
+works with flask server")
     @mock.patch('hpe3parclient.client.HPE3ParClient.getWsApiVersion')
     def test_5_get_VLUN_no_query_support(self, mock_version):
         self.printHeader('get_VLUN_no_query_support')
@@ -397,7 +400,8 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
         self.printFooter('get_VLUN_query_support')
 
-    @unittest.skipIf(config['TEST']['unit'].lower() == 'false', "only works with flask server")
+    @unittest.skipIf(config['TEST']['unit'].lower() == 'false', "only \
+works with flask server")
     @mock.patch('hpe3parclient.client.HPE3ParClient.getWsApiVersion')
     def test_5_get_host_VLUNs_query_support(self, mock_version):
         self.printHeader('get_host_VLUNs_query_support')

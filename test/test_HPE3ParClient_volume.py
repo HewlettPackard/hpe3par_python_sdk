@@ -290,8 +290,10 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 #
 #        vols = self.cl.getVolumes()
 #
-#        self.assertTrue(self.findInDict(vols['members'], 'name', vol1['name']))
-#        self.assertTrue(self.findInDict(vols['members'], 'name', vol2['name']))
+#        self.assertTrue(self.findInDict(vols['members'],
+#            'name', vol1['name']))
+#        self.assertTrue(self.findInDict(vols['members'],
+#            'name', vol2['name']))
 #
 #        self.printFooter('get_volumes')
 #
