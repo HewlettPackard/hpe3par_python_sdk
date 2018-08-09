@@ -3689,3 +3689,40 @@ volume_name, lunid, hostname or port")
 
     def getRemoteCopyGroup(self, name):
         return RemoteCopyGroup(self.client.getRemoteCopyGroup(name))
+		
+	def createRemoteCopy(self, name, targets, optional=None):
+	    return self.client.createRemoteCopy(name, targets, optional)
+		
+	def removeRemoteCopyGroup(self, name, keep_snap=False):
+	    return self.client.removeRemoteCopyGroup(name, keep_snap)
+		
+	def modifyRemoteCopyGroup(self, name, optional=None):
+	    return self.client.modifyRemoteCopyGroup(name, optional)
+		
+    def addVolumeToRemoteCopyGroup(self, name, volumeName, targets,
+                                   optional=None):
+		return self.client.addVolumeToRemoteCopyGroup(name, volumeName, 
+		                           targets, optional)
+								   
+    def removeVolumeFromRemoteCopyGroup(self, name, volumeName,
+                                        optional=None,
+                                        removeFromTarget=False):
+		return self.client.removeVolumeFromRemoteCopyGroup(name, volumeName, 
+		                           optional, removeFromTarget)
+
+    def startRemoteCopy(self, name, optional=None):
+        return self.client.startRemoteCopy(name, optional)
+		
+	def stopRemoteCopy(self, name, optional=None):
+	    return self.client.stopRemoteCopy(name, optional)
+		
+    def synchronizeRemoteCopyGroup(self, name, optional=None):
+	    return self.client.synchronizeRemoteCopyGroup(name, optional)
+		
+    def recoverRemoteCopyGroupFromDisaster(self, name, action, optional=None):
+        return self.client.recoverRemoteCopyGroupFromDisaster(name, action, optional)
+						
+    def toggleRemoteCopyConfigMirror(self, target, mirror_config=True):
+	    return self.client.toggleRemoteCopyConfigMirror(target, mirror_config)
+	
+        	
