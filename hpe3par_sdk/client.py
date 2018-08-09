@@ -1,11 +1,11 @@
 # (C) Copyright 2018 Hewlett Packard Enterprise Development LP
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
 # a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -14,7 +14,6 @@
 
 from hpe3parclient import client
 from hpe3parclient import exceptions
-from hpe3parclient import http
 from distutils.version import StrictVersion
 
 from models import FlashCache
@@ -73,19 +72,19 @@ class HPE3ParClient(object):
     OPENVMS = 9
     HPUX = 10
     WINDOWS_SERVER = 11
-    
+
     # QoS priority Enumeration
     class QOSPriority:
         LOW = 1
         NORMAL = 2
         HIGH = 3
-    
+
     # Task Priority Enumeration
     class TaskPriority:
         HIGH = 1
         MEDIUM = 2
         LOW = 3
-  
+
     # Qos Zero None Operation
     ZERO = 1
     NOLIMIT = 2
@@ -93,10 +92,10 @@ class HPE3ParClient(object):
     # QoS target Type
     VVSET = 1
     SYS = 2
-    
+
     VLUN_QUERY_SUPPORTED = False
     HOST_AND_VV_SET_FILTER_SUPPORTED = False
-    
+
     CURRENT_WSAPI_VERSION = None
 
     """ The 3PAR REST API Client.
@@ -110,10 +109,10 @@ class HPE3ParClient(object):
     def __init__(self, api_url, debug=False, secure=False, timeout=None,
                  suppress_ssl_warnings=False):
         self.api_url = api_url
-        self.client = client.HPE3ParClient(api_url, debug, secure, timeout, suppress_ssl_warnings)
+        self.client = client.HPE3ParClient(
+            api_url, debug, secure, timeout, suppress_ssl_warnings)
         self.check_WSAPI_version()
-        
-    
+
     def check_WSAPI_version(self):
         try:
             api_version = self.getWsApiVersion()
@@ -123,24 +122,31 @@ class HPE3ParClient(object):
             if ex_message and 'SSL Certificate Verification Failed' in ex_message:
                 raise exceptions.SSLCertFailed()
             else:
-                msg = """Error: %s - Error communicating with 3PAR WSAPI. 
+                msg = """Error: %s - Error communicating with 3PAR WSAPI.
 Check proxy settings. If error persists, either the
 3PAR WSAPI is not running OR the version of the WSAPI is
 not supported.""" % (ex_message)
                 raise exceptions.ConnectionError(msg)
-                
+
     def compare_version(self, api_version):
-        self.CURRENT_WSAPI_VERSION = '{}.{}.{}'.format(api_version['major'], api_version['minor'], api_version['revision'])
-        if StrictVersion(self.CURRENT_WSAPI_VERSION) < StrictVersion(self.WSAPI_MIN_SUPPORTED_VERSION):
-            err_msg = 'Unsupported 3PAR WS API version %s, min supported version is %s' % (self.CURRENT_WSAPI_VERSION, self.WSAPI_MIN_SUPPORTED_VERSION)
+        self.CURRENT_WSAPI_VERSION = '{}.{}.{}'.format(
+            api_version['major'], api_version['minor'], api_version['revision'])
+        if StrictVersion(
+                self.CURRENT_WSAPI_VERSION) < StrictVersion(
+                self.WSAPI_MIN_SUPPORTED_VERSION):
+            err_msg = 'Unsupported 3PAR WS API version %s, min supported version is %s' % (
+                self.CURRENT_WSAPI_VERSION, self.WSAPI_MIN_SUPPORTED_VERSION)
             raise exceptions.UnsupportedVersion(err_msg)
-            
-        if StrictVersion(self.CURRENT_WSAPI_VERSION) >= StrictVersion(self.WSAPI_MIN_VERSION_VLUN_QUERY_SUPPORT):
+
+        if StrictVersion(
+                self.CURRENT_WSAPI_VERSION) >= StrictVersion(
+                self.WSAPI_MIN_VERSION_VLUN_QUERY_SUPPORT):
             self.VLUN_QUERY_SUPPORTED = True
-            
-        if StrictVersion(self.CURRENT_WSAPI_VERSION) >=  StrictVersion(self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT):
+
+        if StrictVersion(
+                self.CURRENT_WSAPI_VERSION) >= StrictVersion(
+                self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT):
             self.HOST_AND_VV_SET_FILTER_SUPPORTED = True
-            
 
     def setSSHOptions(self, ip, login, password, port=22,
                       conn_timeout=None, privatekey=None,
@@ -151,7 +157,13 @@ not supported.""" % (ex_message)
         that use SSH instead of REST HTTP.
 
         """
-        self.client.setSSHOptions(ip, login, password, port, conn_timeout, privatekey)
+        self.client.setSSHOptions(
+            ip,
+            login,
+            password,
+            port,
+            conn_timeout,
+            privatekey)
 
     def _run(self, cmd):
         return self.client._run(cmd)
@@ -196,7 +208,7 @@ not supported.""" % (ex_message)
         """
         try:
             self.client.logout()
-        #Making logout idempotent by not throwing HTTP Forbidden error
+        # Making logout idempotent by not throwing HTTP Forbidden error
         except exceptions.HTTPForbidden:
             pass
         except Exception:
@@ -464,8 +476,8 @@ not supported.""" % (ex_message)
 
         """
         try:
-            self.client.removeVolumeMetaData(name,'type')
-        except:
+            self.client.removeVolumeMetaData(name, 'type')
+        except BaseException:
             pass
         return self.client.deleteVolume(name)
 
@@ -768,7 +780,10 @@ not supported.""" % (ex_message)
 
         """
         if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
-            for attribute in ['compression', 'allowRemoteCopyParent', 'skipZero']:
+            for attribute in [
+                'compression',
+                'allowRemoteCopyParent',
+                    'skipZero']:
                 if attribute in optional.keys():
                     del optional[attribute]
         return self.client.copyVolume(src_name, dest_name, dest_cpg, optional)
@@ -1111,7 +1126,7 @@ not supported.""" % (ex_message)
 
         """
         return self.client.stopOfflinePhysicalCopy(name)
-        
+
     def resyncPhysicalCopy(self, volume_name):
         """Resynchronizes a physical copy.
 
@@ -2322,8 +2337,8 @@ not supported.""" % (ex_message)
           - UNLICENSED_FEATURE - The system is not licensed for QoS.
         """
         if qosRules is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_SUPPORTED_VERSION:
-            if 'latencyGoaluSecs' in qos_rules.keys():
-                del qos_rules['latencyGoaluSecs']
+            if 'latencyGoaluSecs' in qosRules.keys():
+                del qosRules['latencyGoaluSecs']
         return self.client.createQoSRules(targetName, qosRules, target_type)
 
     def modifyQoSRules(self, targetName, qosRules, targetType='vvset'):
@@ -2413,8 +2428,8 @@ not supported.""" % (ex_message)
                      UNLICENSED_FEATURE - The system is not licensed for QoS.
         """
         if qosRules is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_SUPPORTED_VERSION:
-            if 'latencyGoaluSecs' in qos_rules.keys():
-                del qos_rules['latencyGoaluSecs']
+            if 'latencyGoaluSecs' in qosRules.keys():
+                del qosRules['latencyGoaluSecs']
         return self.client.modifyQoSRules(targetName, qosRules, targetType)
 
     def deleteQoSRules(self, targetName, targetType='vvset'):
@@ -3551,7 +3566,7 @@ not supported.""" % (ex_message)
         return self.client._format_srstatld_output(out)
 
     def tuneVolume(self, volName, tune_operation, optional=None):
-        info = { 'action': self.TUNE_VOLUME, 'tuneOperation': tune_operation }
+        info = {'action': self.TUNE_VOLUME, 'tuneOperation': tune_operation}
 
         if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
             if 'compression' in optional.keys():
@@ -3637,21 +3652,23 @@ volume_name, lunid, hostname or port")
 
     def onlinePhysicalCopyExists(self, src_name, phy_copy_name):
         try:
-            if self.volumeExists(src_name) and self.volumeExists(phy_copy_name) and self._findTask(phy_copy_name,True) != None:
+            if self.volumeExists(src_name) and self.volumeExists(
+                    phy_copy_name) and self._findTask(phy_copy_name, True) is not None:
                 return True
         except exceptions.HTTPNotFound:
             return False
         return False
-        
+
     def offlinePhysicalCopyExists(self, src_name, phy_copy_name):
         try:
-            if self.volumeExists(src_name) and self.volumeExists(phy_copy_name) and self._findTask(src_name + "-*" + phy_copy_name, True) != None:
+            if self.volumeExists(src_name) and self.volumeExists(
+                    phy_copy_name) and self._findTask(src_name + "-*" + phy_copy_name, True) is not None:
                 return True
         except exceptions.HTTPNotFound:
             return False
         return False
-      
-    #Takes a list of host setmembers and adds them to a hostset
+
+    # Takes a list of host setmembers and adds them to a hostset
     def addHostsToHostSet(self, name, setmembers):
         self.client.modifyHostSet(
             name, action=client.HPE3ParClient.SET_MEM_ADD,

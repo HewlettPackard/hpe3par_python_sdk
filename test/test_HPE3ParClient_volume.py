@@ -290,8 +290,10 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 #
 #        vols = self.cl.getVolumes()
 #
-#        self.assertTrue(self.findInDict(vols['members'], 'name', vol1['name']))
-#        self.assertTrue(self.findInDict(vols['members'], 'name', vol2['name']))
+#        self.assertTrue(self.findInDict(vols['members'],
+#            'name', vol1['name']))
+#        self.assertTrue(self.findInDict(vols['members'],
+#            'name', vol2['name']))
 #
 #        self.printFooter('get_volumes')
 #
@@ -577,9 +579,6 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         resp = self.cl.getVolumeSet(VOLUME_SET_NAME1)
         self.assertIsNotNone(resp)
 
-        #resp_members = resp['setmembers']
-        #self.assertIn(VOLUME_NAME1, resp_members)
-
         # Remove volume from volume set
         self.cl.removeVolumeFromVolumeSet(VOLUME_SET_NAME1, VOLUME_NAME1)
 
@@ -721,8 +720,8 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
     def test_10_modify_volume_set_change_flash_cache(self):
         self.printHeader('modify_volume_set_change_flash_cache')
-	self.cl.FLASH_CACHE_ENABLED = 1
-	self.cl.FLASH_CACHE_DISABLED = 2
+        self.cl.FLASH_CACHE_ENABLED = 1
+        self.cl.FLASH_CACHE_DISABLED = 2
         try:
             self.cl.createVolumeSet(VOLUME_SET_NAME1, domain=self.DOMAIN,
                                     comment="First")
@@ -755,7 +754,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
     def test_10_modify_volume_set_add_members_to_empty(self):
         self.printHeader('modify_volume_set_add_members_to_empty')
-	self.cl.SET_MEM_ADD = 1
+        self.cl.SET_MEM_ADD = 1
         optional = {'comment': 'test volume 1', 'tpvv': True}
         self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
         optional = {'comment': 'test volume 2', 'tpvv': True}
@@ -777,7 +776,6 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
     def test_10_modify_volume_set_add_members(self):
         self.printHeader('modify_volume_set_add_members')
-	#HPE3ParClient.SET_MEM_ADD = 1
         optional = {'comment': 'test volume 1', 'tpvv': True}
         self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
         optional = {'comment': 'test volume 2', 'tpvv': True}
@@ -789,8 +787,8 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                 comment="Unit test volume set 1")
 
         members = [VOLUME_NAME2]
-	# ----------- TODO-----------------
-	# change 1 to HPE3ParClient.SET_MEM_ADD,
+        # ----------- TODO-----------------
+        # change 1 to HPE3ParClient.SET_MEM_ADD,
         self.cl.modifyVolumeSet(VOLUME_SET_NAME1, 1,
                                 setmembers=members)
 
@@ -803,10 +801,10 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
     def test_10_modify_volume_set_del_members(self):
         self.printHeader('modify_volume_del_members')
-	
-	#--------TODO----------
-	# Remove below declartion to use the parent class value
-	self.cl.SET_MEM_REMOVE = 2
+
+        # --------TODO----------
+        # Remove below declartion to use the parent class value
+        self.cl.SET_MEM_REMOVE = 2
 
         optional = {'comment': 'test volume 1', 'tpvv': True}
         self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
@@ -889,7 +887,6 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.cl.createQoSRules(VOLUME_SET_NAME1, qos1)
         self.cl.createQoSRules(VOLUME_SET_NAME2, qos2)
         all_qos = self.cl.queryQoSRules()
-        #self.assertGreaterEqual(all_qos['total'], 2)
         self.assertIn(VOLUME_SET_NAME1,
                       [qos.name for qos in all_qos])
         self.assertIn(VOLUME_SET_NAME2,

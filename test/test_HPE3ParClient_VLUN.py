@@ -20,8 +20,7 @@ import mock
 import unittest
 from testconfig import config
 
-from hpe3parclient import client,exceptions
-
+from hpe3parclient import client, exceptions
 
 
 try:
@@ -39,7 +38,7 @@ HOST_NAME2 = 'HOST2_VLUN_UNIT_TEST' + hpe3parbase.TIME
 LUN_0 = 0
 LUN_1 = random.randint(1, 10)
 LUN_2 = random.randint(1, 10)
-PORT={"node": 2,"slot": 2,"cardPort": 4}
+PORT = {"node": 2, "slot": 2, "cardPort": 4}
 # Ensure LUN1 and LUN2 are distinct.
 while LUN_2 == LUN_1:
     LUN_2 = random.randint(1, 10)
@@ -84,7 +83,7 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
     def tearDown(self):
 
         try:
-	    print "coming here"
+            print "coming here"
             self.cl.deleteVLUN(VOLUME_NAME1, LUN_1, HOST_NAME1, self.port)
         except Exception:
             pass
@@ -94,11 +93,11 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
             pass
         try:
             self.cl.deleteVLUN(VOLUME_NAME2, LUN_2, HOST_NAME2)
-        except:
+        except Exception:
             pass
         try:
             self.cl.deleteVLUN(VOLUME_NAME2, LUN_2, HOST_NAME2, self.port)
-        except:
+        except Exception:
             pass
         try:
             self.cl.deleteVolume(VOLUME_NAME1)
@@ -138,7 +137,6 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         # add one
         noVcn = False
         overrideObjectivePriority = True
-        #port={"node": 2,"slot": 2,"cardPort": 4}
         self.cl.createVLUN(VOLUME_NAME1, LUN_1, HOST_NAME1, PORT, noVcn,
                            overrideObjectivePriority)
         # check
@@ -155,23 +153,24 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.assertEqual(VOLUME_NAME2, volName)
         self.printFooter('create_VLUN')
 
-   # def test_1_create_VLUN_tooLarge(self):
-        #self.printHeader('create_VLUN_tooLarge')
+        # def test_1_create_VLUN_tooLarge(self):
+        # self.printHeader('create_VLUN_tooLarge')
 
-       # lun = 100000
-	#raise exceptions.HTTPBadRequest("Raised something")
-	#print self.cl.createVLUN(VOLUME_NAME1, lun, HOST_NAME1, PORT)
-       #   Bad request (HTTP 400) 28 - LUN is greater than 16384.
-       # self.assertRaisesRegexp(exceptions.HTTPBadRequest,"Bad request (HTTP 400) 28 - LUN is greater than 16384.",self.cl.createVLUN, VOLUME_NAME1, lun, HOST_NAME1, PORT)
-	#with self.assertRaises(exceptions.HTTPBadRequest):
+        # lun = 100000
+        #   Bad request (HTTP 400) 28 - LUN is greater than 16384.
+        # self.assertRaisesRegexp(exceptions.HTTPBadRequest,
+        #     "Bad request (HTTP 400) 28 - LUN is greater than 16384.",
+        #     self.cl.createVLUN, VOLUME_NAME1, lun, HOST_NAME1, PORT)
+        # with self.assertRaises(exceptions.HTTPBadRequest):
         #    self.cl.createVLUN(VOLUME_NAME1, lun, HOST_NAME1, PORT)
 
-       # self.printFooter('create_VLUN_tooLarge')
+        # self.printFooter('create_VLUN_tooLarge')
 
     def test_1_create_VLUN_volulmeNonExist(self):
         self.printHeader('create_VLUN_volumeNonExist')
 
-        self.assertRaises(exceptions.HTTPNotFound, self.cl.createVLUN,'Some_Volume', LUN_1, HOST_NAME1, PORT)
+        self.assertRaises(exceptions.HTTPNotFound, self.cl.createVLUN,
+                          'Some_Volume', LUN_1, HOST_NAME1, PORT)
 
         self.printFooter('create_VLUN_volumeNonExist')
 
@@ -200,16 +199,17 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.printHeader('get_VLUN_bad')
         self.assertRaises(exceptions.HTTPNotFound, self.cl.getVLUN, 'badName')
         self.printFooter('get_VLUN_bad')
+
     def check_value_in_listof_objects(self, objects_list, key, value):
-	print "key"
-	print key
+        print "key"
+        print key
         for object in objects_list:
             if key == 'lun':
                 if object.lun == value:
-	            return True
+                    return True
             if key == 'volumeName':
                 if object.volume_name == value:
-		    return True
+                    return True
 
     def test_2_get_VLUNs(self):
         self.printHeader('get_VLUNs')
@@ -224,10 +224,14 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         print type(vluns)
         v1 = self.cl.getVLUN(VOLUME_NAME1)
         v2 = self.cl.getVLUN(VOLUME_NAME2)
-        self.assertTrue(self.check_value_in_listof_objects(vluns, 'lun', v1.lun))
-        self.assertTrue(self.check_value_in_listof_objects(vluns, 'volumeName',v1.volume_name))
-        self.assertTrue(self.check_value_in_listof_objects(vluns, 'lun', v2.lun))
-        self.assertTrue(self.check_value_in_listof_objects(vluns, 'volumeName', v2.volume_name))
+        self.assertTrue(
+            self.check_value_in_listof_objects(vluns, 'lun', v1.lun))
+        self.assertTrue(self.check_value_in_listof_objects(
+            vluns, 'volumeName', v1.volume_name))
+        self.assertTrue(
+            self.check_value_in_listof_objects(vluns, 'lun', v2.lun))
+        self.assertTrue(self.check_value_in_listof_objects(
+            vluns, 'volumeName', v2.volume_name))
         self.printFooter('get_VLUNs')
 
     def test_3_delete_VLUN_volumeNonExist(self):
@@ -288,140 +292,142 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.printFooter('delete_VLUNs')
 
     def test_4_get_host_VLUNs(self):
-       self.printHeader('get_host_vluns')
+        self.printHeader('get_host_vluns')
 
-       self.cl.createVLUN(VOLUME_NAME2, LUN_2, HOST_NAME2)
-       self.cl.createVLUN(VOLUME_NAME1, LUN_1, HOST_NAME2)
+        self.cl.createVLUN(VOLUME_NAME2, LUN_2, HOST_NAME2)
+        self.cl.createVLUN(VOLUME_NAME1, LUN_1, HOST_NAME2)
 
-       host_vluns = self.cl.getHostVLUNs(HOST_NAME2)
+        host_vluns = self.cl.getHostVLUNs(HOST_NAME2)
 
-       self.assertIn(VOLUME_NAME1,
-                     [vlun.volume_name for vlun in host_vluns])
-       self.assertIn(VOLUME_NAME2,
-                     [vlun.volume_name for vlun in host_vluns])
-       self.assertIn(LUN_1, [vlun.lun for vlun in host_vluns])
-       self.assertIn(LUN_2, [vlun.lun for vlun in host_vluns])
-       self.printFooter('get_host_vluns')
+        self.assertIn(VOLUME_NAME1,
+                      [vlun.volume_name for vlun in host_vluns])
+        self.assertIn(VOLUME_NAME2,
+                      [vlun.volume_name for vlun in host_vluns])
+        self.assertIn(LUN_1, [vlun.lun for vlun in host_vluns])
+        self.assertIn(LUN_2, [vlun.lun for vlun in host_vluns])
+        self.printFooter('get_host_vluns')
 
     def test_4_get_host_VLUNs_unknown_host(self):
-       self.printHeader('get_host_vluns_unknown_host')
+        self.printHeader('get_host_vluns_unknown_host')
 
-       self.assertRaises(
-           exceptions.HTTPNotFound,
-           self.cl.getHostVLUNs,
-           'bogusHost')
-       self.printFooter('get_host_vluns_unknown_host')
+        self.assertRaises(
+            exceptions.HTTPNotFound,
+            self.cl.getHostVLUNs,
+            'bogusHost')
+        self.printFooter('get_host_vluns_unknown_host')
 
-    @unittest.skipIf(config['TEST']['unit'].lower() == 'false', "only works with flask server")
+    @unittest.skipIf(config['TEST']['unit'].lower() == 'false', "only \
+works with flask server")
     @mock.patch('hpe3parclient.client.HPE3ParClient.getWsApiVersion')
     def test_5_get_VLUN_no_query_support(self, mock_version):
-       self.printHeader('get_VLUN_no_query_support')
+        self.printHeader('get_VLUN_no_query_support')
 
-      # Mock the version number to a version that does not support
-      # VLUN querying and then remake the client.
-       version = (client.HPE3ParClient
-                  .HPE3PAR_WS_MIN_BUILD_VERSION_VLUN_QUERY - 1)
-       mock_version.return_value = {'build': version}
-       self.cl = client.HPE3ParClient(self.flask_url)
+        # Mock the version number to a version that does not support
+        # VLUN querying and then remake the client.
+        version = (client.HPE3ParClient
+                   .HPE3PAR_WS_MIN_BUILD_VERSION_VLUN_QUERY - 1)
+        mock_version.return_value = {'build': version}
+        self.cl = client.HPE3ParClient(self.flask_url)
 
-     # Mock the HTTP GET function to track what the call to it was.
-       self.cl.http.get = mock.Mock()
-       self.cl.http.get.return_value = (
-           {},
-           {'members': [{'volumeName': VOLUME_NAME1}]}
-       )
- 
-       self.cl.createVLUN(VOLUME_NAME1, LUN_1, HOST_NAME1)
-       self.cl.getVLUN(VOLUME_NAME1)
+        # Mock the HTTP GET function to track what the call to it was.
+        self.cl.http.get = mock.Mock()
+        self.cl.http.get.return_value = (
+            {},
+            {'members': [{'volumeName': VOLUME_NAME1}]}
+        )
 
-       # Check for the request that happens when VLUN querying is unsupported.
-       self.cl.http.get.assert_has_calls([mock.call('/vluns')])
+        self.cl.createVLUN(VOLUME_NAME1, LUN_1, HOST_NAME1)
+        self.cl.getVLUN(VOLUME_NAME1)
 
-       self.printFooter('get_VLUN_no_query_support')
+        # Check for the request that happens when VLUN querying is unsupported.
+        self.cl.http.get.assert_has_calls([mock.call('/vluns')])
+
+        self.printFooter('get_VLUN_no_query_support')
 
     @unittest.skipIf(config['TEST']['unit'].lower() == 'false',
-                    "only works with flask server")
+                     "only works with flask server")
     @mock.patch('hpe3parclient.client.HPE3ParClient.getWsApiVersion')
     def test_5_get_host_VLUNs_no_query_support(self, mock_version):
-       self.printHeader('get_host_VLUNs_no_query_support')
+        self.printHeader('get_host_VLUNs_no_query_support')
 
-      # Mock the version number to a version that does not support
-      # VLUN querying and then remake the client.
-       version = (client.HPE3ParClient
-                  .HPE3PAR_WS_MIN_BUILD_VERSION_VLUN_QUERY - 1)
-       mock_version.return_value = {'build': version}
-       self.cl = client.HPE3ParClient(self.flask_url)
+        # Mock the version number to a version that does not support
+        # VLUN querying and then remake the client.
+        version = (client.HPE3ParClient
+                   .HPE3PAR_WS_MIN_BUILD_VERSION_VLUN_QUERY - 1)
+        mock_version.return_value = {'build': version}
+        self.cl = client.HPE3ParClient(self.flask_url)
 
-       # Mock the HTTP GET function to track what the call to it was.
-       self.cl.http.get = mock.Mock()
-       self.cl.http.get.return_value = (
-           {}, {'members': [{'hostname': HOST_NAME1}]}
-       )
-  
-       self.cl.createVLUN(VOLUME_NAME1, LUN_1, HOST_NAME1)
-       self.cl.getHostVLUNs(HOST_NAME1)
- 
-       # Check for the request that happens when VLUN querying is unsupported.
-       self.cl.http.get.assert_has_calls([mock.call('/vluns')])
- 
-       self.printFooter('get_host_VLUNs_no_query_support')
+        # Mock the HTTP GET function to track what the call to it was.
+        self.cl.http.get = mock.Mock()
+        self.cl.http.get.return_value = (
+            {}, {'members': [{'hostname': HOST_NAME1}]}
+        )
+
+        self.cl.createVLUN(VOLUME_NAME1, LUN_1, HOST_NAME1)
+        self.cl.getHostVLUNs(HOST_NAME1)
+
+        # Check for the request that happens when VLUN querying is unsupported.
+        self.cl.http.get.assert_has_calls([mock.call('/vluns')])
+
+        self.printFooter('get_host_VLUNs_no_query_support')
 
     @unittest.skipIf(config['TEST']['unit'].lower() == 'false',
-                    "only works with flask server")
+                     "only works with flask server")
     @mock.patch('hpe3parclient.client.HPE3ParClient.getWsApiVersion')
     def test_5_get_VLUN_query_support(self, mock_version):
-       self.printHeader('get_VLUN_query_support')
- 
-       # Mock the version number to a version that supports
-       # VLUN querying and then remake the client.
-       version = client.HPE3ParClient.HPE3PAR_WS_MIN_BUILD_VERSION_VLUN_QUERY
-       mock_version.return_value = {'build': version}
-       self.cl = client.HPE3ParClient(self.flask_url)
+        self.printHeader('get_VLUN_query_support')
 
-      # Mock the HTTP GET function to track what the call to it was.
-       self.cl.http.get = mock.Mock()
-       self.cl.http.get.return_value = (
-           {},
-           {'members': [{'volumeName': VOLUME_NAME1, 'active': True}]}
-       )
+        # Mock the version number to a version that supports
+        # VLUN querying and then remake the client.
+        version = client.HPE3ParClient.HPE3PAR_WS_MIN_BUILD_VERSION_VLUN_QUERY
+        mock_version.return_value = {'build': version}
+        self.cl = client.HPE3ParClient(self.flask_url)
 
-       self.cl.createVLUN(VOLUME_NAME1, LUN_1, HOST_NAME1)
-       self.cl.getVLUN(VOLUME_NAME1)
+        # Mock the HTTP GET function to track what the call to it was.
+        self.cl.http.get = mock.Mock()
+        self.cl.http.get.return_value = (
+            {},
+            {'members': [{'volumeName': VOLUME_NAME1, 'active': True}]}
+        )
 
-       # Check for the request that happens when VLUN querying is supported.
-       query = '"volumeName EQ %s"' % VOLUME_NAME1
-       expected_query = '/vluns?query=%s' % quote(query.encode("utf-8"))
-       self.cl.http.get.assert_has_calls([mock.call(expected_query)])
+        self.cl.createVLUN(VOLUME_NAME1, LUN_1, HOST_NAME1)
+        self.cl.getVLUN(VOLUME_NAME1)
 
-       self.printFooter('get_VLUN_query_support')
+        # Check for the request that happens when VLUN querying is supported.
+        query = '"volumeName EQ %s"' % VOLUME_NAME1
+        expected_query = '/vluns?query=%s' % quote(query.encode("utf-8"))
+        self.cl.http.get.assert_has_calls([mock.call(expected_query)])
 
-    @unittest.skipIf(config['TEST']['unit'].lower() == 'false', "only works with flask server")
+        self.printFooter('get_VLUN_query_support')
+
+    @unittest.skipIf(config['TEST']['unit'].lower() == 'false', "only \
+works with flask server")
     @mock.patch('hpe3parclient.client.HPE3ParClient.getWsApiVersion')
     def test_5_get_host_VLUNs_query_support(self, mock_version):
-       self.printHeader('get_host_VLUNs_query_support')
+        self.printHeader('get_host_VLUNs_query_support')
 
-       # Mock the version number to a version that supports
-       # VLUN querying and then remake the client.
-       version = client.HPE3ParClient.HPE3PAR_WS_MIN_BUILD_VERSION_VLUN_QUERY
-       mock_version.return_value = {'build': version}
-       self.cl = client.HPE3ParClient(self.flask_url)
+        # Mock the version number to a version that supports
+        # VLUN querying and then remake the client.
+        version = client.HPE3ParClient.HPE3PAR_WS_MIN_BUILD_VERSION_VLUN_QUERY
+        mock_version.return_value = {'build': version}
+        self.cl = client.HPE3ParClient(self.flask_url)
 
-       # Mock the HTTP GET function to track what the call to it was.
-       self.cl.http.get = mock.Mock()
-       self.cl.http.get.return_value = (
-           {},
-           {'members': [{'hostname': HOST_NAME1, 'active': True}]}
-       )
+        # Mock the HTTP GET function to track what the call to it was.
+        self.cl.http.get = mock.Mock()
+        self.cl.http.get.return_value = (
+            {},
+            {'members': [{'hostname': HOST_NAME1, 'active': True}]}
+        )
 
-       self.cl.createVLUN(VOLUME_NAME1, LUN_1, HOST_NAME1)
-       self.cl.getHostVLUNs(HOST_NAME1)
+        self.cl.createVLUN(VOLUME_NAME1, LUN_1, HOST_NAME1)
+        self.cl.getHostVLUNs(HOST_NAME1)
 
-       # Check for the request that happens when VLUN querying is supported.
-       query = '"hostname EQ %s"' % HOST_NAME1
-       expected_query = '/vluns?query=%s' % quote(query.encode("utf-8"))
-       self.cl.http.get.assert_has_calls([mock.call(expected_query)])
+        # Check for the request that happens when VLUN querying is supported.
+        query = '"hostname EQ %s"' % HOST_NAME1
+        expected_query = '/vluns?query=%s' % quote(query.encode("utf-8"))
+        self.cl.http.get.assert_has_calls([mock.call(expected_query)])
 
-       self.printFooter('get_host_VLUNs_query_support')
+        self.printFooter('get_host_VLUNs_query_support')
 
 # testing
 # suite = unittest.TestLoader().loadTestsFromTestCase(

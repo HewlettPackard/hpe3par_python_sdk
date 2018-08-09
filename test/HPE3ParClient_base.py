@@ -24,7 +24,6 @@ from testconfig import config
 import datetime
 from functools import wraps
 from hpe3par_sdk import client
-#from hpe3parclient import client, file_client
 
 TIME = datetime.datetime.now().strftime('%H%M%S')
 
@@ -77,7 +76,7 @@ class HPE3ParClientBaseTestCase(unittest.TestCase):
             CPG_OPTIONS = {'domain': DOMAIN,
                            'LDLayout': {'HA': CPG_LDLAYOUT_HA,
                                         'diskPatterns': [{'diskType':
-                                                         DISK_TYPE}]}}
+                                                          DISK_TYPE}]}}
         else:
             CPG_OPTIONS = {'domain': DOMAIN,
                            'LDLayout': {'HA': CPG_LDLAYOUT_HA}}
@@ -127,8 +126,7 @@ class HPE3ParClientBaseTestCase(unittest.TestCase):
 
             time.sleep(5)
             if self.withFilePersona:
-		pass
-                #self.cl = file_client.HPE3ParFilePersonaClient(self.flask_url)
+                pass
             else:
                 self.cl = client.HPE3ParClient(self.flask_url)
 
@@ -152,7 +150,6 @@ class HPE3ParClientBaseTestCase(unittest.TestCase):
             if withFilePersona:
                 self.printHeader('Using 3PAR %s with File Persona' %
                                  self.url_3par)
-                #self.cl = file_client.HPE3ParFilePersonaClient(self.url_3par)
             else:
                 self.printHeader('Using 3PAR ' + self.url_3par)
                 self.cl = client.HPE3ParClient(self.url_3par)
@@ -209,11 +206,12 @@ class HPE3ParClientBaseTestCase(unittest.TestCase):
 
         if not self.port:
             ports = self.cl.getPorts()
-	    print "hello"
-	    print vars(self.cl)
-	    for port in ports:
-	        print port.mode
-            ports = [port for port in ports if port.linkState == 4 and  ( port.device is not None or not port.device) and port.mode == 2]
+            print "hello"
+            print vars(self.cl)
+            for port in ports:
+                print port.mode
+            ports = [port for port in ports if port.linkState == 4 and (
+                port.device is not None or not port.device) and port.mode == 2]
             self.port = ports[0].port_pos
 
     def tearDown(self):
