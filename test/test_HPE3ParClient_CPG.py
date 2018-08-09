@@ -19,7 +19,7 @@ from hpe3parclient import exceptions
 
 DOMAIN = 'UNIT_TEST_DOMAIN'
 CPG_NAME1 = 'CPG1_UNIT_TEST' + hpe3parbase.TIME
-CPG_NAME2 = 'CPG2_UNIT_TEST' + hpe3parbase.TIME
+CPG_NAME2 = 'CPG2_UNIT_TEST' + hpe3parbase.timeout
 
 
 class HPE3ParClientCPGTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
@@ -63,7 +63,7 @@ class HPE3ParClientCPGTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         else:
             if self.DISK_TYPE is None:
                 more_optional = {'LDLayout': {'RAIDType': 2,
-                                 'HA': self.CPG_LDLAYOUT_HA}}
+                                              'HA': self.CPG_LDLAYOUT_HA}}
             else:
                 more_optional = {'LDLayout': {'RAIDType': 2,
                                               'HA': self.CPG_LDLAYOUT_HA,
@@ -130,6 +130,7 @@ class HPE3ParClientCPGTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.assertRaises(exceptions.HTTPNotFound, self.cl.getCPG, 'BadName')
 
         self.printFooter('get_CPG_bad')
+
     def test_2_get_CPGs(self):
         self.printHeader('get_CPGs')
 
@@ -139,7 +140,6 @@ class HPE3ParClientCPGTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
         cpgs = self.cl.getCPGs()
         self.assertGreater(len(cpgs), 0, 'getCPGs failed with no CPGs')
-        #self.assertTrue(self.findInDict(cpgs['members'], 'name', CPG_NAME1))
 
         self.printFooter('get_CPGs')
 
@@ -164,7 +164,7 @@ class HPE3ParClientCPGTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         cpgs = self.cl.getCPGs()
         if cpgs and len(cpgs) > 0:
             for cpg in cpgs:
-                if cpg.name== CPG_NAME1:
+                if cpg.name == CPG_NAME1:
                     # pprint.pprint("Deleting CPG %s " % cpg['name'])
                     self.cl.deleteCPG(cpg.name)
 

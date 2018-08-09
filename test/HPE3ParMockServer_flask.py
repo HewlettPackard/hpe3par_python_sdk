@@ -1,11 +1,11 @@
 # (C) Copyright 2018 Hewlett Packard Enterprise Development LP
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
 # a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -372,8 +372,8 @@ def modify_host_set(host_set_name):
     debugRequest(flask.request)
 
     if len(host_set_name) > 31:
-            throw_error(400, INV_INPUT_EXCEEDS_LENGTH,
-                        'invalid input: string length exceeds limit')
+        throw_error(400, INV_INPUT_EXCEEDS_LENGTH,
+                    'invalid input: string length exceeds limit')
 
     data = json.loads(flask.request.data.decode('utf-8'))
 
@@ -1955,10 +1955,10 @@ if __name__ == "__main__":
                           'rawUsedMiB': 768,
                           'totalMiB': 8192,
                           'usedMiB': 256},
-             'SDGrowth': {'LDLayout': {'diskPatterns': [{'diskType': 1}]},
-                          'incrementMiB': 16384,
-                          'limitMiB': 256000,
-                          'warningMiB': 204800},
+              'SDGrowth': {'LDLayout': {'diskPatterns': [{'diskType': 1}]},
+                           'incrementMiB': 16384,
+                           'limitMiB': 256000,
+                           'warningMiB': 204800},
               'SDUsage': {'rawTotalMiB': 32768,
                           'rawUsedMiB': 2048,
                           'totalMiB': 16384,

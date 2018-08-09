@@ -1,127 +1,131 @@
 # (C) Copyright 2018 Hewlett Packard Enterprise Development LP
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
 # a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
 
+
 class VirtualVolume(object):
 
     def __init__(self, object_hash):
         if object_hash is None:
             return
-    
+
         self.additional_states = object_hash.get('additionalStates')
 
         if object_hash.get('adminSpace'):
             self.admin_space = Space(object_hash['adminSpace'])
         else:
             self.admin_space = None
-        
+
         self.base_id = object_hash.get('baseId')
-        
+
         self.comment = object_hash.get('comment')
 
         if object_hash.get('capacityEfficiency'):
-            self.capacity_efficiency = CapEfficiency(object_hash['capacityEfficiency'])
-        else:    
+            self.capacity_efficiency = CapEfficiency(
+                object_hash['capacityEfficiency'])
+        else:
             self.capacity_efficiency = None
-        
+
         self.copy_of = object_hash.get('copyOf')
-        
+
         self.copy_type = object_hash.get('copyType')
-        
+
         self.creation_time8601 = object_hash.get('creationTime8601')
-        
+
         self.creation_time_sec = object_hash.get('creationTimeSec')
-        
+
         self.degraded_states = object_hash.get('degradedStates')
-        
+
         self.domain = object_hash.get('domain')
-        
+
         self.expiration_time8601 = object_hash.get('expirationTime8601')
-        
+
         self.expiration_time_sec = object_hash.get('expirationTimeSec')
-        
+
         self.failed_states = object_hash.get('failedStates')
-        
+
         self.compression_state = object_hash.get('compressionState')
-        
+
         self.deduplication_state = object_hash.get('deduplicationState')
-        
+
         self.id = object_hash.get('id')
-        
+
         self.links = object_hash.get('links')
-        
+
         self.name = object_hash.get('name')
-        
+
         self.parent_id = object_hash.get('parentId')
-        
+
         self.phys_parent_id = object_hash.get('physParentId')
-        
+
         if object_hash.get('policies'):
             self.policies = Policy(object_hash.get('policies'))
         else:
             self.policies = None
-        
+
         self.provisioning_type = object_hash.get('provisioningType')
-        
+
         self.read_only = object_hash.get('readOnly')
-        
+
         self.retention_time8601 = object_hash.get('retentionTime8601')
-        
+
         self.retention_time_sec = object_hash.get('retentionTimeSec')
-        
+
         self.ro_child_id = object_hash.get('roChildId')
-        
+
         self.rw_child_id = object_hash.get('rwChildId')
-        
+
         self.host_write_mib = object_hash.get('hostWriteMiB')
-        
+
         self.total_used_mib = object_hash.get('totalUsedMiB')
-        
+
         self.total_reserved_mib = object_hash.get('totalReservedMiB')
-        
+
         self.size_mib = object_hash.get('sizeMiB')
-        
+
         self.snap_cpg = object_hash.get('snapCPG')
-        
+
         if object_hash.get('snapshotSpace'):
             self.snapshot_space = Space(object_hash.get('snapshotSpace'))
         else:
             self.snapshot_space = None
-        
+
         self.ss_spc_alloc_limit_pct = object_hash.get('ssSpcAllocLimitPct')
-        
+
         self.ss_spc_alloc_warning_pct = object_hash.get('ssSpcAllocWarningPct')
-        
+
         self.state = object_hash.get('state')
-        
+
         self.user_cpg = object_hash.get('userCPG')
-        
+
         if object_hash.get('userSpace'):
             self.user_space = Space(object_hash.get('userSpace'))
         else:
             self.user_space = None
-        
+
         self.usr_spc_alloc_limit_pct = object_hash.get('usrSpcAllocLimitPct')
-        
-        self.usr_spc_alloc_warning_pct = object_hash.get('usrSpcAllocWarningPct')
-        
+
+        self.usr_spc_alloc_warning_pct = object_hash.get(
+            'usrSpcAllocWarningPct')
+
         self.uuid = object_hash.get('uuid')
-        
+
         self.shared_parent_id = object_hash.get('sharedParentID')
-        
+
         self.udid = object_hash.get('udid')
-        
+
         self.wwn = object_hash.get('wwn')
+
 
 class Space(object):
 
@@ -130,70 +134,74 @@ class Space(object):
             return
 
         self.reserved_MiB = object_hash.get('reservedMiB')
-        
+
         self.raw_reserved_MiB = object_hash.get('rawReservedMiB')
-        
+
         self.used_MiB = object_hash.get('usedMiB')
-        
+
         self.free_MiB = object_hash.get('freeMiB')
+
 
 class CapEfficiency(object):
 
     def __init__(self, object_hash):
         if object_hash is None:
             return
-        
+
         self.compaction = object_hash.get('compaction')
-        
+
         self.compression = object_hash.get('compression')
-        
+
         self.data_reduction = object_hash.get('dataReduction')
-        
+
         self.over_provisioning = object_hash.get('overProvisioning')
-        
+
         self.deduplication = object_hash.get('deduplication')
+
 
 class Policy(object):
 
     def __init__(self, object_hash):
         if object_hash is None:
             return
-        
+
         self.stale_ss = object_hash.get('staleSS')
-        
+
         self.one_host = object_hash.get('oneHost')
-        
+
         self.zero_detect = object_hash.get('zeroDetect')
-        
+
         self.system = object_hash.get('system')
-        
+
         self.caching = object_hash.get('caching')
-        
+
         self.fsvc = object_hash.get('fsvc')
-        
+
         self.host_dif = object_hash.get('hostDIF')
+
 
 class VolumeSet(object):
 
     def __init__(self, object_hash):
         if object_hash is None:
             return
-        
+
         self.name = object_hash.get('name')
-        
+
         self.uuid = object_hash.get('uuid')
-        
+
         self.id = object_hash.get('id')
-        
+
         self.comment = object_hash.get('comment')
-        
+
         self.domain = object_hash.get('domain')
-        
+
         self.setmembers = object_hash.get('setmembers')
-        
+
         self.flash_cache_policy = object_hash.get('flashCachePolicy')
-        
+
         self.qos_enabled = object_hash.get('qosEnabled')
+
 
 class FCPath(object):
 
@@ -231,6 +239,7 @@ class FCPath(object):
         # [type - String]
         # HBA host speed.
         self.host_speed = object_hash.get('hostSpeed')
+
 
 class SCSIPath(object):
 
@@ -273,6 +282,7 @@ class SCSIPath(object):
         # HBA host speed.
         self.host_speed = object_hash.get('hostSpeed')
 
+
 class Agent(object):
 
     def __init__(self, object_hash):
@@ -309,7 +319,8 @@ class Agent(object):
 
         # [type - String]
         # The multipathing software version.
-        self.multi_path_software_version = object_hash.get('multiPathSoftwareVersion')
+        self.multi_path_software_version = object_hash.get(
+            'multiPathSoftwareVersion')
 
         # [type - String]
         # Name of the host cluster of which the host is a member.
@@ -377,7 +388,8 @@ class Host(object):
         self.persona = object_hash.get('persona')
 
         # [type - Array of FCPath]
-        # A host object query response can include an array of one or more FCPaths objects
+        # A host object query response can include an array of one or more
+        # FCPaths objects
         self.fcpaths = []
 
         if object_hash.get('FCPaths') is not None:
@@ -385,7 +397,8 @@ class Host(object):
                 self.fcpaths.append(FCPath(fc_path))
 
         # [type - Array of SCSIPath]
-        # A host object query response can include an array of one or more iSCSIPaths objects.
+        # A host object query response can include an array of one or more
+        # iSCSIPaths objects.
         self.iscsi_paths = []
 
         if object_hash.get('iSCSIPaths') is not None:
@@ -397,7 +410,8 @@ class Host(object):
         self.domain = object_hash.get('domain')
 
         # [type - Descriptors]
-        # An optional sub-object of the host object for creation and modification
+        # An optional sub-object of the host object for creation and
+        # modification
         if object_hash.get('descriptors'):
             self.descriptors = Descriptors(object_hash['descriptors'])
         else:
@@ -427,12 +441,13 @@ class Host(object):
 
         # [type - String]
         # Encrypted CHAP secret of initiator.
-        self.initiator_encrypted_chap_secret = object_hash.get('initiatorEncryptedChapSecret')
+        self.initiator_encrypted_chap_secret = object_hash.get(
+            'initiatorEncryptedChapSecret')
 
         # [type - String]
         # Encrypted CHAP secret of target.
-        self.target_encrypted_chap_secret = object_hash.get('targetEncryptedChapSecret')
-
+        self.target_encrypted_chap_secret = object_hash.get(
+            'targetEncryptedChapSecret')
 
 
 class QoSRule():
@@ -503,6 +518,7 @@ class PortPos(object):
         # Port number on the FC card.
         self.card_port = object_hash.get('cardPort')
 
+
 class VLUN(object):
     def __init__(self, object_hash):
         if object_hash is None:
@@ -524,7 +540,8 @@ class VLUN(object):
         self.remote_name = object_hash.get('remoteName')
 
         # [type - PortPos]
-        # System port of VLUN exported to. It includes node number, slot number, and cardPort number.
+        # System port of VLUN exported to. It includes node number, slot
+        # number, and cardPort number.
         if object_hash.get('portPos'):
             self.port_pos = PortPos(object_hash.get('portPos'))
         else:
@@ -547,7 +564,8 @@ class VLUN(object):
         self.failed_path_pol = object_hash.get('failedPathPol')
 
         # [type - Number]
-        # Monitoring interval in seconds after which the host checks for failed paths.
+        # Monitoring interval in seconds after which the host checks for failed
+        # paths.
         self.failed_path_interval = object_hash.get('failedPathInterval')
 
         # [type - String]
@@ -557,6 +575,7 @@ class VLUN(object):
         # [type - Boolean]
         # Specified if the VLUN is an active VLUN or a VLUN template.
         self.active = object_hash.get('active')
+
 
 class Usage(object):
 
@@ -588,15 +607,18 @@ class GrowthParams(object):
             return
 
         # [type - Number]
-        # Threshold of used logical disk space, when exceeded, results in a warning alert.
+        # Threshold of used logical disk space, when exceeded, results in a
+        # warning alert.
         self.warning_MiB = object_hash.get('warningMiB')
 
         # [type - Number]
-        # The auto-grow operation is limited to the specified storage amount that sets the growth limit.
+        # The auto-grow operation is limited to the specified storage amount
+        # that sets the growth limit.
         self.limit_MiB = object_hash.get('limitMiB')
 
         # [type - Number]
-        # The growth increment, the amount of logical disk storage created on each auto-grow operation.
+        # The growth increment, the amount of logical disk storage created on
+        # each auto-grow operation.
         self.increment_MiB = object_hash.get('incrementMiB')
 
         # [type - LDLayout]
@@ -625,6 +647,7 @@ class PrivateSpace(object):
         # [type - Number]
         # Raw snapshot space in MiB.
         self.raw_snapshot = object_hash.get('rawSnapshot')
+
 
 class CPG(object):
 
@@ -751,13 +774,14 @@ class CPG(object):
         # Maximum size of the deduplication store Volume in the Cpg.
         self.dds_rsvd_MiB = object_hash.get('ddsRsvdMiB')
 
-
         # [type - PrivateSpace]
         # Private Cpg space in MiB
         if object_hash.get('privateSpaceMiB') is not None:
-            self.private_space_MiB = PrivateSpace(object_hash.get('privateSpaceMiB'))
+            self.private_space_MiB = PrivateSpace(
+                object_hash.get('privateSpaceMiB'))
         else:
             self.private_space_MiB = None
+
 
 class LDLayout(object):
 
@@ -766,7 +790,8 @@ class LDLayout(object):
             return
 
         # [type - Number]
-        # Specifies the RAID type for the logical disk. - HPE3PARClient::CPGRAIDType
+        # Specifies the RAID type for the logical disk. -
+        # HPE3PARClient::CPGRAIDType
         self.raidtype = object_hash.get('RAIDType')
 
         # [type - Number]
@@ -774,11 +799,13 @@ class LDLayout(object):
         self.set_size = object_hash.get('setSize')
 
         # [type - Number]
-        # Specifies that the layout must support the failure of one port pair, one cage, or one magazine. - HPE3PARClient::CPGHA
+        # Specifies that the layout must support the failure of one port pair,
+        # one cage, or one magazine. - HPE3PARClient::CPGHA
         self.ha = object_hash.get('HA')
 
         # [type - Number]
-        # Specifies the chunklet location preference characteristics. - HPE3PARClient::CPGChunkletPosPref
+        # Specifies the chunklet location preference characteristics. -
+        # HPE3PARClient::CPGChunkletPosPref
         self.chunklet_pos_pref = object_hash.get('chunkletPosPref')
 
         # [type - Array of DiskPattern objects]
@@ -796,11 +823,17 @@ class DiskPattern(object):
             return
 
         # [type - String]
-        # Specifies one or more nodes. Nodes are identified by one or more integers. Multiple nodes are separated with a single comma (1,2,3). A range of nodes is separated with a hyphen (0 7). The primary path of the disks must be on the specified node number.
+        # Specifies one or more nodes. Nodes are identified by one or more
+        # integers. Multiple nodes are separated with a single comma (1,2,3). A
+        # range of nodes is separated with a hyphen (0 7). The primary path of
+        # the disks must be on the specified node number.
         self.node_list = object_hash.get('nodeList')
 
         # [type - String]
-        # Specifies one or more PCI slots. Slots are identified by one or more integers. Multiple slots are separated with a single comma (1,2,3). A range of slots is separated with a hyphen (0 7). The primary path of the disks must be on the specified PCI slot number(s).
+        # Specifies one or more PCI slots. Slots are identified by one or more
+        # integers. Multiple slots are separated with a single comma (1,2,3). A
+        # range of slots is separated with a hyphen (0 7). The primary path of
+        # the disks must be on the specified PCI slot number(s).
         self.slot_list = object_hash.get('slotList')
 
         # # Specifies one or more ports. Ports are identified by one or more integers. Multiple ports are separated with a single comma (1,2,3). A range of ports is separated with a hyphen (04). The primary path of the disks must be on the specified port number(s).
@@ -810,7 +843,6 @@ class DiskPattern(object):
         # # [type - String]
         # # Specifies one or more drive cages. Drive cages are identified by one or more integers. Multiple drive cages are separated with a single comma (1,2,3). A range of drive cages is separated with a hyphen (0 3). The specified drive cage(s) must contain disks.
         self.cage_list = object_hash.get('cageList')
-
 
         # # [type - String]
         # # Specifies one or more drive magazines. Drive magazines are identified by one or more integers. Multiple drive magazines are separated with a single comma (1,2,3). A range of drive magazines is separated with a hyphen (07). The specified magazine(s) must contain disks.
@@ -824,23 +856,27 @@ class DiskPattern(object):
         # # Specifies one or more physical disks. Disks are identified by one or more integers. Multiple disks are separated with a single comma (1,2,3). A range of disks is separated with a hyphen (0 3). Disks must match the specified ID(s).
         # attr_accessor :disk_list
         self.disk_list = object_hash.get('diskList')
-        
-        # # [type - Number]
-        # # Specifies that physical disks with total chunklets less than the number specified be selected.
-        self.total_chunklets_greater_than = object_hash.get('totalChunkletsGreaterThan')
 
         # # [type - Number]
         # # Specifies that physical disks with total chunklets less than the number specified be selected.
-        self.total_chunklets_less_than = object_hash.get('totalChunkletsLessThan')
+        self.total_chunklets_greater_than = object_hash.get(
+            'totalChunkletsGreaterThan')
+
+        # # [type - Number]
+        # # Specifies that physical disks with total chunklets less than the number specified be selected.
+        self.total_chunklets_less_than = object_hash.get(
+            'totalChunkletsLessThan')
 
         # # [type - Number]
         # # Specifies that physical disks with free chunklets greater than the number specified be selected.
-        self.free_chunklets_greater_than = object_hash.get('freeChunkletsGreaterThan')
+        self.free_chunklets_greater_than = object_hash.get(
+            'freeChunkletsGreaterThan')
 
         # # [type - Number]
         # # Specifies that physical disks with free chunklets greater than the number specified be selected.
         # attr_accessor :free_chunklets_less_than
-        self.free_chunklets_less_than = object_hash.get('freeChunkletsLessThan')
+        self.free_chunklets_less_than = object_hash.get(
+            'freeChunkletsLessThan')
 
         # # [type - array of string]
         # # Specifies that PDs identified by their models are selected.
@@ -853,39 +889,42 @@ class DiskPattern(object):
         # [type - Number]
         # Disks must be of the specified speed.
         self.rpm = object_hash.get('RPM')
-        
+
+
 class Task(object):
-    
+
     def __init__(self, object_hash):
         if object_hash is None:
             return
-    
+
         self.task_id = object_hash.get('id')
-    
+
         self.status = object_hash.get('status')
-    
+
         self.name = object_hash.get('name')
-    
+
         self.type = object_hash.get('type')
+
 
 class HostSet(object):
 
     def __init__(self, object_hash):
         if object_hash is None:
             return
-        
+
         self.name = object_hash.get('name')
-        
+
         self.uuid = object_hash.get('uuid')
-        
+
         self.id = object_hash.get('id')
-        
+
         self.comment = object_hash.get('comment')
-        
+
         self.domain = object_hash.get('domain')
-        
+
         self.setmembers = object_hash.get('setmembers')
-        
+
+
 class LDLayoutCapacity(object):
 
     def __init__(self, object_hash):
@@ -893,68 +932,75 @@ class LDLayoutCapacity(object):
             return
 
         self.rawfree_in_mib = object_hash.get('rawFreeMiB')
-        
-        self.usable_free_in_mib = object_hash.get('usableFreeMiB')
-        
-        self.overprovisioned_virtualsize_in_mib = object_hash.get('overProvisionedVirtualSizeMiB')
 
-        self.overprovisioned_used_in_mib = object_hash.get('overProvisionedUsedMiB')
-        
-        self.overprovisioned_allocated_in_mib = object_hash.get('overProvisionedAllocatedMiB')
-        
-        self.overprovisioned_free_in_mib = object_hash.get('overProvisionedFreeMiB')
-        
-        self.capacitefficiency = CapEfficiency(object_hash.get('capacityEfficiency'))
+        self.usable_free_in_mib = object_hash.get('usableFreeMiB')
+
+        self.overprovisioned_virtualsize_in_mib = object_hash.get(
+            'overProvisionedVirtualSizeMiB')
+
+        self.overprovisioned_used_in_mib = object_hash.get(
+            'overProvisionedUsedMiB')
+
+        self.overprovisioned_allocated_in_mib = object_hash.get(
+            'overProvisionedAllocatedMiB')
+
+        self.overprovisioned_free_in_mib = object_hash.get(
+            'overProvisionedFreeMiB')
+
+        self.capacitefficiency = CapEfficiency(
+            object_hash.get('capacityEfficiency'))
+
 
 class ISCSIPortInfo(object):
 
     def __init__(self, object_hash):
         if not object_hash:
             return
-        
+
         # [type - String]
         # iSCSI port only, not included in the JSON object for other ports.
         self.ip_addr = object_hash.get('ipAddr')
-        
+
         # [type - String]
         # iSCSI port only, not included in the JSON object for other ports.
         self.iscsi_name = object_hash.get('iSCSIName')
-        
+
         # [type - String]
         # Netmask for Ethernet port.
         self.netmask = object_hash.get('netmask')
-        
+
         # [type - String]
         # IP address of the gateway.
         self.gateway = object_hash.get('gateway')
-        
+
         # [type - Number]
         # MTU size in bytes.
         self.mtu = object_hash.get('mtu')
-        
+
         # [type - Boolean]
         # Send Targets Group Tag of the iSCSI target
         self.stgt = object_hash.get('stgt')
-        
+
         # [type - Number]
         # TCP port number for the iSNS server.
         self.isns_port = object_hash.get('iSNSPort')
-        
+
         # [type - String]
         # iSNS server IP address.
         self.isns_addr = object_hash.get('iSNSAddr')
-        
+
         # [type - String]
         # Data transfer rate for the iSCSI port
         self.rate = object_hash.get('rate')
-        
+
         # [type - Number]
         # Target portal group tag.
         self.tpgt = object_hash.get('tpgt')
-        
+
         # [type - Boolean]
         # Indicates whether the port supports VLANs.
         self.vlans = object_hash.get('vlans')
+
 
 class Port(object):
 
@@ -990,7 +1036,8 @@ class Port(object):
         self.type = object_hash.get('type')
 
         # [type - String]
-        # Hardware address for RCIP and iSCSI ports. Not included in JSON for other ports.
+        # Hardware address for RCIP and iSCSI ports. Not included in JSON for
+        # other ports.
         self.hwaddr = object_hash.get('HWAddr')
 
         # [type - HPE3PARClient::PortProtocol]
@@ -998,11 +1045,13 @@ class Port(object):
         self.protocol = object_hash.get('protocol')
 
         # [type - String]
-        # Configurable, human-readable label identifying the HBA port. Maximum length is 15 characters.
+        # Configurable, human-readable label identifying the HBA port. Maximum
+        # length is 15 characters.
         self.label = object_hash.get('label')
 
         # [type - Arry of string]
-        # Array of device name (cage0, host1, etc.) of the device connected to the port.
+        # Array of device name (cage0, host1, etc.) of the device connected to
+        # the port.
         self.device = object_hash.get('device')
 
         # [type - PortPos]
@@ -1013,11 +1062,13 @@ class Port(object):
             self.partner_pos = None
 
         # [type - HPE3PARClient::PortFailOverState]
-        # The state of the failover operation, shown for the two ports indicated in the N:S:P and Partner columns.
+        # The state of the failover operation, shown for the two ports
+        # indicated in the N:S:P and Partner columns.
         self.failover_state = object_hash.get('failoverState')
 
         # [type - String]
-        # For RCIP and iSCSI ports only; not included in the JSON object for other ports.
+        # For RCIP and iSCSI ports only; not included in the JSON object for
+        # other ports.
         self.ip_addr = object_hash.get('IPAddr')
 
         # [type - String]
@@ -1035,9 +1086,11 @@ class Port(object):
         # [type - ISCSIPortInfo]
         # Contains information related to iSCSI port properties.
         if object_hash.get('iSCSIPortInfo') is not None:
-            self.iscsi_portinfo = ISCSIPortInfo(object_hash.get('iSCSIPortInfo'))
+            self.iscsi_portinfo = ISCSIPortInfo(
+                object_hash.get('iSCSIPortInfo'))
         else:
             self.iscsi_portinfo = None
+
 
 class FlashCache(object):
 
@@ -1050,7 +1103,9 @@ class FlashCache(object):
         self.mode = object_hash.get('mode')
 
         # [type - Number]
-        # The total size of the Flash Cache on the entire system. This might differ from the sizeGib input in the create Flash Cache request if the system has more than two nodes.
+        # The total size of the Flash Cache on the entire system. This might
+        # differ from the sizeGib input in the create Flash Cache request if
+        # the system has more than two nodes.
         self.sizeGiB = object_hash.get('sizeGiB')
 
         # [type - HPE3PARClient::CPGState]

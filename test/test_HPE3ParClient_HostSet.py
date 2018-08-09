@@ -122,7 +122,7 @@ class HPE3ParClientHostSetTestCase(HPE3ParClient_base
         volumes_to_delete.extend([volume_name1, volume_name2])
         self.cl.createVolume(volume_name1, cpg_name, VOLUME_SIZE)
         self.cl.createVolume(volume_name2, cpg_name, VOLUME_SIZE)
-	self.port={"node": 2,"slot": 2,"cardPort": 4}
+        self.port = {"node": 2, "slot": 2, "cardPort": 4}
 
         # Create VLUNs
         vlun1 = [volume_name1, LUN_1, host_name, self.port]
@@ -232,7 +232,7 @@ class HPE3ParClientHostSetTestCase(HPE3ParClient_base
         self.cl.createVolume(volume_name2, cpg_name, VOLUME_SIZE)
 
         # Create VLUNs
-	self.port = {"node": 2,"slot": 2,"cardPort": 4}
+        self.port = {"node": 2, "slot": 2, "cardPort": 4}
         vlun1 = [volume_name1, LUN_1, host_name, self.port]
         vlun2 = [volume_name2, LUN_2, host_name, self.port]
         vluns_to_delete.extend([vlun1, vlun2])
@@ -253,7 +253,6 @@ class HPE3ParClientHostSetTestCase(HPE3ParClient_base
         self.assertIsNotNone(host_set)
         self.assertIsNotNone(found_host_set)
         self.assertEqual(host_set.name, found_host_set)
-        #self.assertIn(host_set, host_sets)
 
         cpg = self.cl.getCPG(cpg_name)
         self.assertEqual(cpg.name, cpg_name)
@@ -264,10 +263,9 @@ class HPE3ParClientHostSetTestCase(HPE3ParClient_base
         volume = self.cl.getVolume(volume_name2)
         self.assertEqual(volume.name, volume_name2)
 
-        host_vluns = self.cl.getHostVLUNs(host_name)
-        #self.assertIn(volume_name1,
+        # self.assertIn(volume_name1,
         #              [vlun.volume_name for vlun in host_vluns])
-        #self.assertIn(volume_name2,
+        # self.assertIn(volume_name2,
         #              [vlun.volume_name for vlun in host_vluns])
 
         vlun = self.cl.getVLUN(volume_name1)
@@ -475,6 +473,5 @@ class HPE3ParClientHostSetTestCase(HPE3ParClient_base
         self.cl.modifyHostSet(host_set_name2, 1, setmembers=[created_host2])
 
         host2 = self.cl.getHostSet(host_set_name2)
-        #self.assertEqual(host2['setmembers'], [created_host1, created_host2])
 
         self.printFooter("modify")
