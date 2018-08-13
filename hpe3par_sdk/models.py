@@ -1094,7 +1094,7 @@ class RemoteCopyInfo(object):
         # [type - boolean]
         # true—Asynchronous streaming replication enabled.
         # false—Asynchronous streaming replication disabled.
-        self.status = object_hash.get('status')
+        self.asyncEnabled = object_hash.get('asyncEnabled')
 
 
 class RemoteCopyGroup(object):
@@ -1107,15 +1107,17 @@ class RemoteCopyGroup(object):
 
         self.id = object_hash.get('id')
 
+        self.role = object_hash.get('role')
+
         self.domain = object_hash.get('domain')
 
         self.recoveryPointObjmSecs = object_hash.get('recoveryPointObjmSecs')
 
         self.remoteGroupName = object_hash.get('remoteGroupName')
 
-        self.localUsrCPG = object_hash.get('localUsrCPG')
+        self.localUserCPG = object_hash.get('localUserCPG')
 
-        self.localSnpCPG = object_hash.get('localSnpCPG')
+        self.localSnapCPG = object_hash.get('localSnapCPG')
 
         self.volumes = []
         for object in object_hash.get('volumes'):
@@ -1124,7 +1126,7 @@ class RemoteCopyGroup(object):
         self.targets = []
         for object in object_hash.get('targets'):
             self.targets.append(Targets(object))
-  
+
         if object_hash.get('links') is not None:
             self.links = []
             for object in object_hash.get('links'):
@@ -1138,7 +1140,7 @@ class Volumes(object):
 
         self.localVolumeName = object_hash.get('localVolumeName')
 
-        self.localVolumeId = object_hash.get('localVolumeID')
+        self.localVolumeID = object_hash.get('localVolumeID')
 
         self.remoteVolumes = []
         for object in object_hash.get('remoteVolumes'):
@@ -1209,11 +1211,11 @@ class Targets(object):
 
         self.groupLastSyncTime = object_hash.get('groupLastSyncTime')
 
-        self.policy = Policy(object_hash.get('policy'))
+        self.policies = TargetPolicies(object_hash.get('policies'))
 
-        self.remoteSnpCPG = object_hash.get('remoteSnpCPG')
+        self.remoteSnapCPG = object_hash.get('remoteSnapCPG')
 
-        self.remoteUsrCPG = object_hash.get('remoteUsrCPG')
+        self.remoteUserCPG = object_hash.get('remoteUserCPG')
 
         self.snapFrequency = object_hash.get('snapFrequency')
 
@@ -1221,7 +1223,20 @@ class Targets(object):
             self.links = []
             for object in object_hash.get('links'):
                 self.links.append(Link(object))
+				
+class TargetPolicies(object):
 
+    def __init__(self, object_hash):
+        if object_hash is None:
+            return
+
+        self.autoRecover = object_hash.get('autoRecover')
+
+        self.overPeriodAlert = object_hash.get('overPeriodAlert')
+
+        self.autoFailover = object_hash.get('autoFailover')
+
+        self.pathManagement = object_hash.get('pathManagement')
 
 class Link(object):
     def __init__(self, object_hash):
