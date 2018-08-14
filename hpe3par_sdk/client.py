@@ -2797,7 +2797,7 @@ volume_name, lunid, hostname or port")
         """
         return RemoteCopyGroup(self.client.getRemoteCopyGroup(name))
 
-    def createRemoteCopy(self, name, targets, optional=None):
+    def createRemoteCopyGroup(self, name, targets, optional=None):
         """
         Creates a remote copy group
 
@@ -2927,7 +2927,7 @@ volume_name, lunid, hostname or port")
             - RCOPY_MAX_PERIODIC_TARGET_REACHED - The maximum number of
             remote-copy periodic targets has been reached.
         """
-        return self.client.createRemoteCopy(name, targets, optional)
+        return self.client.createRemoteCopyGroup(name, targets, optional)
 
     def removeRemoteCopyGroup(self, name, keep_snap=False):
         """
