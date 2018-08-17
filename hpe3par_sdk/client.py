@@ -76,6 +76,15 @@ class HPE3ParClient(object):
     OPENVMS = 9
     HPUX = 10
     WINDOWS_SERVER = 11
+	
+	# Remote Copy Recovery Enumeration
+	REVERSE_GROUP =6
+	FAILOVER_GROUP = 7
+	SWITCHOVER_GROUP = 8
+	RECOVER_GROUP = 9
+	RESTORE_GROUP = 10
+	OVERRIDE_GROUP = 11
+	CLX_DR = 12
 
     # QoS priority Enumeration
     class QOSPriority:
