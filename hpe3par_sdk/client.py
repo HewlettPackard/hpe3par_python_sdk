@@ -30,6 +30,7 @@ from models import VolumeSet
 from models import QoSRule
 from models import RemoteCopyInfo
 from models import RemoteCopyGroup
+from models import Volumes
 
 
 import time
