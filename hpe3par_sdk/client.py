@@ -2796,6 +2796,36 @@ volume_name, lunid, hostname or port")
 
         """
         return RemoteCopyGroup(self.client.getRemoteCopyGroup(name))
+		
+    def getRemoteCopyGroupVolumes(self, remoteCopyGroupName):
+        """
+        Returns information on all volumes in a Remote Copy Groups
+		
+		:param remoteCopyGroupName: the remote copy group name
+        :type name: str
+
+        :returns: list of volumes in a Remote Copy Groups
+
+        """
+        remoteCopyGroupVolumes = []
+        remoteCopyGroupVolumes_list = self.client.getRemoteCopyGroupVolumes(remoteCopyGroupName)['members']
+        for remoteCopyGroupVolume in remoteCopyGroupVolumes_list:
+            remoteCopyGroupVolumes.append(Volumes(remoteCopyGroupVolume))
+        return remoteCopyGroupVolumes
+		
+	def getRemoteCopyGroupVolume(self, remoteCopyGroupName, volumeName):
+        """
+        Returns information on one volume of a Remote Copy Group
+
+        :param remoteCopyGroupName: the remote copy group name
+        :type name: str
+		:param volumeName: the remote copy group name
+        :type name: str
+
+        :returns: RemoteVolume
+
+        """
+		return Volumes(self.client.getRemoteCopyGroupVolume(remoteCopyGroupName, volumeName))
 
     def createRemoteCopyGroup(self, name, targets, optional=None):
         """
@@ -3682,6 +3712,13 @@ volume_name, lunid, hostname or port")
     def remoteCopyGroupExists(self, name):
         try:
             self.getRemoteCopyGroup(name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+
+    def remoteCopyGroupVolumeExists(self, remote_copy_group_name, volume_name):
+        try:
+            self.getRemoteCopyGroupVolume(remote_copy_group_name, volume_name)
         except exceptions.HTTPNotFound:
             return False
         return True
