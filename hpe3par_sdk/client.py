@@ -3370,7 +3370,7 @@ volume_name, lunid, hostname or port")
             state.
         """
         return self.client.addVolumeToRemoteCopyGroup(name, volumeName,
-                                   targets, True, optional)
+                                   targets, optional, True)
 
     def removeVolumeFromRemoteCopyGroup(self, name, volumeName,
                                         optional=None,
@@ -3429,7 +3429,7 @@ volume_name, lunid, hostname or port")
             not ready.
         """
         return self.client.removeVolumeFromRemoteCopyGroup(name, volumeName,
-                                   True, optional, removeFromTarget)
+                                   optional, removeFromTarget, True)
 
     def startRemoteCopy(self, name, optional=None):
         """
