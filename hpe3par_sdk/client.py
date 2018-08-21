@@ -3494,7 +3494,8 @@ volume_name, lunid, hostname or port")
             starting snapshot or volume was specified, or the snapshot or
             volume does not exist.
         """
-        return self.client.startRemoteCopy(name, optional)
+        response, body = self.client.startRemoteCopy(name, optional)
+        return self.getTask(body['taskid'])
 
     def stopRemoteCopy(self, name, optional=None):
         """
@@ -3582,7 +3583,8 @@ volume_name, lunid, hostname or port")
             - RCOPY_GROUP_STARTED - The remote-copy group has already been
             started.
         """
-        return self.client.synchronizeRemoteCopyGroup(name, optional)
+        response, body = self.client.synchronizeRemoteCopyGroup(name, optional)
+        return self.getTask(body['taskid'])
 
     def recoverRemoteCopyGroupFromDisaster(self, name, action, optional=None):
         """
@@ -3705,7 +3707,12 @@ volume_name, lunid, hostname or port")
             - RCOPY_GROUP_OPERATION_ONLY_ON_SECONDARY_SIDE - Operation should
             only be issued on secondary side.
         """
-        return self.client.recoverRemoteCopyGroupFromDisaster(name, action, optional)
+        response, body = self.client.recoverRemoteCopyGroupFromDisaster(name, action, optional)
+        tasks = []
+        for member in body['members']:
+            tasks.append(self.getTask(member['taskid']))
+        return tasks
+
 
     def toggleRemoteCopyConfigMirror(self, target, mirror_config=True):
         """
