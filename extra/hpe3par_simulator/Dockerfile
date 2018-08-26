@@ -1,7 +1,5 @@
 FROM library/python:3
 
-ARG FLASK_PORT=5001
-
 WORKDIR /usr/src
 
 RUN git clone https://github.com/HewlettPackard/hpe3par_python_sdk.git \
@@ -9,8 +7,13 @@ RUN git clone https://github.com/HewlettPackard/hpe3par_python_sdk.git \
     && pip install . \
     && pip install flask
 
-EXPOSE $FLASK_PORT
+EXPOSE 5000
+
+ARG USER=username
+ARG PASSWORD=password
 
 VOLUME [ "/usr/src" ]
 
-CMD [ "python", "hpe3par_python_sdk/test/HPE3ParMockServer_flask.py -port $FLASK_PORT" ]
+ENTRYPOINT [ "python" ]
+
+CMD [ "hpe3par_python_sdk/test/HPE3ParMockServer_flask.py", "-debug", "-user", "${USER}", "-password", "${PASS}" ]
