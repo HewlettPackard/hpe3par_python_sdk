@@ -1092,8 +1092,8 @@ class RemoteCopyInfo(object):
                 self.links.append(Link(object))
 
         # [type - boolean]
-        # true—Asynchronous streaming replication enabled.
-        # false—Asynchronous streaming replication disabled.
+        # true - Asynchronous streaming replication enabled.
+        # false - Asynchronous streaming replication disabled.
         self.asyncEnabled = object_hash.get('asyncEnabled')
 
 
