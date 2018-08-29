@@ -3494,8 +3494,7 @@ volume_name, lunid, hostname or port")
             starting snapshot or volume was specified, or the snapshot or
             volume does not exist.
         """
-        response, body = self.client.startRemoteCopy(name, optional)
-        return self.getTask(body['taskid'])
+        return self.client.startRemoteCopy(name, optional)
 
     def stopRemoteCopy(self, name, optional=None):
         """
