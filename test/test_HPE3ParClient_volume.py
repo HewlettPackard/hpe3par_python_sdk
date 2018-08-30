@@ -721,8 +721,8 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
     def test_10_modify_volume_set_change_flash_cache(self):
         self.printHeader('modify_volume_set_change_flash_cache')
-        self.cl.FLASH_CACHE_ENABLED = 1
-        self.cl.FLASH_CACHE_DISABLED = 2
+	self.cl.FLASH_CACHE_ENABLED = 1
+	self.cl.FLASH_CACHE_DISABLED = 2
         try:
             self.cl.createVolumeSet(VOLUME_SET_NAME1, domain=self.DOMAIN,
                                     comment="First")
@@ -755,7 +755,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
     def test_10_modify_volume_set_add_members_to_empty(self):
         self.printHeader('modify_volume_set_add_members_to_empty')
-        self.cl.SET_MEM_ADD = 1
+	self.cl.SET_MEM_ADD = 1
         optional = {'comment': 'test volume 1', 'tpvv': True}
         self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
         optional = {'comment': 'test volume 2', 'tpvv': True}
@@ -777,7 +777,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
     def test_10_modify_volume_set_add_members(self):
         self.printHeader('modify_volume_set_add_members')
-        #HPE3ParClient.SET_MEM_ADD = 1
+	#HPE3ParClient.SET_MEM_ADD = 1
         optional = {'comment': 'test volume 1', 'tpvv': True}
         self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
         optional = {'comment': 'test volume 2', 'tpvv': True}
@@ -789,8 +789,8 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                 comment="Unit test volume set 1")
 
         members = [VOLUME_NAME2]
-        # ----------- TODO-----------------
-        # change 1 to HPE3ParClient.SET_MEM_ADD,
+	# ----------- TODO-----------------
+	# change 1 to HPE3ParClient.SET_MEM_ADD,
         self.cl.modifyVolumeSet(VOLUME_SET_NAME1, 1,
                                 setmembers=members)
 
@@ -803,10 +803,10 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
     def test_10_modify_volume_set_del_members(self):
         self.printHeader('modify_volume_del_members')
-        
-        #--------TODO----------
-        # Remove below declartion to use the parent class value
-        self.cl.SET_MEM_REMOVE = 2
+	
+	#--------TODO----------
+	# Remove below declartion to use the parent class value
+	self.cl.SET_MEM_REMOVE = 2
 
         optional = {'comment': 'test volume 1', 'tpvv': True}
         self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
@@ -1274,7 +1274,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
 
         self.printFooter('create_remote_copy_group')
 
@@ -1288,7 +1288,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
 
         # Delete remote copy group
         self.cl.removeRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
@@ -1311,14 +1311,14 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
 
         REMOTE_COPY_TARGETS[0]['syncPeriod'] = 300
         self.cl.modifyRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1,
                                       {'targets': REMOTE_COPY_TARGETS})
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp.targets
-        self.assertEqual(300, targets[0].syncPeriod)
+        targets = resp['targets']
+        self.assertEqual(300, targets[0]['syncPeriod'])
 
         self.printFooter('modify_remote_copy_group')
 
@@ -1332,7 +1332,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
@@ -1343,8 +1343,8 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                            RC_VOLUME_NAME,
                                            REMOTE_COPY_TARGETS)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp.volumes
-        self.assertEqual(RC_VOLUME_NAME, volumes[0].localVolumeName)
+        volumes = resp['volumes']
+        self.assertEqual(RC_VOLUME_NAME, volumes[0]['name'])
 
         self.printFooter('add_volume_to_remote_copy_group')
 
@@ -1358,7 +1358,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
 
         # Add non existent volume to remote copy group
         self.assertRaises(
@@ -1381,7 +1381,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
@@ -1392,14 +1392,14 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                            RC_VOLUME_NAME,
                                            REMOTE_COPY_TARGETS)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp.volumes
-        self.assertEqual(RC_VOLUME_NAME, volumes[0].localVolumeName)
+        volumes = resp['volumes']
+        self.assertEqual(RC_VOLUME_NAME, volumes[0]['name'])
 
         # Remove volume from remote copy group
         self.cl.removeVolumeFromRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1,
                                                 RC_VOLUME_NAME)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp.volumes
+        volumes = resp['volumes']
         self.assertEqual([], volumes)
 
         self.printFooter('remove_volume_from_remote_copy_group')
