@@ -1,11 +1,11 @@
 # (C) Copyright 2018 Hewlett Packard Enterprise Development LP
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
 # a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -28,6 +28,9 @@ from models import CPG
 from models import LDLayoutCapacity
 from models import VolumeSet
 from models import QoSRule
+from models import RemoteCopyInfo
+from models import RemoteCopyGroup
+from models import Volumes
 
 
 import time
@@ -73,19 +76,28 @@ class HPE3ParClient(object):
     OPENVMS = 9
     HPUX = 10
     WINDOWS_SERVER = 11
-    
+
+    # Remote Copy Recovery Enumeration
+    REVERSE_GROUP =6
+    FAILOVER_GROUP = 7
+    SWITCHOVER_GROUP = 8
+    RECOVER_GROUP = 9
+    RESTORE_GROUP = 10
+    OVERRIDE_GROUP = 11
+    CLX_DR = 12
+
     # QoS priority Enumeration
     class QOSPriority:
         LOW = 1
         NORMAL = 2
         HIGH = 3
-    
+
     # Task Priority Enumeration
     class TaskPriority:
         HIGH = 1
         MEDIUM = 2
         LOW = 3
-  
+
     # Qos Zero None Operation
     ZERO = 1
     NOLIMIT = 2
@@ -93,10 +105,10 @@ class HPE3ParClient(object):
     # QoS target Type
     VVSET = 1
     SYS = 2
-    
+
     VLUN_QUERY_SUPPORTED = False
     HOST_AND_VV_SET_FILTER_SUPPORTED = False
-    
+
     CURRENT_WSAPI_VERSION = None
 
     """ The 3PAR REST API Client.
@@ -112,8 +124,8 @@ class HPE3ParClient(object):
         self.api_url = api_url
         self.client = client.HPE3ParClient(api_url, debug, secure, timeout, suppress_ssl_warnings)
         self.check_WSAPI_version()
-        
-    
+
+
     def check_WSAPI_version(self):
         try:
             api_version = self.getWsApiVersion()
@@ -123,24 +135,24 @@ class HPE3ParClient(object):
             if ex_message and 'SSL Certificate Verification Failed' in ex_message:
                 raise exceptions.SSLCertFailed()
             else:
-                msg = """Error: %s - Error communicating with 3PAR WSAPI. 
+                msg = """Error: %s - Error communicating with 3PAR WSAPI.
 Check proxy settings. If error persists, either the
 3PAR WSAPI is not running OR the version of the WSAPI is
 not supported.""" % (ex_message)
                 raise exceptions.ConnectionError(msg)
-                
+
     def compare_version(self, api_version):
         self.CURRENT_WSAPI_VERSION = '{}.{}.{}'.format(api_version['major'], api_version['minor'], api_version['revision'])
         if StrictVersion(self.CURRENT_WSAPI_VERSION) < StrictVersion(self.WSAPI_MIN_SUPPORTED_VERSION):
             err_msg = 'Unsupported 3PAR WS API version %s, min supported version is %s' % (self.CURRENT_WSAPI_VERSION, self.WSAPI_MIN_SUPPORTED_VERSION)
             raise exceptions.UnsupportedVersion(err_msg)
-            
+
         if StrictVersion(self.CURRENT_WSAPI_VERSION) >= StrictVersion(self.WSAPI_MIN_VERSION_VLUN_QUERY_SUPPORT):
             self.VLUN_QUERY_SUPPORTED = True
-            
+
         if StrictVersion(self.CURRENT_WSAPI_VERSION) >=  StrictVersion(self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT):
             self.HOST_AND_VV_SET_FILTER_SUPPORTED = True
-            
+
 
     def setSSHOptions(self, ip, login, password, port=22,
                       conn_timeout=None, privatekey=None,
@@ -1111,7 +1123,7 @@ not supported.""" % (ex_message)
 
         """
         return self.client.stopOfflinePhysicalCopy(name)
-        
+
     def resyncPhysicalCopy(self, volume_name):
         """Resynchronizes a physical copy.
 
@@ -2571,13 +2583,204 @@ not supported.""" % (ex_message)
         """
         return self.client.findVolumeMetaData(name, key, value)
 
+    def getVolumeSnapshots(self, name):
+        """
+        Shows all snapshots associated with a given volume.
+
+        :param name: The volume name
+        :type name: str
+
+        :returns: List of snapshot names
+        """
+        return self.client.getVolumeSnapshots(name)
+
+    def _mergeDict(self, dict1, dict2):
+        """
+        Safely merge 2 dictionaries together
+
+        :param dict1: The first dictionary
+        :type dict1: dict
+        :param dict2: The second dictionary
+        :type dict2: dict
+
+        :returns: dict
+
+        :raises Exception: dict1, dict2 is not a dictionary
+        """
+        return self.client._mergeDict(dict1, dict2)
+
+    def _get_next_word(self, s, search_string):
+        """Return the next word.
+
+        Search 's' for 'search_string', if found return the word preceding
+        'search_string' from 's'.
+        """
+        return self.client._get_next_word(s, search_string)
+
+    def getCPGStatData(self, name, interval='daily', history='7d'):
+        """
+        Requests CPG performance data at a sampling rate (interval) for a
+        given length of time to sample (history)
+
+        :param name: a valid CPG name
+        :type name: str
+        :param interval: hourly, or daily
+        :type interval: str
+        :param history: xm for x minutes, xh for x hours, or xd for x days
+                        (e.g. 30m, 1.5h, 7d)
+        :type history: str
+
+        :returns: dict
+
+        :raises: :class:`~hpe3parclient.exceptions.SrstatldException`
+            - srstatld gives invalid output
+        """
+        return self.client.getCPGStatData(name, interval, history)
+
+    def _format_srstatld_output(self, out):
+        """
+        Formats the output of the 3PAR CLI command srstatld
+        Takes the total read/write value when possible
+
+        :param out: the output of srstatld
+        :type out: list
+
+        :returns: dict
+        """
+        return self.client._format_srstatld_output(out)
+
+    def tuneVolume(self, volName, tune_operation, optional=None):
+        info = { 'action': self.TUNE_VOLUME, 'tuneOperation': tune_operation }
+
+        if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
+            if 'compression' in optional.keys():
+                del optional['compression']
+        if optional:
+            info = self.client._mergeDict(info, optional)
+        response, body = self.client.http.put(
+            '/volumes/%s' % volName, body=info)
+        return self.getTask(body['taskid'])
+
+    def cpgExists(self, name):
+        try:
+            self.getCPG(name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+
+    def volumeExists(self, name):
+        try:
+            self.getVolume(name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+
+    def hostExists(self, name):
+        try:
+            self.getHost(name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+
+    def hostSetExists(self, name):
+        try:
+            self.getHostSet(name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+
+    def volumeSetExists(self, name):
+        try:
+            self.getVolumeSet(name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+
+    def vlunExists(self, volume_name, lunid, hostname, port):
+        try:
+            vlun_id = ''
+            if volume_name is not None:
+                vlun_id = volume_name
+            if lunid is not None:
+                vlun_id = "%s,%s" % (vlun_id, lunid)
+            if hostname is not None:
+                vlun_id = '%s,%s' % (vlun_id, hostname)
+            if port is not None:
+                if hostname is None:
+                    vlun_id = '%s,' % vlun_id
+
+                vlun_id = '%s,%s:%s:%s' % (vlun_id, str(port['node']), str(
+                    port['slot']), str(port['cardPort']))
+            if ((volume_name is None or len(volume_name) == 0) or
+                    lunid is None and (hostname is None or port is None)):
+                raise Exception("Some or all parameters are missing : \
+volume_name, lunid, hostname or port")
+            self.client.http.get('/vluns/%s' % vlun_id)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+
+    def qosRuleExists(self, targetName, targetType):
+        try:
+            self.queryQoSRule(targetName, targetType)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+
+    def flashCacheExists(self):
+        try:
+            self.getFlashCache()
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+
+    def onlinePhysicalCopyExists(self, src_name, phy_copy_name):
+        try:
+            if self.volumeExists(src_name) and self.volumeExists(phy_copy_name) and self._findTask(phy_copy_name,True) != None:
+                return True
+        except exceptions.HTTPNotFound:
+            return False
+        return False
+
+    def offlinePhysicalCopyExists(self, src_name, phy_copy_name):
+        try:
+            if self.volumeExists(src_name) and self.volumeExists(phy_copy_name) and self._findTask(src_name + "-*" + phy_copy_name, True) != None:
+                return True
+        except exceptions.HTTPNotFound:
+            return False
+        return False
+
+    #Takes a list of host setmembers and adds them to a hostset
+    def addHostsToHostSet(self, name, setmembers):
+        self.client.modifyHostSet(
+            name, action=client.HPE3ParClient.SET_MEM_ADD,
+            setmembers=setmembers)
+
+    # Takes a list of host setmembers and removes them from a hostset
+    def removeHostsFromHostSet(self, name, setmembers):
+        self.client.modifyHostSet(
+            name, action=client.HPE3ParClient.SET_MEM_REMOVE,
+            setmembers=setmembers)
+
+    # Takes a list of volume setmembers and adds them to a volumeset
+    def addVolumesToVolumeSet(self, name, setmembers):
+        self.client.modifyVolumeSet(
+            name, action=client.HPE3ParClient.SET_MEM_ADD,
+            setmembers=setmembers)
+
+    # Takes a list of volume setmembers and removes them from a volumeset
+    def removeVolumesFromVolumeSet(self, name, setmembers):
+        self.client.modifyVolumeSet(
+            name, action=client.HPE3ParClient.SET_MEM_REMOVE,
+            setmembers=setmembers)
+
     def getRemoteCopyInfo(self):
         """
         Querying Overall Remote-Copy Information
 
         :returns: Overall Remote Copy Information
         """
-        return self.client.getRemoteCopyInfo()
+        return RemoteCopyInfo(self.client.getRemoteCopyInfo())
 
     def getRemoteCopyGroups(self):
         """
@@ -2586,7 +2789,11 @@ not supported.""" % (ex_message)
         :returns: list of Remote Copy Groups
 
         """
-        return self.client.getRemoteCopyGroups()
+        remoteCopyGroups = []
+        remoteCopyGroups_list = self.client.getRemoteCopyGroups()['members']
+        for remoteCopyGroup in remoteCopyGroups_list:
+            remoteCopyGroups.append(RemoteCopyGroup(remoteCopyGroup))
+        return remoteCopyGroups
 
     def getRemoteCopyGroup(self, name):
         """
@@ -2598,7 +2805,37 @@ not supported.""" % (ex_message)
         :returns: Remote Copy Group
 
         """
-        return self.client.getRemoteCopyGroup(name)
+        return RemoteCopyGroup(self.client.getRemoteCopyGroup(name))
+
+    def getRemoteCopyGroupVolumes(self, remoteCopyGroupName):
+        """
+        Returns information on all volumes in a Remote Copy Groups
+
+        :param remoteCopyGroupName: the remote copy group name
+        :type name: str
+
+        :returns: list of volumes in a Remote Copy Groups
+
+        """
+        remoteCopyGroupVolumes = []
+        remoteCopyGroupVolumes_list = self.client.getRemoteCopyGroupVolumes(remoteCopyGroupName)['members']
+        for remoteCopyGroupVolume in remoteCopyGroupVolumes_list:
+            remoteCopyGroupVolumes.append(Volumes(remoteCopyGroupVolume))
+        return remoteCopyGroupVolumes
+
+    def getRemoteCopyGroupVolume(self, remoteCopyGroupName, volumeName):
+        """
+        Returns information on one volume of a Remote Copy Group
+
+        :param remoteCopyGroupName: the remote copy group name
+        :type name: str
+        :param volumeName: the remote copy group name
+        :type name: str
+
+        :returns: RemoteVolume
+
+        """
+        return Volumes(self.client.getRemoteCopyGroupVolume(remoteCopyGroupName, volumeName))
 
     def createRemoteCopyGroup(self, name, targets, optional=None):
         """
@@ -3133,7 +3370,7 @@ not supported.""" % (ex_message)
             state.
         """
         return self.client.addVolumeToRemoteCopyGroup(name, volumeName,
-                                                      targets, optional)
+                                   targets, optional, True)
 
     def removeVolumeFromRemoteCopyGroup(self, name, volumeName,
                                         optional=None,
@@ -3192,8 +3429,7 @@ not supported.""" % (ex_message)
             not ready.
         """
         return self.client.removeVolumeFromRemoteCopyGroup(name, volumeName,
-                                                           optional,
-                                                           removeFromTarget)
+                                   optional, removeFromTarget, True)
 
     def startRemoteCopy(self, name, optional=None):
         """
@@ -3346,7 +3582,8 @@ not supported.""" % (ex_message)
             - RCOPY_GROUP_STARTED - The remote-copy group has already been
             started.
         """
-        return self.client.synchronizeRemoteCopyGroup(name, optional)
+        response, body = self.client.synchronizeRemoteCopyGroup(name, optional)
+        return self.getTask(body['taskid'])
 
     def recoverRemoteCopyGroupFromDisaster(self, name, action, optional=None):
         """
@@ -3469,8 +3706,12 @@ not supported.""" % (ex_message)
             - RCOPY_GROUP_OPERATION_ONLY_ON_SECONDARY_SIDE - Operation should
             only be issued on secondary side.
         """
-        return self.client.recoverRemoteCopyGroupFromDisaster(name, action,
-                                                              optional)
+        response, body = self.client.recoverRemoteCopyGroupFromDisaster(name, action, optional)
+        tasks = []
+        for member in body['members']:
+            tasks.append(self.getTask(member['taskid']))
+        return tasks
+
 
     def toggleRemoteCopyConfigMirror(self, target, mirror_config=True):
         """
@@ -3482,195 +3723,18 @@ not supported.""" % (ex_message)
                               mirroring.
         :type mirror_config: bool
         """
-        self.client.toggleRemoteCopyConfigMirror(target, mirror_config)
+        return self.client.toggleRemoteCopyConfigMirror(target, mirror_config)
 
-    def getVolumeSnapshots(self, name):
-        """
-        Shows all snapshots associated with a given volume.
-
-        :param name: The volume name
-        :type name: str
-
-        :returns: List of snapshot names
-        """
-        return self.client.getVolumeSnapshots(name)
-
-    def _mergeDict(self, dict1, dict2):
-        """
-        Safely merge 2 dictionaries together
-
-        :param dict1: The first dictionary
-        :type dict1: dict
-        :param dict2: The second dictionary
-        :type dict2: dict
-
-        :returns: dict
-
-        :raises Exception: dict1, dict2 is not a dictionary
-        """
-        return self.client._mergeDict(dict1, dict2)
-
-    def _get_next_word(self, s, search_string):
-        """Return the next word.
-
-        Search 's' for 'search_string', if found return the word preceding
-        'search_string' from 's'.
-        """
-        return self.client._get_next_word(s, search_string)
-
-    def getCPGStatData(self, name, interval='daily', history='7d'):
-        """
-        Requests CPG performance data at a sampling rate (interval) for a
-        given length of time to sample (history)
-
-        :param name: a valid CPG name
-        :type name: str
-        :param interval: hourly, or daily
-        :type interval: str
-        :param history: xm for x minutes, xh for x hours, or xd for x days
-                        (e.g. 30m, 1.5h, 7d)
-        :type history: str
-
-        :returns: dict
-
-        :raises: :class:`~hpe3parclient.exceptions.SrstatldException`
-            - srstatld gives invalid output
-        """
-        return self.client.getCPGStatData(name, interval, history)
-
-    def _format_srstatld_output(self, out):
-        """
-        Formats the output of the 3PAR CLI command srstatld
-        Takes the total read/write value when possible
-
-        :param out: the output of srstatld
-        :type out: list
-
-        :returns: dict
-        """
-        return self.client._format_srstatld_output(out)
-
-    def tuneVolume(self, volName, tune_operation, optional=None):
-        info = { 'action': self.TUNE_VOLUME, 'tuneOperation': tune_operation }
-
-        if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
-            if 'compression' in optional.keys():
-                del optional['compression']
-        if optional:
-            info = self.client._mergeDict(info, optional)
-        response, body = self.client.http.put(
-            '/volumes/%s' % volName, body=info)
-        return self.getTask(body['taskid'])
-
-    def cpgExists(self, name):
+    def remoteCopyGroupExists(self, name):
         try:
-            self.getCPG(name)
+            self.getRemoteCopyGroup(name)
         except exceptions.HTTPNotFound:
             return False
         return True
 
-    def volumeExists(self, name):
+    def remoteCopyGroupVolumeExists(self, remote_copy_group_name, volume_name):
         try:
-            self.getVolume(name)
+            self.getRemoteCopyGroupVolume(remote_copy_group_name, volume_name)
         except exceptions.HTTPNotFound:
             return False
         return True
-
-    def hostExists(self, name):
-        try:
-            self.getHost(name)
-        except exceptions.HTTPNotFound:
-            return False
-        return True
-
-    def hostSetExists(self, name):
-        try:
-            self.getHostSet(name)
-        except exceptions.HTTPNotFound:
-            return False
-        return True
-
-    def volumeSetExists(self, name):
-        try:
-            self.getVolumeSet(name)
-        except exceptions.HTTPNotFound:
-            return False
-        return True
-
-    def vlunExists(self, volume_name, lunid, hostname, port):
-        try:
-            vlun_id = ''
-            if volume_name is not None:
-                vlun_id = volume_name
-            if lunid is not None:
-                vlun_id = "%s,%s" % (vlun_id, lunid)
-            if hostname is not None:
-                vlun_id = '%s,%s' % (vlun_id, hostname)
-            if port is not None:
-                if hostname is None:
-                    vlun_id = '%s,' % vlun_id
-
-                vlun_id = '%s,%s:%s:%s' % (vlun_id, str(port['node']), str(
-                    port['slot']), str(port['cardPort']))
-            if ((volume_name is None or len(volume_name) == 0) or
-                    lunid is None and (hostname is None or port is None)):
-                raise Exception("Some or all parameters are missing : \
-volume_name, lunid, hostname or port")
-            self.client.http.get('/vluns/%s' % vlun_id)
-        except exceptions.HTTPNotFound:
-            return False
-        return True
-
-    def qosRuleExists(self, targetName, targetType):
-        try:
-            self.queryQoSRule(targetName, targetType)
-        except exceptions.HTTPNotFound:
-            return False
-        return True
-
-    def flashCacheExists(self):
-        try:
-            self.getFlashCache()
-        except exceptions.HTTPNotFound:
-            return False
-        return True
-
-    def onlinePhysicalCopyExists(self, src_name, phy_copy_name):
-        try:
-            if self.volumeExists(src_name) and self.volumeExists(phy_copy_name) and self._findTask(phy_copy_name,True) != None:
-                return True
-        except exceptions.HTTPNotFound:
-            return False
-        return False
-        
-    def offlinePhysicalCopyExists(self, src_name, phy_copy_name):
-        try:
-            if self.volumeExists(src_name) and self.volumeExists(phy_copy_name) and self._findTask(src_name + "-*" + phy_copy_name, True) != None:
-                return True
-        except exceptions.HTTPNotFound:
-            return False
-        return False
-      
-    #Takes a list of host setmembers and adds them to a hostset
-    def addHostsToHostSet(self, name, setmembers):
-        self.client.modifyHostSet(
-            name, action=client.HPE3ParClient.SET_MEM_ADD,
-            setmembers=setmembers)
-
-    # Takes a list of host setmembers and removes them from a hostset
-    def removeHostsFromHostSet(self, name, setmembers):
-        self.client.modifyHostSet(
-            name, action=client.HPE3ParClient.SET_MEM_REMOVE,
-            setmembers=setmembers)
-
-    # Takes a list of volume setmembers and adds them to a volumeset
-    def addVolumesToVolumeSet(self, name, setmembers):
-        self.client.modifyVolumeSet(
-            name, action=client.HPE3ParClient.SET_MEM_ADD,
-            setmembers=setmembers)
-
-    # Takes a list of volume setmembers and removes them from a volumeset
-    def removeVolumesFromVolumeSet(self, name, setmembers):
-        self.client.modifyVolumeSet(
-            name, action=client.HPE3ParClient.SET_MEM_REMOVE,
-            setmembers=setmembers)
