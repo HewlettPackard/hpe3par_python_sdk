@@ -3582,7 +3582,7 @@ volume_name, lunid, hostname or port")
             - RCOPY_GROUP_STARTED - The remote-copy group has already been
             started.
         """
-        response, body = self.client.synchronizeRemoteCopyGroup(name, optional)
+        body = self.client.synchronizeRemoteCopyGroup(name, optional)
         return self.getTask(body['taskid'])
 
     def recoverRemoteCopyGroupFromDisaster(self, name, action, optional=None):
