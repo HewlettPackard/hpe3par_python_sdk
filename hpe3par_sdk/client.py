@@ -3582,8 +3582,7 @@ volume_name, lunid, hostname or port")
             - RCOPY_GROUP_STARTED - The remote-copy group has already been
             started.
         """
-        body = self.client.synchronizeRemoteCopyGroup(name, optional)
-        return self.getTask(body['taskid'])
+        return self.client.synchronizeRemoteCopyGroup(name, optional)
 
     def recoverRemoteCopyGroupFromDisaster(self, name, action, optional=None):
         """
@@ -3706,12 +3705,7 @@ volume_name, lunid, hostname or port")
             - RCOPY_GROUP_OPERATION_ONLY_ON_SECONDARY_SIDE - Operation should
             only be issued on secondary side.
         """
-        response, body = self.client.recoverRemoteCopyGroupFromDisaster(name, action, optional)
-        tasks = []
-        for member in body['members']:
-            tasks.append(self.getTask(member['taskid']))
-        return tasks
-
+        return self.client.recoverRemoteCopyGroupFromDisaster(name, action, optional)
 
     def toggleRemoteCopyConfigMirror(self, target, mirror_config=True):
         """
