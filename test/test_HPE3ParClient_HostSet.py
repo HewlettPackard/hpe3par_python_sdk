@@ -17,7 +17,6 @@
 import unittest
 from test import HPE3ParClient_base
 import random
-
 from hpe3parclient import exceptions
 
 VOLUME_SIZE = 512
@@ -146,7 +145,6 @@ class HPE3ParClientHostSetTestCase(HPE3ParClient_base
 
         volume = self.cl.getVolume(volume_name2)
         self.assertEqual(volume.name, volume_name2)
-
         host_vluns = self.cl.getHostVLUNs(host_name)
         self.assertIn(volume_name1,
                       [vlun.volume_name for vlun in host_vluns])

@@ -823,10 +823,11 @@ def get_vluns():
     debugRequest(flask.request)
     if 'query' in flask.request.args:
        query = flask.request.args.get('query')
-       newquery = query.replace('%22',' ')
-       newquery = newquery.replace('%20',' ')
-       newquery = newquery.strip()
+       #newquery = query.replace('%22',' ')
+       #newquery = newquery.replace('%20',' ')
+       newquery = query.strip()
        newquery = newquery.replace('"','')
+       newquery = newquery.replace("'","")
        volstr = newquery.split('EQ')
        memname = volstr[0].strip()
        if memname != 'hostname':
@@ -836,6 +837,8 @@ def get_vluns():
              if vlun['volumeName'] == volume_name:
                 ret['members']=[vlun]
           resp = flask.make_response(json.dumps(ret), 200)
+       else:
+          resp = flask.make_response(json.dumps(vluns), 200)
     else:
         resp = flask.make_response(json.dumps(vluns), 200)
     return resp
@@ -1118,12 +1121,10 @@ def get_remote_copy_groups():
 @app.route('/api/v1/remotecopygroups/<rcg_name>', methods=['GET'])
 def get_remote_copy_group(rcg_name):
     debugRequest(flask.request)
-
     for rcg in remote_copy_groups['members']:
         if rcg['name'] == rcg_name:
             resp = flask.make_response(json.dumps(rcg), 200)
             return resp
-
     throw_error(404, NON_EXISTENT_RCOPY_GROUP,
                 "remote copy group doesn't exist")
 
@@ -1154,6 +1155,7 @@ def create_remote_copy_group():
                     'No remote copy group provided.')
 
     data['volumes'] = []
+    data['taskid'] = 8933
     remote_copy_groups['members'].append(data)
     return flask.make_response("", 200)
 
@@ -1171,15 +1173,12 @@ def delete_remote_copy_group(rcg_name):
 
 @app.route('/api/v1/remotecopygroups/<rcg_name>/volumes/<volume_name>', methods=['DELETE'])
 def delete_volumes_from_remote_copy_group(rcg_name,volume_name):
-    logf=open("removol.txt","w")
     debugRequest(flask.request)
-    logf.write(remote_copy_groups)
-    logf.close()
     for rcg in remote_copy_groups['members']:
-        if rcg['name'] == rcg_name:
+        if rcg['name'] == rcg_name:              
             for volumes in rcg['volumes']:
                 if volumes['localVolumeName']==volume_name:
-                   remote_copy_groups['members']['volumes'].remove(volumes)
+                   rcg['volumes'].remove(volumes)
             return flask.make_response("", 200)
 
     throw_error(404, NON_EXISTENT_RCOPY_GROUP,
@@ -1190,7 +1189,6 @@ def delete_volumes_from_remote_copy_group(rcg_name,volume_name):
 def add_volumes_remote_copy_group(rcg_name):
     debugRequest(flask.request)
     data = json.loads(flask.request.data.decode('utf-8'))
-
     valid_keys = {'targets': None, 'targetName': None,
                   'mode': None, 'userCPG': None, 'snapCPG': None,
                   'localSnapCPG': None, 'localUserCPG': None, 'domain': None,
@@ -1207,19 +1205,25 @@ def add_volumes_remote_copy_group(rcg_name):
     for key in list(data.keys()):
         if key not in list(valid_keys.keys()):
             throw_error(400, INV_INPUT, "Invalid Parameter '%s'" % key)
-
+     
     for rcg in remote_copy_groups['members']:
         if rcg['name'] == rcg_name:
-            # We are adding a volume to a remote copy group
+            vol_found = False
+            for volume in volumes['members']:
+                # We are adding a volume to a remote copy group            
+                if volume['name']==data['volumeName']:
+                   vol_found = True
+                   rv_id = len(rcg['volumes'])+1
+                   rcg['volumes'].append({'remoteVolumes':[{'targetName':'TA_1','remoteVolumeName':'REMOTE_VOLUME1','remoteVolumeID':rv_id}],'localVolumeName':data['volumeName'],'localVolumeID':('LOCAL_ID'+str(rv_id))})
+            if not vol_found:
+                throw_error(404, NON_EXISTENT_VOL,"volume doesn't exist")
+        else: 
+                throw_error(404, NON_EXISTENT_RCOPY_GROUP,"remote copy group doesn't exist")
             
-            rv_id = len(rcg['volumes'])+1
-            rcg['volumes'].append({'remoteVolumes':[{'targetName':'TA_1','remoteVolumeName':'REMOTE_VOLUME1','remoteVolumeID':rv_id}],'localVolumeName':data['volumeName'],'localVolumeID':('LOCAL_ID'+str(rv_id))})
-	    #rcg['volumes'].append({'localVolumeName':data['volumeName']})
-            resp = flask.make_response(json.dumps(rcg), 200)
-            return resp
-    throw_error(404, NON_EXISTENT_RCOPY_GROUP,
-                "remote copy group doesn't exist")
+    resp = flask.make_response(json.dumps(rcg), 200)
+    return resp
  
+
 
 @app.route('/api/v1/remotecopygroups/<rcg_name>', methods=['PUT'])
 def modify_remote_copy_group(rcg_name):
@@ -1238,7 +1242,7 @@ def modify_remote_copy_group(rcg_name):
                   'pathManagement': None, 'secVolumeName': None,
                   'snapshotName': None, 'volumeAutoCreation': None,
                   'skipInitialSync': None, 'volumeName': None, 'action': None}
-
+     
     for key in list(data.keys()):
         if key not in list(valid_keys.keys()):
             throw_error(400, INV_INPUT, "Invalid Parameter '%s'" % key)
@@ -1767,7 +1771,6 @@ def get_version():
 @app.route('/api/v1/tasks/<task_id>', methods=['GET'])
 def get_task(task_id):
     debugRequest(flask.request)
-
     try:
         task_id = int(task_id)
     except ValueError:
