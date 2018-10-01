@@ -3732,3 +3732,93 @@ volume_name, lunid, hostname or port")
         except exceptions.HTTPNotFound:
             return False
         return True
+
+    def admitRemoteCopyLinks(self, targetName, source_port, target_port_wwn_or_ip):
+        """
+        Creating remote copy link from soure to target.
+        :param targetName - The name of target system
+        :type name: str
+        :source_port - Source ethernet/Fibre channel port
+        :type name: str
+        :target_port_wwn_or_ip- Target system's peer port WWN/IP
+        :type name: str
+        :returns: empty list if successful
+        """
+        return self.client.admitRemoteCopyLinks(targetName, source_port, target_port_wwn_or_ip)
+
+    def dismissRemoteCopyLinks(self, targetName, source_port, target_port_wwn_or_ip):
+        """
+        Dismissing remote copy link from soure to target.
+        :param targetName - The name of target system
+        :type name: str
+        :source_port - Source ethernet/Fibre channel port
+        :type name: str
+        :target_port_wwn_or_ip- Target system's peer port WWN/IP
+        :type name: str
+        :returns: empty list if successful
+        """
+        return self.client.dismissRemoteCopyLinks(targetName, source_port, target_port_wwn_or_ip)
+
+    def startrCopy(self):
+        """
+        Starting remote copy service
+        :returns: empty list if successful
+        """
+        return self.client.startrCopy()
+
+    def rcopyServiceExists(self):
+        """
+        checking rcopyservice status
+        :returns: True if status is 'Started'
+        :         False if status is 'Stopped'
+        """
+        return self.client.rcopyServiceExists()
+
+    def rcopyLinkExists(self,targetName,local_port,target_system_peer_port):
+        """
+        checking remote copy link from soure to target.
+        :param targetName - The name of target system
+        :type name: str
+        :source_port - Source ethernet/Fibre channel port
+        :type name: str
+        :target_port_wwn_or_ip- Target system's peer port WWN/IP
+        :type name: str
+        :returns: True if remote copy link exists
+        :         False if remote copy link doesn't exists
+        """
+        return self.client.rcopyLinkExists(targetName, local_port, target_system_peer_port)
+
+    def admitRemoteCopyTarget(self, targetName, mode, remote_copy_group_name, source_target_volume_pairs_list=[]):
+        """
+        Adding target to remote copy group.
+        :param targetName - The name of target system
+        :type name: str
+        :mode - synchronization mode
+        :type name: str
+        :remote_copy_group_name
+        :type : str
+        :source_target_volume_pairs_list: list of pairs of primary and remote copy volumes
+        :type : list
+        """
+        return self.client.admitRemoteCopyTarget(targetName, mode, remote_copy_group_name, source_target_volume_pairs_list)
+
+    def dismissRemoteCopyTarget(self, targetName, remote_copy_group_name):
+        """
+        Dismissing target from remote copy group.
+        :param targetName - The name of target system
+        :type name: str
+        :remote_copy_group_name
+        :type : str
+        """
+        return self.client.dismissRemoteCopyTarget(targetName, remote_copy_group_name)
+
+    def targetInRemoteCopyGroupExists(self, targetName, remote_copy_group_name):
+        """
+        Determines whether target is present in remote copy group.
+        :param targetName - The name of target system
+        :type name: str
+        :remote_copy_group_name
+        :type : str
+        """
+        return self.client.targetInRemoteCopyGroupExists(targetName, remote_copy_group_name)
+
