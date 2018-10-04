@@ -107,7 +107,7 @@ class HPE3ParClient(object):
 
     """
 
-    def __init__(self, api_url, app_type = 'python_sdk_3par', debug=False, secure=False, timeout=None,
+    def __init__(self, api_url, app_type = 'python_SDK_3par', debug=False, secure=False, timeout=None,
                  suppress_ssl_warnings=False):
         self.api_url = api_url
         self.client = client.HPE3ParClient(api_url, debug, secure, timeout, suppress_ssl_warnings)
