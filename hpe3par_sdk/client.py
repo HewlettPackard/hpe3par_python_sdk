@@ -3674,3 +3674,43 @@ volume_name, lunid, hostname or port")
         self.client.modifyVolumeSet(
             name, action=client.HPE3ParClient.SET_MEM_REMOVE,
             setmembers=setmembers)
+
+    def createSchedule(self, schedule_name, task, taskfreq):
+        """Create Schedule for volume snapshot.
+        :param schedule_name - The name of the schedule
+        :type - string
+        :param volume_name - The name of the volume
+        :type - string
+        :param expiration - Expiration period for snapshot
+        :type - string
+        :retain - Retaintion period for snapshot
+        :type - string
+        :taskschedule - schedule for snapshot created
+        :type - string
+        """
+        return self.client.createSchedule(schedule_name, task, taskfreq)
+
+    def deleteSchedule(self, schedule_name):
+        """Delete Schedule
+        :param schedule_name - The name of the schedule to delete
+        :type - string
+        """
+        return self.client.deleteSchedule(schedule_name)
+
+    def scheduleExists(self, name):
+        try:
+            result = self.getSchedule(name)
+        except exceptions.HTTPNotFound:
+            return False
+        if 'No scheduled tasks listed' in result:
+            return False
+        else:
+            return True
+
+
+    def getSchedule(self, schedule_name):
+        """Get Schedule
+        :param schedule_name - The name of the schedule to get information
+        :type - string
+        """
+        return self.client.getSchedule(schedule_name)
