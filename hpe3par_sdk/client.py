@@ -107,11 +107,13 @@ class HPE3ParClient(object):
 
     """
 
-    def __init__(self, api_url, debug=False, secure=False, timeout=None,
+    def __init__(self, api_url, app_type = 'python_SDK_3par', debug=False, secure=False, timeout=None,
                  suppress_ssl_warnings=False):
         self.api_url = api_url
         self.client = client.HPE3ParClient(api_url, debug, secure, timeout, suppress_ssl_warnings)
         self.check_WSAPI_version()
+        self.app_type = app_type
+        self.app_key = 'hpe_ecosystem_product'
         
     
     def check_WSAPI_version(self):
@@ -441,6 +443,10 @@ not supported.""" % (ex_message)
         if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
             if 'compression' in optional.keys():
                 del optional['compression']
+        object_key_values = {'objectKeyValues': [{'key': self.app_key, 'value': self.app_type}]}
+        if optional is None:
+            optional = {}
+        optional = self.client._mergeDict(optional, object_key_values)
         return self.client.createVolume(name, cpgName, sizeMiB, optional)
 
     def deleteVolume(self, name):
@@ -469,7 +475,7 @@ not supported.""" % (ex_message)
             pass
         return self.client.deleteVolume(name)
 
-    def modifyVolume(self, name, volumeMods, app_type=None):
+    def modifyVolume(self, name, volumeMods):
         """Modify a volume.
 
         :param name: the name of the volume
@@ -580,7 +586,7 @@ not supported.""" % (ex_message)
             snapshot.
 
         """
-        return self.client.modifyVolume(name, volumeMods, app_type)
+        return self.client.modifyVolume(name, volumeMods, self.app_type)
 
     def growVolume(self, name, amount):
         """Grow an existing volume by 'amount' Mebibytes.
