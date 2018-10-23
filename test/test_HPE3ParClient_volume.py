@@ -2238,7 +2238,7 @@ schedule1 createsv svro-vol@h@@m@ test_volume 0* * * * 3paradm active Y 2"
         self.printFooter('delete_schedule')
 
     @mock.patch('hpe3parclient.client.HPE3ParClient._run')
-    @mock.patch('hpe3parclient.client.HPE3ParClient.check_response')
+    @mock.patch('hpe3parclient.client.HPE3ParClient.check_responses')
     def test_modify_schedule(self, mock_res, mock_run):
         self.printHeader('modify_schedule')
         mock_run.return_value = "SchedName File/Command Min Hour DOM Month DOW CreatedBy Status Alert NextRunTim\
@@ -2251,6 +2251,20 @@ schedule1 createsv svro-vol@h@@m@ test_volume 0* * * * 3paradm active Y 2"
         res = self.cl.getSchedule(SCHEDULE_NAME2)
         self.assertIsNotNone(res)
         self.printFooter('modify_schedule')
+
+    @mock.patch('hpe3parclient.client.HPE3ParClient._run')
+    @mock.patch('hpe3parclient.client.HPE3ParClient.check_response')
+    def test_suspend_resume_schedule(self, mock_res, mock_run):
+        self.printHeader('suspend_resume_schedule')
+        mock_run.return_value = "SchedName File/Command Min Hour DOM Month DOW CreatedBy Status Alert NextRunTim\
+schedule1 createsv svro-vol@h@@m@ test_volume 0* * * * 3paradm active Y 2"
+        mock_res.return_value = None
+
+        cmd = "createsv -ro snap-"+VOLUME_NAME1+" "+VOLUME_NAME1
+        self.cl.createSchedule(SCHEDULE_NAME1,cmd,'hourly')
+        self.cl.suspendSchedule(SCHEDULE_NAME1)
+        self.cl.resumeSchedule(SCHEDULE_NAME1)
+        self.printFooter('suspend_resume_schedule')
     
 # testing
 # suite = unittest.TestLoader().
