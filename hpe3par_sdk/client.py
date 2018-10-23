@@ -3675,27 +3675,24 @@ volume_name, lunid, hostname or port")
             name, action=client.HPE3ParClient.SET_MEM_REMOVE,
             setmembers=setmembers)
 
-    def createSchedule(self, schedule_name, task, taskfreq):
+    def createSchedule(self, name, task, taskFreq):
         """Create Schedule for volume snapshot.
-        :param schedule_name - The name of the schedule
+        :param name - The name of the schedule
         :type - string
-        :param volume_name - The name of the volume
+        :param task - task to be scheduled
+        :type - string        
+        :param taskFreq - schedule for snapshot created
         :type - string
-        :param expiration - Expiration period for snapshot
-        :type - string
-        :retain - Retaintion period for snapshot
-        :type - string
-        :taskschedule - schedule for snapshot created
-        :type - string
-        """
-        return self.client.createSchedule(schedule_name, task, taskfreq)
 
-    def deleteSchedule(self, schedule_name):
+        """
+        return self.client.createSchedule(name, task, taskFreq)
+
+    def deleteSchedule(self, name):
         """Delete Schedule
-        :param schedule_name - The name of the schedule to delete
+        :param name - The name of the schedule to delete
         :type - string
         """
-        return self.client.deleteSchedule(schedule_name)
+        return self.client.deleteSchedule(name)
 
     def scheduleExists(self, name):
         try:
@@ -3708,9 +3705,41 @@ volume_name, lunid, hostname or port")
             return True
 
 
-    def getSchedule(self, schedule_name):
+    def getSchedule(self, name):
         """Get Schedule
-        :param schedule_name - The name of the schedule to get information
+        :param name - The name of the schedule to get information
         :type - string
         """
-        return self.client.getSchedule(schedule_name)
+        return self.client.getSchedule(name)
+
+    def modifySchedule(self, name, options):
+        """Modify Schedule.
+        :param name - The name of the schedule
+        :type name - string
+        :param options -
+        :type options - dictionary of option to be modified
+        .. code-block:: python
+
+            mod_request = {
+                'newName': 'myNewName',         # New name of the schedule
+                'taskFrequency': '0 * * * *'    # String containing cron or
+                                                # @monthly, @hourly, @daily, @yearly
+                                                # and @weekly.
+        }
+        """        
+        return self.client.modifySchedule(name, options)
+
+    def suspendSchedule(self, name):
+        """Suspend Schedule
+        :param name - schedule name to suspend
+        :type name - string
+        """
+        return self.client.suspendSchedule(name)
+
+    def resumeSchedule(self, name):
+        """Resume Schedule
+        :param name - schedule name to suspend
+        :type name - string
+        """
+        return self.client.resumeSchedule(name)
+

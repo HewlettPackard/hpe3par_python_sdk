@@ -30,6 +30,7 @@ VOLUME_NAME3 = 'VOLUME3_UNIT_TEST' + hpe3parbase.TIME
 SNAP_NAME1 = 'SNAP_UNIT_TEST1' + hpe3parbase.TIME
 SNAP_NAME2 = 'SNAP_UNIT_TEST2' + hpe3parbase.TIME
 SCHEDULE_NAME1 = 'SCHEDULE_NAME1' + hpe3parbase.TIME
+SCHEDULE_NAME2 = 'SCHEDULE_NAME2' + hpe3parbase.TIME
 DOMAIN = 'UNIT_TEST_DOMAIN'
 VOLUME_SET_NAME1 = 'VOLUME_SET1_UNIT_TEST' + hpe3parbase.TIME
 VOLUME_SET_NAME2 = 'VOLUME_SET2_UNIT_TEST' + hpe3parbase.TIME
@@ -2202,22 +2203,55 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.assertEqual(RCOPY_STARTED, targets[0]['state'])
 
         self.printFooter('promote_vcopy_on_rep_vol_with_bad_param')
+  
 
     @mock.patch('hpe3parclient.client.HPE3ParClient._run')
     @mock.patch('hpe3parclient.client.HPE3ParClient.check_response')
-    def test_run(self,mock_res, mock_run):
+    def test_create_schedule(self, mock_res, mock_run):
         self.printHeader('schedule_test')
         mock_run.return_value = "SchedName File/Command Min Hour DOM Month DOW CreatedBy Status Alert NextRunTim\
 schedule1 createsv svro-vol@h@@m@ test_volume 0* * * * 3paradm active Y 2"
         mock_res.return_value = None
-        #self.cl = client.HPE3ParClient(self.flask_url)
+
         cmd = "createsv -ro snap-"+VOLUME_NAME1+" "+VOLUME_NAME1
         self.cl.createSchedule(SCHEDULE_NAME1,cmd,'hourly')
         res = self.cl.getSchedule(SCHEDULE_NAME1)
         self.assertIsNotNone(res)
-        self.cl.deleteSchedule(SCHEDULE_NAME1)
-        self.printFooter('schedule_test')
+        self.printFooter('create_schedule')
 
+    @mock.patch('hpe3parclient.client.HPE3ParClient._run')
+    @mock.patch('hpe3parclient.client.HPE3ParClient.check_response')    
+    def test_delete_schedule(self, mock_res, mock_run):
+        self.printHeader('delete_schedule')
+        mock_run.return_value = "SchedName File/Command Min Hour DOM Month DOW CreatedBy Status Alert NextRunTim\
+schedule1 createsv svro-vol@h@@m@ test_volume 0* * * * 3paradm active Y 2"
+        mock_res.return_value = None
+
+        cmd = "createsv -ro snap-"+VOLUME_NAME1+" "+VOLUME_NAME1
+        self.cl.createSchedule(SCHEDULE_NAME1,cmd,'hourly')
+        res = self.cl.getSchedule(SCHEDULE_NAME1)
+        self.assertIsNotNone(res)
+        mock_run.return_value = 'No scheduled tasks'
+        self.cl.deleteSchedule(SCHEDULE_NAME1)        
+        res = self.cl.getSchedule(SCHEDULE_NAME1)
+        self.assertEqual(res, 'No scheduled tasks')
+        self.printFooter('delete_schedule')
+
+    @mock.patch('hpe3parclient.client.HPE3ParClient._run')
+    @mock.patch('hpe3parclient.client.HPE3ParClient.check_response')
+    def test_modify_schedule(self, mock_res, mock_run):
+        self.printHeader('modify_schedule')
+        mock_run.return_value = "SchedName File/Command Min Hour DOM Month DOW CreatedBy Status Alert NextRunTim\
+schedule1 createsv svro-vol@h@@m@ test_volume 0* * * * 3paradm active Y 2"
+        mock_res.return_value = None
+
+        cmd = "createsv -ro snap-"+VOLUME_NAME1+" "+VOLUME_NAME1
+        self.cl.createSchedule(SCHEDULE_NAME1,cmd,'hourly')
+        self.cl.modifySchedule(SCHEDULE_NAME1, {'newName': SCHEDULE_NAME2})
+        res = self.cl.getSchedule(SCHEDULE_NAME2)
+        self.assertIsNotNone(res)
+        self.printFooter('modify_schedule')
+    
 # testing
 # suite = unittest.TestLoader().
 #   loadTestsFromTestCase(HPE3ParClientVolumeTestCase)
