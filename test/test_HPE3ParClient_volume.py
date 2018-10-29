@@ -723,8 +723,8 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
     def test_10_modify_volume_set_change_flash_cache(self):
         self.printHeader('modify_volume_set_change_flash_cache')
-	self.cl.FLASH_CACHE_ENABLED = 1
-	self.cl.FLASH_CACHE_DISABLED = 2
+        self.cl.FLASH_CACHE_ENABLED = 1
+        self.cl.FLASH_CACHE_DISABLED = 2
         try:
             self.cl.createVolumeSet(VOLUME_SET_NAME1, domain=self.DOMAIN,
                                     comment="First")
@@ -757,7 +757,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
     def test_10_modify_volume_set_add_members_to_empty(self):
         self.printHeader('modify_volume_set_add_members_to_empty')
-	self.cl.SET_MEM_ADD = 1
+        self.cl.SET_MEM_ADD = 1
         optional = {'comment': 'test volume 1', 'tpvv': True}
         self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
         optional = {'comment': 'test volume 2', 'tpvv': True}
@@ -779,7 +779,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
     def test_10_modify_volume_set_add_members(self):
         self.printHeader('modify_volume_set_add_members')
-	#HPE3ParClient.SET_MEM_ADD = 1
+        #HPE3ParClient.SET_MEM_ADD = 1
         optional = {'comment': 'test volume 1', 'tpvv': True}
         self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
         optional = {'comment': 'test volume 2', 'tpvv': True}
@@ -791,8 +791,8 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                 comment="Unit test volume set 1")
 
         members = [VOLUME_NAME2]
-	# ----------- TODO-----------------
-	# change 1 to HPE3ParClient.SET_MEM_ADD,
+        # ----------- TODO-----------------
+        # change 1 to HPE3ParClient.SET_MEM_ADD,
         self.cl.modifyVolumeSet(VOLUME_SET_NAME1, 1,
                                 setmembers=members)
 
@@ -805,10 +805,10 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
     def test_10_modify_volume_set_del_members(self):
         self.printHeader('modify_volume_del_members')
-	
-	#--------TODO----------
-	# Remove below declartion to use the parent class value
-	self.cl.SET_MEM_REMOVE = 2
+        
+        #--------TODO----------
+        # Remove below declartion to use the parent class value
+        self.cl.SET_MEM_REMOVE = 2
 
         optional = {'comment': 'test volume 1', 'tpvv': True}
         self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
@@ -2238,7 +2238,7 @@ schedule1 createsv svro-vol@h@@m@ test_volume 0* * * * 3paradm active Y 2"
         self.printFooter('delete_schedule')
 
     @mock.patch('hpe3parclient.client.HPE3ParClient._run')
-    @mock.patch('hpe3parclient.client.HPE3ParClient.check_responses')
+    @mock.patch('hpe3parclient.client.HPE3ParClient.check_response')
     def test_modify_schedule(self, mock_res, mock_run):
         self.printHeader('modify_schedule')
         mock_run.return_value = "SchedName File/Command Min Hour DOM Month DOW CreatedBy Status Alert NextRunTim\
