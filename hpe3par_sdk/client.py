@@ -78,7 +78,7 @@ class HPE3ParClient(object):
     WINDOWS_SERVER = 11
 
     # Remote Copy Recovery Enumeration
-    REVERSE_GROUP =6
+    REVERSE_GROUP = 6
     FAILOVER_GROUP = 7
     SWITCHOVER_GROUP = 8
     RECOVER_GROUP = 9
