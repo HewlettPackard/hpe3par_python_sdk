@@ -1,11 +1,11 @@
 # (C) Copyright 2018 Hewlett Packard Enterprise Development LP
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
 # a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -28,6 +28,9 @@ from models import CPG
 from models import LDLayoutCapacity
 from models import VolumeSet
 from models import QoSRule
+from models import RemoteCopyInfo
+from models import RemoteCopyGroup
+from models import Volumes
 
 
 import time
@@ -73,19 +76,28 @@ class HPE3ParClient(object):
     OPENVMS = 9
     HPUX = 10
     WINDOWS_SERVER = 11
-    
+
+    # Remote Copy Recovery Enumeration
+    REVERSE_GROUP = 6
+    FAILOVER_GROUP = 7
+    SWITCHOVER_GROUP = 8
+    RECOVER_GROUP = 9
+    RESTORE_GROUP = 10
+    OVERRIDE_GROUP = 11
+    CLX_DR = 12
+
     # QoS priority Enumeration
     class QOSPriority:
         LOW = 1
         NORMAL = 2
         HIGH = 3
-    
+
     # Task Priority Enumeration
     class TaskPriority:
         HIGH = 1
         MEDIUM = 2
         LOW = 3
-  
+
     # Qos Zero None Operation
     ZERO = 1
     NOLIMIT = 2
@@ -93,10 +105,10 @@ class HPE3ParClient(object):
     # QoS target Type
     VVSET = 1
     SYS = 2
-    
+
     VLUN_QUERY_SUPPORTED = False
     HOST_AND_VV_SET_FILTER_SUPPORTED = False
-    
+
     CURRENT_WSAPI_VERSION = None
 
     """ The 3PAR REST API Client.
@@ -2583,7 +2595,7 @@ not supported.""" % (ex_message)
 
         :returns: Overall Remote Copy Information
         """
-        return self.client.getRemoteCopyInfo()
+        return RemoteCopyInfo(self.client.getRemoteCopyInfo())
 
     def getRemoteCopyGroups(self):
         """
@@ -2592,7 +2604,11 @@ not supported.""" % (ex_message)
         :returns: list of Remote Copy Groups
 
         """
-        return self.client.getRemoteCopyGroups()
+        remoteCopyGroups = []
+        remoteCopyGroups_list = self.client.getRemoteCopyGroups()['members']
+        for remoteCopyGroup in remoteCopyGroups_list:
+            remoteCopyGroups.append(RemoteCopyGroup(remoteCopyGroup))
+        return remoteCopyGroups
 
     def getRemoteCopyGroup(self, name):
         """
@@ -2604,7 +2620,37 @@ not supported.""" % (ex_message)
         :returns: Remote Copy Group
 
         """
-        return self.client.getRemoteCopyGroup(name)
+        return RemoteCopyGroup(self.client.getRemoteCopyGroup(name))
+
+    def getRemoteCopyGroupVolumes(self, remoteCopyGroupName):
+        """
+        Returns information on all volumes in a Remote Copy Groups
+
+        :param remoteCopyGroupName: the remote copy group name
+        :type name: str
+
+        :returns: list of volumes in a Remote Copy Groups
+
+        """
+        remoteCopyGroupVolumes = []
+        remoteCopyGroupVolumes_list = self.client.getRemoteCopyGroupVolumes(remoteCopyGroupName)['members']
+        for remoteCopyGroupVolume in remoteCopyGroupVolumes_list:
+            remoteCopyGroupVolumes.append(Volumes(remoteCopyGroupVolume))
+        return remoteCopyGroupVolumes
+
+    def getRemoteCopyGroupVolume(self, remoteCopyGroupName, volumeName):
+        """
+        Returns information on one volume of a Remote Copy Group
+
+        :param remoteCopyGroupName: the remote copy group name
+        :type name: str
+        :param volumeName: the remote copy group name
+        :type name: str
+
+        :returns: RemoteVolume
+
+        """
+        return Volumes(self.client.getRemoteCopyGroupVolume(remoteCopyGroupName, volumeName))
 
     def createRemoteCopyGroup(self, name, targets, optional=None):
         """
@@ -3139,7 +3185,7 @@ not supported.""" % (ex_message)
             state.
         """
         return self.client.addVolumeToRemoteCopyGroup(name, volumeName,
-                                                      targets, optional)
+                                   targets, optional, True)
 
     def removeVolumeFromRemoteCopyGroup(self, name, volumeName,
                                         optional=None,
@@ -3198,8 +3244,7 @@ not supported.""" % (ex_message)
             not ready.
         """
         return self.client.removeVolumeFromRemoteCopyGroup(name, volumeName,
-                                                           optional,
-                                                           removeFromTarget)
+                                   optional, removeFromTarget, True)
 
     def startRemoteCopy(self, name, optional=None):
         """
@@ -3488,7 +3533,7 @@ not supported.""" % (ex_message)
                               mirroring.
         :type mirror_config: bool
         """
-        self.client.toggleRemoteCopyConfigMirror(target, mirror_config)
+        return self.client.toggleRemoteCopyConfigMirror(target, mirror_config)
 
     def getVolumeSnapshots(self, name):
         """
@@ -3680,3 +3725,106 @@ volume_name, lunid, hostname or port")
         self.client.modifyVolumeSet(
             name, action=client.HPE3ParClient.SET_MEM_REMOVE,
             setmembers=setmembers)
+
+    def remoteCopyGroupExists(self, name):
+        try:
+            self.getRemoteCopyGroup(name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+
+    def remoteCopyGroupVolumeExists(self, remote_copy_group_name, volume_name):
+        try:
+            self.getRemoteCopyGroupVolume(remote_copy_group_name, volume_name)
+        except exceptions.HTTPNotFound:
+            return False
+        return True
+
+    def admitRemoteCopyLinks(self, targetName, source_port, target_port_wwn_or_ip):
+        """
+        Creating remote copy link from soure to target.
+        :param targetName - The name of target system
+        :type name: str
+        :source_port - Source ethernet/Fibre channel port
+        :type name: str
+        :target_port_wwn_or_ip- Target system's peer port WWN/IP
+        :type name: str
+        :returns: empty list if successful
+        """
+        return self.client.admitRemoteCopyLinks(targetName, source_port, target_port_wwn_or_ip)
+
+    def dismissRemoteCopyLinks(self, targetName, source_port, target_port_wwn_or_ip):
+        """
+        Dismissing remote copy link from soure to target.
+        :param targetName - The name of target system
+        :type name: str
+        :source_port - Source ethernet/Fibre channel port
+        :type name: str
+        :target_port_wwn_or_ip- Target system's peer port WWN/IP
+        :type name: str
+        :returns: empty list if successful
+        """
+        return self.client.dismissRemoteCopyLinks(targetName, source_port, target_port_wwn_or_ip)
+
+    def startrCopy(self):
+        """
+        Starting remote copy service
+        :returns: empty list if successful
+        """
+        return self.client.startrCopy()
+
+    def rcopyServiceExists(self):
+        """
+        checking rcopyservice status
+        :returns: True if status is 'Started'
+        :         False if status is 'Stopped'
+        """
+        return self.client.rcopyServiceExists()
+
+    def rcopyLinkExists(self,targetName,local_port,target_system_peer_port):
+        """
+        checking remote copy link from soure to target.
+        :param targetName - The name of target system
+        :type name: str
+        :source_port - Source ethernet/Fibre channel port
+        :type name: str
+        :target_port_wwn_or_ip- Target system's peer port WWN/IP
+        :type name: str
+        :returns: True if remote copy link exists
+        :         False if remote copy link doesn't exists
+        """
+        return self.client.rcopyLinkExists(targetName, local_port, target_system_peer_port)
+
+    def admitRemoteCopyTarget(self, targetName, mode, remote_copy_group_name, source_target_volume_pairs_list=[]):
+        """
+        Adding target to remote copy group.
+        :param targetName - The name of target system
+        :type name: str
+        :mode - synchronization mode
+        :type name: str
+        :remote_copy_group_name
+        :type : str
+        :source_target_volume_pairs_list: list of pairs of primary and remote copy volumes
+        :type : list
+        """
+        return self.client.admitRemoteCopyTarget(targetName, mode, remote_copy_group_name, source_target_volume_pairs_list)
+
+    def dismissRemoteCopyTarget(self, targetName, remote_copy_group_name):
+        """
+        Dismissing target from remote copy group.
+        :param targetName - The name of target system
+        :type name: str
+        :remote_copy_group_name
+        :type : str
+        """
+        return self.client.dismissRemoteCopyTarget(targetName, remote_copy_group_name)
+
+    def targetInRemoteCopyGroupExists(self, targetName, remote_copy_group_name):
+        """
+        Determines whether target is present in remote copy group.
+        :param targetName - The name of target system
+        :type name: str
+        :remote_copy_group_name
+        :type : str
+        """
+        return self.client.targetInRemoteCopyGroupExists(targetName, remote_copy_group_name)

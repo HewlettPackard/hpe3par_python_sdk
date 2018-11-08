@@ -1060,3 +1060,188 @@ class FlashCache(object):
         # [type - Number]
         # The used size of the Flash Cache.
         self.usedSizeGiB = object_hash.get('usedSizeGiB')
+
+
+class RemoteCopyInfo(object):
+
+    def __init__(self, object_hash):
+        if not object_hash:
+            return
+
+        # [type - Number]
+        # Remote Copy system mode.
+        self.mode = object_hash.get('mode')
+
+        # [type - Number]
+        # Remote Copy system state.
+        self.status = object_hash.get('status')
+
+        # [type - Number]
+        # Remote Copy configuration error message. Under normal conditions, this is empty and does not add to the JSON body.
+        self.configErrDescription = object_hash.get('configErrDescription')
+
+        # [type - Number]
+        # Links include the following URLs:
+        # self
+        # remotecopygroup
+        # remotecopytargets
+        # remotecopylinks
+        if object_hash.get('links') is not None:
+            self.links = []
+            for object in object_hash.get('links'):
+                self.links.append(Link(object))
+
+        # [type - boolean]
+        # true - Asynchronous streaming replication enabled.
+        # false - Asynchronous streaming replication disabled.
+        self.asyncEnabled = object_hash.get('asyncEnabled')
+
+
+class RemoteCopyGroup(object):
+
+    def __init__(self, object_hash):
+        if not object_hash:
+            return
+
+        self.name = object_hash.get('name')
+
+        self.id = object_hash.get('id')
+
+        self.role = object_hash.get('role')
+
+        self.domain = object_hash.get('domain')
+
+        self.recoveryPointObjmSecs = object_hash.get('recoveryPointObjmSecs')
+
+        self.remoteGroupName = object_hash.get('remoteGroupName')
+
+        self.localUserCPG = object_hash.get('localUserCPG')
+
+        self.localSnapCPG = object_hash.get('localSnapCPG')
+
+        self.volumes = []
+        for object in object_hash.get('volumes'):
+            self.volumes.append(Volumes(object))
+
+        self.targets = []
+        for object in object_hash.get('targets'):
+            self.targets.append(Targets(object))
+
+        if object_hash.get('links') is not None:
+            self.links = []
+            for object in object_hash.get('links'):
+                self.links.append(Link(object))
+
+
+class Volumes(object):
+    def __init__(self, object_hash):
+        if not object_hash:
+            return
+
+        self.localVolumeName = object_hash.get('localVolumeName')
+
+        self.localVolumeID = object_hash.get('localVolumeID')
+
+        self.remoteVolumes = []
+        for object in object_hash.get('remoteVolumes'):
+            self.remoteVolumes.append(RemoteVolume(object))
+
+        if object_hash.get('links') is not None:
+            self.links = []
+            for object in object_hash.get('links'):
+                self.links.append(Link(object))
+
+
+class RemoteVolume(object):
+    def __init__(self, object_hash):
+        if not object_hash:
+            return
+
+        self.targetName = object_hash.get('targetName')
+
+        self.remoteVolumeName = object_hash.get('remoteVolumeName')
+
+        self.remoteVolumeID = object_hash.get('remoteVolumeID')
+
+        self.resyncSnapshotName = object_hash.get('resyncSnapshotName')
+
+        self.syncSnapshotName = object_hash.get('syncSnapshotName')
+
+        self.syncStatus = object_hash.get('syncStatus')
+
+        self.volumeIteration = object_hash.get('volumeIteration')
+
+        self.sycnIteration = object_hash.get('sycnIteration')
+
+        self.resycnIteration = object_hash.get('resycnIteration')
+
+        self.volumeLastSnapTime = object_hash.get('volumeLastSnapTime')
+
+        self.volumeLastSnapTimeSec = object_hash.get('volumeLastSnapTimeSec')
+
+        self.volumeLastSyncTimeSec = object_hash.get('volumeLastSyncTimeSec')
+
+        self.volumeLastSyncTime = object_hash.get('volumeLastSyncTime')
+
+        self.volumeSyncOffset = object_hash.get('volumeSyncOffset')
+
+        self.volumeSyncLength = object_hash.get('volumeSyncLength')
+
+        self.asyncOutstanding = object_hash.get('asyncOutstanding')
+
+
+class Targets(object):
+    def __init__(self, object_hash):
+        if not object_hash:
+            return
+
+        self.targetName = object_hash.get('targetName')
+
+        self.target = object_hash.get('target')
+
+        self.roleReversed = object_hash.get('roleReversed')
+
+        self.state = object_hash.get('state')
+
+        self.mode = object_hash.get('mode')
+
+        self.syncPeriod = object_hash.get('syncPeriod')
+
+        self.groupLastSyncTimeSec = object_hash.get('groupLastSyncTimeSec')
+
+        self.groupLastSyncTime = object_hash.get('groupLastSyncTime')
+
+        self.policies = TargetPolicies(object_hash.get('policies'))
+
+        self.remoteSnapCPG = object_hash.get('remoteSnapCPG')
+
+        self.remoteUserCPG = object_hash.get('remoteUserCPG')
+
+        self.snapFrequency = object_hash.get('snapFrequency')
+
+        if object_hash.get('links') is not None:
+            self.links = []
+            for object in object_hash.get('links'):
+                self.links.append(Link(object))
+				
+class TargetPolicies(object):
+
+    def __init__(self, object_hash):
+        if object_hash is None:
+            return
+
+        self.autoRecover = object_hash.get('autoRecover')
+
+        self.overPeriodAlert = object_hash.get('overPeriodAlert')
+
+        self.autoFailover = object_hash.get('autoFailover')
+
+        self.pathManagement = object_hash.get('pathManagement')
+
+class Link(object):
+    def __init__(self, object_hash):
+        if not object_hash:
+            return
+
+        self.href = object_hash.get('href')
+        self.rel = object_hash.get('rel')
