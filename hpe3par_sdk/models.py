@@ -1223,7 +1223,8 @@ class Targets(object):
             self.links = []
             for object in object_hash.get('links'):
                 self.links.append(Link(object))
-				
+
+
 class TargetPolicies(object):
 
     def __init__(self, object_hash):
@@ -1238,10 +1239,14 @@ class TargetPolicies(object):
 
         self.pathManagement = object_hash.get('pathManagement')
 
+
 class Link(object):
+
     def __init__(self, object_hash):
         if not object_hash:
             return
 
         self.href = object_hash.get('href')
+
         self.rel = object_hash.get('rel')
+
