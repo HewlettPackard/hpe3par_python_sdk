@@ -3748,7 +3748,7 @@ volume_name, lunid, hostname or port")
     def scheduleExists(self, name):
         try:
             result = self.getSchedule(name)
-        except exceptions.HTTPNotFound:
+        except exceptions.SSHNotFoundException:
             return False
         if 'No scheduled tasks listed' in result:
             return False
