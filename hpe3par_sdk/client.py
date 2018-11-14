@@ -3734,7 +3734,6 @@ volume_name, lunid, hostname or port")
         :type - string        
         :param taskFreq - schedule for snapshot created
         :type - string
-
         """
         return self.client.createSchedule(name, task, taskFreq)
 
@@ -3755,7 +3754,6 @@ volume_name, lunid, hostname or port")
         else:
             return True
 
-
     def getSchedule(self, name):
         """Get Schedule
         :param name - The name of the schedule to get information
@@ -3771,7 +3769,7 @@ volume_name, lunid, hostname or port")
         :type options - dictionary of option to be modified
         .. code-block:: python
 
-            mod_request = {
+            options = {
                 'newName': 'myNewName',         # New name of the schedule
                 'taskFrequency': '0 * * * *'    # String containing cron or
                                                 # @monthly, @hourly, @daily, @yearly
