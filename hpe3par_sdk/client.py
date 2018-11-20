@@ -3726,6 +3726,72 @@ volume_name, lunid, hostname or port")
             name, action=client.HPE3ParClient.SET_MEM_REMOVE,
             setmembers=setmembers)
 
+    def createSchedule(self, name, task, taskFreq):
+        """Create Schedule for volume snapshot.
+        :param name - The name of the schedule
+        :type - string
+        :param task - task to be scheduled
+        :type - string        
+        :param taskFreq - schedule for snapshot created
+        :type - string
+        """
+        return self.client.createSchedule(name, task, taskFreq)
+
+    def deleteSchedule(self, name):
+        """Delete Schedule
+        :param name - The name of the schedule to delete
+        :type - string
+        """
+        return self.client.deleteSchedule(name)
+
+    def scheduleExists(self, name):
+        try:
+            result = self.getSchedule(name)
+        except exceptions.SSHNotFoundException:
+            return False
+        if 'No scheduled tasks listed' in result:
+            return False
+        else:
+            return True
+
+    def getSchedule(self, name):
+        """Get Schedule
+        :param name - The name of the schedule to get information
+        :type - string
+        """
+        return self.client.getSchedule(name)
+
+    def modifySchedule(self, name, options):
+        """Modify Schedule.
+        :param name - The name of the schedule
+        :type name - string
+        :param options -
+        :type options - dictionary of option to be modified
+        .. code-block:: python
+
+            options = {
+                'newName': 'myNewName',         # New name of the schedule
+                'taskFrequency': '0 * * * *'    # String containing cron or
+                                                # @monthly, @hourly, @daily, @yearly
+                                                # and @weekly.
+        }
+        """        
+        return self.client.modifySchedule(name, options)
+
+    def suspendSchedule(self, name):
+        """Suspend Schedule
+        :param name - schedule name to suspend
+        :type name - string
+        """
+        return self.client.suspendSchedule(name)
+
+    def resumeSchedule(self, name):
+        """Resume Schedule
+        :param name - schedule name to suspend
+        :type name - string
+        """
+        return self.client.resumeSchedule(name)
+
     def remoteCopyGroupExists(self, name):
         try:
             self.getRemoteCopyGroup(name)
