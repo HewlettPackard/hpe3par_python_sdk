@@ -3861,7 +3861,7 @@ volume_name, lunid, hostname or port")
         """
         return self.client.rcopyLinkExists(targetName, local_port, target_system_peer_port)
 
-    def admitRemoteCopyTarget(self, targetName, mode, remote_copy_group_name, source_target_volume_pairs_list=[]):
+    def admitRemoteCopyTarget(self, targetName, mode, remote_copy_group_name, optional=None):
         """
         Adding target to remote copy group.
         :param targetName - The name of target system
@@ -3870,10 +3870,21 @@ volume_name, lunid, hostname or port")
         :type name: str
         :remote_copy_group_name
         :type : str
-        :source_target_volume_pairs_list: list of pairs of primary and remote copy volumes
-        :type : list
+        :optional
+        :type - dict
+         .. code-block:: python
+             optional = {
+                "volumePairs": [{
+                    "sourceVolumeName": "source_name",  # The target volume
+                                                        # name associated with
+                                                        # this group.
+                    "targetVolumeName": "target_name"   # The target volume
+                                                        # name associated with
+                                                        # this group.
+                }]
+            }
         """
-        return self.client.admitRemoteCopyTarget(targetName, mode, remote_copy_group_name, source_target_volume_pairs_list)
+        return self.client.admitRemoteCopyTarget(targetName, mode, remote_copy_group_name, optional)
 
     def dismissRemoteCopyTarget(self, targetName, remote_copy_group_name):
         """
