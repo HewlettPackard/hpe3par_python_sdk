@@ -3894,3 +3894,17 @@ volume_name, lunid, hostname or port")
         :type : str
         """
         return self.client.targetInRemoteCopyGroupExists(targetName, remote_copy_group_name)
+
+    def remoteCopyGroupStatusCheck(self, remote_copy_group_name):
+        """
+        Determines whether all volumes syncStatus is synced or not
+        when remote copy group status is started. If all volumes
+        syncStatus is 'synced' then it will return true else false
+        :param remote_copy_group_name - Remote copy group name
+        :type remote_copy_group_name: str
+        :return: True: If remote copy group is started and all
+        :              volume syncStatus is 'synced' 
+        :        False: If remote copy group is started and some
+        :              volume status is not 'synced'
+        """
+        return self.client.remoteCopyGroupStatusCheck(remote_copy_group_name)
