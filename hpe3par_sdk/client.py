@@ -3919,3 +3919,27 @@ volume_name, lunid, hostname or port")
         :              volume status is not 'synced'
         """
         return self.client.remoteCopyGroupStatusCheck(remote_copy_group_name)
+
+    def remoteCopyGroupStatusStartedCheck(self, remote_copy_group_name):
+        """
+        Checks whether remote copy group status is started or not
+        :param remote_copy_group_name - Remote copy group name
+        :type remote_copy_group_name: str
+        :return: True: If remote copy group is in started
+        :              state i.e. 3
+        :        False: If remote copy group is not in started
+        :              state
+        """
+        return self.client.remoteCopyGroupStatusStartedCheck(remote_copy_group_name)
+
+    def remoteCopyGroupStatusStoppedCheck(self, remote_copy_group_name):
+        """
+        Checks whether remote copy group status is stopped or not
+        :param remote_copy_group_name - Remote copy group name
+        :type remote_copy_group_name: str
+        :return: True: If remote copy group is in stopped
+        :              state i.e. 5
+        :        False: If remote copy group is not in started
+        :              state
+        """
+        return self.client.remoteCopyGroupStatusStoppedCheck(remote_copy_group_name)
