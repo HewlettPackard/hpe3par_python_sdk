@@ -3963,7 +3963,7 @@ volume_name, lunid, hostname or port")
         """
         return self.client.remoteCopyGroupStatusStoppedCheck(remote_copy_group_name)
 
-    def scheduleStatusActiveCheck(self, schedule_name):
+    def isScheduleActive(self, schedule_name):
         """
         Checks whether schedule status is active or not.
         :param schedule_name - Schedule name
@@ -3971,9 +3971,9 @@ volume_name, lunid, hostname or port")
         :return: True: If schedule status is 'active'
         :        False: If schedule status in not 'active'
         """
-        return self.client.scheduleStatusActiveCheck(schedule_name)
+        return self.client.isScheduleActive(schedule_name)
 
-    def scheduleStatusSuspendedCheck(self, schedule_name):
+    def isScheduleSuspended(self, schedule_name):
         """
         Checks whether schedule status is suspended or not.
         :param schedule_name - Schedule name
@@ -3981,4 +3981,4 @@ volume_name, lunid, hostname or port")
         :return: True: If schedule status is 'suspended'
         :        False: If schedule status in not 'suspended'
         """
-        return self.client.scheduleStatusSuspendedCheck(schedule_name)
+        return self.client.isScheduleSuspended(schedule_name)
