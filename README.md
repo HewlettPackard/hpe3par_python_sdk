@@ -86,7 +86,7 @@ This branch requires 3.1.3 version MU1 or later of the 3PAR firmware.
 * Enable/Disable Config Mirroring on a Remote Copy Target
 * Promote Virtual Copy
 * Create Snapshot Schedule
-* delete SnapShot Schedule
+* Delete SnapShot Schedule
 * Modify Snapshot Schedule
 * Suspend Snapshot Schedule
 * Resume Snapshot Schedule
