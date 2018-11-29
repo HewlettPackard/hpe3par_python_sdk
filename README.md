@@ -34,6 +34,8 @@ This branch requires 3.1.3 version MU1 or later of the 3PAR firmware.
 * Create a Host Set
 * Delete a Host Set
 * Modify a Host Set
+* Add Hosts to Host Set
+* Remove Hosts from Host Set
 * Get all Ports
 * Get iSCSI Ports
 * Get FC Ports
@@ -46,6 +48,8 @@ This branch requires 3.1.3 version MU1 or later of the 3PAR firmware.
 * Create a Volume Set
 * Delete a Volume Set
 * Modify a Volume Set
+* Add Volumes to Volume Set
+* Remove Volumes from Volume Set
 * Get a Volume Set
 * Get all Volume Sets
 * Find one Volume Set containing a specified Volume
@@ -81,6 +85,17 @@ This branch requires 3.1.3 version MU1 or later of the 3PAR firmware.
 * Recover a Remote Copy Group from a Disaster
 * Enable/Disable Config Mirroring on a Remote Copy Target
 * Promote Virtual Copy
+* Create Snapshot Schedule
+* delete SnapShot Schedule
+* Modify Snapshot Schedule
+* Suspend Snapshot Schedule
+* Resume Snapshot Schedule
+* Admit Remote Copy Links
+* Dismiss Remote Copy Links
+* Start Remote Copy Service
+* Add Target to Remote Copy Group
+* Remove Target from Remote Copy Group
+* Remote Copy Group Status Check
 
 ### Installation
  To install:
