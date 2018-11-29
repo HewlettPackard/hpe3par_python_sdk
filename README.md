@@ -90,6 +90,7 @@ This branch requires 3.1.3 version MU1 or later of the 3PAR firmware.
 * Modify Snapshot Schedule
 * Suspend Snapshot Schedule
 * Resume Snapshot Schedule
+* Get Snapshot Schedule
 * Admit Remote Copy Links
 * Dismiss Remote Copy Links
 * Start Remote Copy Service
