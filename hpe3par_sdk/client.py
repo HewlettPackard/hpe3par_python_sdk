@@ -3969,24 +3969,10 @@ volume_name, lunid, hostname or port")
         :param schedule_name - Schedule name
         :type schedule_name: str
         :return: True: If schedule status is 'active'
-        :        False: If schedule status in not 'active'
+        :        False: If schedule status is 'suspended'
         """
-        result = self.client.getSchedule(schedule_name)
-        for r in result:
-            if 'active' in r:
-                return True
-        return False
-
-    def isScheduleSuspended(self, schedule_name):
-        """
-        Checks whether schedule status is suspended or not.
-        :param schedule_name - Schedule name
-        :type schedule_name: str
-        :return: True: If schedule status is 'suspended'
-        :        False: If schedule status in not 'suspended'
-        """
-        result = self.client.getSchedule(schedule_name)
-        for r in result:
-            if 'suspended' in r:
-                return True
-        return False
+        result = self.client.getScheduleStatus(schedule_name)
+        if result == 'active':
+            return True
+        else:
+            return False
