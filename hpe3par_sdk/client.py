@@ -3971,7 +3971,11 @@ volume_name, lunid, hostname or port")
         :return: True: If schedule status is 'active'
         :        False: If schedule status in not 'active'
         """
-        return self.client.isScheduleActive(schedule_name)
+        result = self.client.getSchedule(schedule_name)
+        for r in result:
+            if 'active' in r:
+                return True
+        return False
 
     def isScheduleSuspended(self, schedule_name):
         """
@@ -3981,4 +3985,8 @@ volume_name, lunid, hostname or port")
         :return: True: If schedule status is 'suspended'
         :        False: If schedule status in not 'suspended'
         """
-        return self.client.isScheduleSuspended(schedule_name)
+        result = self.client.getSchedule(schedule_name)
+        for r in result:
+            if 'suspended' in r:
+                return True
+        return False
