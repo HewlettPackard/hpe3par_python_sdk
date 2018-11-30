@@ -3974,5 +3974,4 @@ volume_name, lunid, hostname or port")
         result = self.client.getScheduleStatus(schedule_name)
         if result == 'active':
             return True
-        else:
-            return False
+        return False
