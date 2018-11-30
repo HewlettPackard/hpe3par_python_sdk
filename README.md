@@ -78,6 +78,8 @@ This branch requires 3.1.3 version MU1 or later of the 3PAR firmware.
 * Delete a Remote Copy Group
 * Modify a Remote Copy Group
 * Add a Volume to a Remote Copy Group
+* Get Remote Copy Group Volumes
+* Get Remote Copy Group Volume
 * Remove a Volume from a Remote Copy Group
 * Start Remote Copy on a Remote Copy Group
 * Stop Remote Copy on a Remote Copy Group
