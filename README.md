@@ -99,6 +99,8 @@ This branch requires 3.1.3 version MU1 or later of the 3PAR firmware.
 * Add Target to Remote Copy Group
 * Remove Target from Remote Copy Group
 * Remote Copy Group Status Check
+* Get Remote Copy Group Volumes
+* Get Remote Copy Group Volume
 
 ### Installation
  To install:
