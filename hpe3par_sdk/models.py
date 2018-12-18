@@ -629,7 +629,7 @@ class PrivateSpace(object):
 class CPG(object):
 
     def __init__(self, object_hash):
-        if not object_hash:
+        if object_hash is None:
             return
 
         # [type - Number]
@@ -762,7 +762,7 @@ class CPG(object):
 class LDLayout(object):
 
     def __init__(self, object_hash):
-        if not object_hash:
+        if object_hash is None:
             return
 
         # [type - Number]
@@ -792,7 +792,7 @@ class LDLayout(object):
 class DiskPattern(object):
 
     def __init__(self, object_hash):
-        if not object_hash:
+        if object_hash is None:
             return
 
         # [type - String]
@@ -909,7 +909,7 @@ class LDLayoutCapacity(object):
 class ISCSIPortInfo(object):
 
     def __init__(self, object_hash):
-        if not object_hash:
+        if object_hash is None:
             return
         
         # [type - String]
@@ -959,7 +959,7 @@ class ISCSIPortInfo(object):
 class Port(object):
 
     def __init__(self, object_hash):
-        if not object_hash:
+        if object_hash is None:
             return
 
         # [type - PortPos]
@@ -1042,7 +1042,7 @@ class Port(object):
 class FlashCache(object):
 
     def __init__(self, object_hash):
-        if not object_hash:
+        if object_hash is None:
             return
 
         # [type - Number 1: Simulator 2: Real]
@@ -1065,7 +1065,7 @@ class FlashCache(object):
 class RemoteCopyInfo(object):
 
     def __init__(self, object_hash):
-        if not object_hash:
+        if object_hash is None:
             return
 
         # [type - Number]
@@ -1100,7 +1100,7 @@ class RemoteCopyInfo(object):
 class RemoteCopyGroup(object):
 
     def __init__(self, object_hash):
-        if not object_hash:
+        if object_hash is None:
             return
 
         self.name = object_hash.get('name')
@@ -1135,7 +1135,7 @@ class RemoteCopyGroup(object):
 
 class Volumes(object):
     def __init__(self, object_hash):
-        if not object_hash:
+        if object_hash is None:
             return
 
         self.localVolumeName = object_hash.get('localVolumeName')
@@ -1154,7 +1154,7 @@ class Volumes(object):
 
 class RemoteVolume(object):
     def __init__(self, object_hash):
-        if not object_hash:
+        if object_hash is None:
             return
 
         self.targetName = object_hash.get('targetName')
@@ -1192,7 +1192,7 @@ class RemoteVolume(object):
 
 class Targets(object):
     def __init__(self, object_hash):
-        if not object_hash:
+        if object_hash is None:
             return
 
         self.targetName = object_hash.get('targetName')
@@ -1240,7 +1240,7 @@ class TargetPolicies(object):
 
 class Link(object):
     def __init__(self, object_hash):
-        if not object_hash:
+        if object_hash is None:
             return
 
         self.href = object_hash.get('href')
