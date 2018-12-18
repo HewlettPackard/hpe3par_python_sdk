@@ -584,7 +584,7 @@ class Usage(object):
 class GrowthParams(object):
 
     def __init__(self, object_hash):
-        if object_hash is not None:
+        if object_hash is None:
             return
 
         # [type - Number]
@@ -607,7 +607,7 @@ class GrowthParams(object):
 class PrivateSpace(object):
 
     def __init__(self, object_hash):
-        if object_hash is not None:
+        if object_hash is None:
             return
 
         # [type - Number]
@@ -786,7 +786,7 @@ class LDLayout(object):
         self.disk_patterns = []
         if object_hash.get('diskPatterns') is not None:
             for disk_pattern in object_hash['diskPatterns']:
-                self.disk_patterns.apppend(DiskPattern(disk_pattern))
+                self.disk_patterns.append(DiskPattern(disk_pattern))
 
 
 class DiskPattern(object):
