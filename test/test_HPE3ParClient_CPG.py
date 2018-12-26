@@ -196,6 +196,31 @@ class HPE3ParClientCPGTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.printFooter('get_cpg_available_space_bad_cpg')
 
 
+    def test_1_modify_CPG(self):
+        self.printHeader('modify_CPG')
+
+        # add one
+        optional = self.CPG_OPTIONS
+        name = CPG_NAME1
+        self.cl.createCPG(name, optional)
+
+        # check
+        cpg1 = self.cl.getCPG(name)
+        self.assertIsNotNone(cpg1)
+        cpgName = cpg1.name
+        self.assertEqual(name, cpgName)
+
+
+        new_name = CPG_NAME2
+        optional = {'newName': new_name, 'growthIncrementMiB': 32000}
+        self.cl.modifyCPG(name, optional)
+
+        cpg1 = self.cl.getCPG(new_name)
+        self.assertIsNotNone(cpg1)
+        cpgName = cpg1.name
+        self.assertEqual(new_name, cpgName)
+
+        self.printFooter('modify_CPG')
 # testing
 # suite = unittest.TestLoader().loadTestsFromTestCase(HPE3ParClientCPGTestCase)
 # unittest.TextTestRunner(verbosity=2).run(suite)
