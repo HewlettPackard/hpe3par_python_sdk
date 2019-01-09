@@ -122,6 +122,9 @@ class HPE3ParClient(object):
     def __init__(self, api_url, app_type = 'python_SDK_3par', debug=False, secure=False, timeout=None,
                  suppress_ssl_warnings=False):
         self.api_url = api_url
+        self.http = http.HTTPJSONRESTClient(
+            self.api_url, secure=secure,
+            timeout=timeout, suppress_ssl_warnings=suppress_ssl_warnings)
         self.client = client.HPE3ParClient(api_url, debug, secure, timeout, suppress_ssl_warnings)
         self.check_WSAPI_version()
         self.app_type = app_type

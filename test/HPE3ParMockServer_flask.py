@@ -821,7 +821,17 @@ def getPort(portPos):
 @app.route('/api/v1/vluns', methods=['GET'])
 def get_vluns():
     debugRequest(flask.request)
-    resp = flask.make_response(json.dumps(vluns), 200)
+    query = flask.request.args.get('query')
+    vlun_dir = dict()
+    if query is not None and "volumeName" in query:
+        if vluns:
+            for vlun in vluns['members']:
+                if vlun['volumeName'] in query:
+                    vlun_dir.update({'members': [vlun]})
+                    resp = flask.make_response(json.dumps(vlun_dir), 200)
+                    break
+    else:
+        resp = flask.make_response(json.dumps(vluns), 200)
     return resp
 
 
@@ -964,8 +974,7 @@ def create_volumes():
                   'tpvv': None, 'usrSpcAllocWarningPct': None,
                   'usrSpcAllocLimitPct': None, 'isCopy': None,
                   'copyOfName': None, 'copyRO': None, 'expirationHours': None,
-                  'retentionHours': None}
-
+                  'retentionHours': None, 'objectKeyValues': None}
     for key in list(data.keys()):
         if key not in list(valid_keys.keys()):
             throw_error(400, INV_INPUT, "Invalid Parameter '%s'" % key)

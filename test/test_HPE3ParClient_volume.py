@@ -1334,7 +1334,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
