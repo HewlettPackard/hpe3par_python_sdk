@@ -16,11 +16,15 @@ This is a Client library that can talk to the HPE 3PAR Storage array. The 3PAR s
 * Modify a Volume
 * Copy a Volume
 * Create a Volume Snapshot
+* Get Snapshots of Volume
+* Get Volume Snapshots
+* Grow Volume
 * Create CPG
 * Delete CPG
 * Get all CPGs
 * Get a CPG
 * Get a CPG's Available Space
+* Get CPG Stats Data
 * Create a VLUN
 * Delete a VLUN
 * Get all VLUNs
@@ -31,6 +35,7 @@ This is a Client library that can talk to the HPE 3PAR Storage array. The 3PAR s
 * Get a Host
 * Get VLUNs for a Host
 * Find a Host
+* Query Host
 * Find a Host Set for a Host
 * Get all Host Sets
 * Get a Host Set
@@ -39,10 +44,13 @@ This is a Client library that can talk to the HPE 3PAR Storage array. The 3PAR s
 * Modify a Host Set
 * Add Hosts to Host Set
 * Remove Hosts from Host Set
+* Add Hosts to Host Set
+* Remove Hosts from Host Set
 * Get all Ports
 * Get iSCSI Ports
 * Get FC Ports
 * Get IP Ports
+* Get Protocol Ports
 * Set Volume Metadata
 * Get Volume Metadata
 * Get All Volume Metadata
@@ -57,6 +65,9 @@ This is a Client library that can talk to the HPE 3PAR Storage array. The 3PAR s
 * Get all Volume Sets
 * Find one Volume Set containing a specified Volume
 * Find all Volume Sets containing a specified Volume
+* Add Volumes to Volume Set
+* Remove Volumes from Volume Set
+* Create Snapshot of Volume Set
 * Create a QOS Rule
 * Modify a QOS Rule
 * Delete a QOS Rule
