@@ -3975,3 +3975,18 @@ volume_name, lunid, hostname or port")
         if result == 'active':
             return True
         return False
+
+    @staticmethod
+    def getPortNumber(ip, login, password, port=22,
+                      conn_timeout=None, privatekey=None,
+                      **kwargs):
+        """Set SSH Options for ssh calls.
+
+        This is used to set the SSH credentials for calls
+        that use SSH instead of REST HTTP.
+
+        :param 3PAR credentials
+        :return: 443: If build version starts with 4.x.x
+        :        8080: If build version not starts with 4.x
+        """
+        return client.HPE3ParClient.getPortNumber(ip, login, password, port, conn_timeout, privatekey)
