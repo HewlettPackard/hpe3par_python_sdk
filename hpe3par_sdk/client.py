@@ -3602,7 +3602,8 @@ not supported.""" % (ex_message)
         return self.client._format_srstatld_output(out)
 
     def tuneVolume(self, volName, tune_operation, optional=None):
-        return Task(self.client.tuneVolume(volName, tune_operation, optional))
+        body = self.client.tuneVolume(volName, tune_operation, optional)
+        return self.getTask(body['taskid'])
 
     def cpgExists(self, name):
         try:
