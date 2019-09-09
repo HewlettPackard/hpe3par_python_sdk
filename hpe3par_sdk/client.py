@@ -3602,15 +3602,7 @@ not supported.""" % (ex_message)
         return self.client._format_srstatld_output(out)
 
     def tuneVolume(self, volName, tune_operation, optional=None):
-        info = { 'action': self.TUNE_VOLUME, 'tuneOperation': tune_operation }
-
-        if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
-            if 'compression' in optional.keys():
-                del optional['compression']
-        if optional:
-            info = self.client._mergeDict(info, optional)
-        response, body = self.client.http.put(
-            '/volumes/%s' % volName, body=info)
+        body = self.client.tuneVolume(volName, tune_operation, optional)
         return self.getTask(body['taskid'])
 
     def cpgExists(self, name):
@@ -3975,3 +3967,14 @@ volume_name, lunid, hostname or port")
         if result == 'active':
             return True
         return False
+
+    @staticmethod
+    def getPortNumber(ip, login, password, port=22,
+                      conn_timeout=None, privatekey=None,
+                      **kwargs):
+        """Get port number from showwsapi output.
+
+        :param 3PAR credentials
+        :return: HTTPS_Port column value
+        """
+        return client.HPE3ParClient.getPortNumber(ip, login, password, port, conn_timeout, privatekey)
