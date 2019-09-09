@@ -1,16 +1,18 @@
-# HPE 3PAR/Primera Software Development Kit for Python
-
+HPE 3PAR/Primera Software Development Kit for Python
+====================
 This is a Client library that can talk to the HPE 3PAR/Primera Storage array. The 3PAR/Primera storage array has a REST web service interface and a command line interface. This client library implements a simple interface for talking with either interface, as needed. The python Requests library is used to communicate with the REST interface. The python paramiko library is used to communicate with the command line interface over an SSH connection.
 
-### Requirements
+Requirements
+====================
 * 3PAR OS
-  * 3.3.1 MU1, MU2, MU3, T05
-  * 3.2.2 MU4, MU6
+    * 3.3.1 MU1, MU2, MU3, T05
+    * 3.2.2 MU4, MU6
 * Primera OS
-  * 4.0.x
+    * 4.0.x
 * WSAPI service should be enabled on the 3PAR/Primera storage array
 
-### Capabilities
+Capabilities
+====================
 * Create Volume
 * Delete Volume
 * Get all Volumes
@@ -107,7 +109,8 @@ This is a Client library that can talk to the HPE 3PAR/Primera Storage array. Th
 * Get Remote Copy Group Volumes
 * Get Remote Copy Group Volume
 
-### Installation
+Installation
+====================
  To install:
 ```bash
 $ sudo pip install .
@@ -127,11 +130,13 @@ $ tox -e cover
 ```
 The output of the coverage tests will be placed into the coverage dir.
 
-### Folders
+Folders
+====================
 * docs -- contains the documentation.
 * hpe3par_sdk -- the actual client.py library
 * test -- unit tests
-### Documentation
+Documentation
+====================
 To build the documentation:
 ```bash
 $ tox -e docs
@@ -139,7 +144,8 @@ $ tox -e docs
 To view the built documentation point your browser to:
 
 docs/html/index.html
-### Running Simulators
+Running Simulators
+====================
 The unit tests should automatically start/stop the simulators. To start them manually use the following commands. To stop them, use 'kill'. Starting them manually before running unit tests also allows you to watch the debug output.
 
 WSAPI:
