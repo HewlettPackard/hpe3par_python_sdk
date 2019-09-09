@@ -5,9 +5,11 @@ This is a Client library that can talk to the HPE 3PAR/Primera Storage array. Th
 Requirements
 ====================
 * 3PAR OS
-    * 3.3.1 MU1, MU2, MU3, T05
-    * 3.2.2 MU4, MU6
+
+    - 3.3.1 MU1, MU2, MU3, T05
+    - 3.2.2 MU4, MU6
 * Primera OS
+
     * 4.0.x
 * WSAPI service should be enabled on the 3PAR/Primera storage array
 
@@ -111,23 +113,23 @@ Capabilities
 
 Installation
 ====================
- To install:
-```bash
+To install::
+
 $ sudo pip install .
-```
+
 Unit Tests
-To run all unit tests:
-```bash
+To run all unit tests::
+
 $ tox -e py27
-```
-To run a specific test:
-```bash
+
+To run a specific test::
+
 $ tox -e py27 -- test/file.py:class_name.test_method_name
-```
-To run all unit tests with code coverage:
-```bash
+
+To run all unit tests with code coverage::
+
 $ tox -e cover
-```
+
 The output of the coverage tests will be placed into the coverage dir.
 
 Folders
@@ -135,24 +137,26 @@ Folders
 * docs -- contains the documentation.
 * hpe3par_sdk -- the actual client.py library
 * test -- unit tests
+
 Documentation
 ====================
-To build the documentation:
-```bash
+To build the documentation::
+
 $ tox -e docs
-```
-To view the built documentation point your browser to:
+
+To view the built documentation point your browser to::
 
 docs/html/index.html
+
 Running Simulators
 ====================
 The unit tests should automatically start/stop the simulators. To start them manually use the following commands. To stop them, use 'kill'. Starting them manually before running unit tests also allows you to watch the debug output.
 
-WSAPI:
-```bash
+WSAPI::
+
 $ python test/HPE3ParMockServer_flask.py -port 5001 -user <USERNAME> -password <PASSWORD> -debug
-```
-SSH:
-```bash
+
+SSH::
+
 $ python test/HPE3ParMockServer_ssh.py [port]
-```
+
