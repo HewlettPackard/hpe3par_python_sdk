@@ -5,7 +5,7 @@ try:
 except ImportError:
     from distutils.core import setup, find_packages
 
-with open('README.md', 'r') as file:
+with open('README.rst', 'r') as file:
     readme = file.read()
 
 setup(
