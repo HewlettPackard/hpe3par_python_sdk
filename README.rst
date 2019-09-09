@@ -6,11 +6,11 @@ Requirements
 ====================
 * 3PAR OS
 
-    - 3.3.1 MU1, MU2, MU3, T05
-    - 3.2.2 MU4, MU6
+  * 3.3.1 MU1, MU2, MU3, T05
+  * 3.2.2 MU4, MU6
 * Primera OS
 
-    * 4.0.x
+  * 4.0.x
 * WSAPI service should be enabled on the 3PAR/Primera storage array
 
 Capabilities
