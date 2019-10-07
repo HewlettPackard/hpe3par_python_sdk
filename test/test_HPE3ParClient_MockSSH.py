@@ -20,6 +20,7 @@ import unittest
 from test import HPE3ParClient_base
 from hpe3parclient import exceptions
 from hpe3parclient import ssh
+from hpe3parclient import client
 
 # Python 3+ override
 try:
@@ -52,7 +53,7 @@ class HPE3ParClientMockSSHTestCase(HPE3ParClient_base
                                 'set_missing_host_key_policy',
                                 mock_smhkp, create=True):
                     try:
-                        self.cl.setSSHOptions(
+                        self.cl.client.setSSHOptions(
                             ip, user, password,
                             known_hosts_file=known_hosts_file,
                             missing_key_policy=missing_key_policy)
@@ -80,17 +81,18 @@ class HPE3ParClientMockSSHTestCase(HPE3ParClient_base
                         expected = missing_key_policy.__class__.__name__
                     self.assertEqual(actual, expected)
 
-    def do_mock_create_ssh(self, known_hosts_file, missing_key_policy):
+    @mock.patch('hpe3parclient.client.ssh.HPE3PARSSHClient', spec=True)
+    def do_mock_create_ssh(self, known_hosts_file, missing_key_policy, mock_ssh_client):
         """Verify that params are getting forwarded to _create_ssh()."""
 
         mock_ssh = mock.Mock()
         with mock.patch('hpe3parclient.ssh.HPE3PARSSHClient._create_ssh',
                         mock_ssh, create=True):
 
-            self.cl.setSSHOptions(ip, user, password,
+            client.ssh.HPE3PARSSHClient._create_ssh(
                                   known_hosts_file=known_hosts_file,
                                   missing_key_policy=missing_key_policy)
-
+            mock_ssh_client.close.return_value = True
             mock_ssh.assert_called_with(missing_key_policy=missing_key_policy,
                                         known_hosts_file=known_hosts_file)
 
@@ -103,9 +105,10 @@ class HPE3ParClientMockSSHTestCase(HPE3ParClient_base
                     mock_ssh_client):
         """Verify that params are getting forwarded to HPE3PARSSHClient."""
 
-        self.cl.setSSHOptions(ip, user, password,
-                              known_hosts_file=known_hosts_file,
-                              missing_key_policy=missing_key_policy)
+        self.cl.client.setSSHOptions(ip, user, password, 22, None, None,
+                                     known_hosts_file=known_hosts_file,
+                                     missing_key_policy=missing_key_policy)
+
 
         mock_ssh_client.assert_called_with(
             ip, user, password, 22, None, None,
@@ -163,13 +166,13 @@ class HPE3ParClientMockSSHTestCase(HPE3ParClient_base
                               known_hosts_file=None,
                               missing_key_policy=paramiko.AutoAddPolicy)
 
-        self.cl.ssh.ssh = mock.Mock()
-        self.cl.ssh.ssh.invoke_shell.side_effect = Exception('boom')
 
+        self.cl.client.ssh.ssh = mock.Mock()
+        self.cl.client.ssh.ssh.invoke_shell.side_effect = Exception('boom')
         cmd = ['fake']
-        self.assertRaises(exceptions.SSHException, self.cl.ssh._run_ssh, cmd)
+        self.assertRaises(exceptions.SSHException, self.cl.client.ssh._run_ssh, cmd)
 
-        self.cl.ssh.ssh.assert_has_calls(
+        self.cl.client.ssh.ssh.assert_has_calls(
             [
                 mock.call.get_transport(),
                 mock.call.get_transport().is_alive(),

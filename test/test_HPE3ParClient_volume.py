@@ -1276,7 +1276,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         self.printFooter('create_remote_copy_group')
 
@@ -1290,7 +1290,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Delete remote copy group
         self.cl.removeRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
@@ -1313,14 +1313,13 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         REMOTE_COPY_TARGETS[0]['syncPeriod'] = 300
         self.cl.modifyRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1,
                                       {'targets': REMOTE_COPY_TARGETS})
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(300, targets[0]['syncPeriod'])
+        self.assertEqual(300, resp.targets[0].syncPeriod)
 
         self.printFooter('modify_remote_copy_group')
 
@@ -1334,7 +1333,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
@@ -1345,8 +1344,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                            RC_VOLUME_NAME,
                                            REMOTE_COPY_TARGETS)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp['volumes']
-        self.assertEqual(RC_VOLUME_NAME, volumes[0]['name'])
+        self.assertEqual(RC_VOLUME_NAME, resp.volumes[0].localVolumeName)
 
         self.printFooter('add_volume_to_remote_copy_group')
 
@@ -1360,7 +1358,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Add non existent volume to remote copy group
         self.assertRaises(
@@ -1383,7 +1381,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
@@ -1394,15 +1392,13 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                            RC_VOLUME_NAME,
                                            REMOTE_COPY_TARGETS)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp['volumes']
-        self.assertEqual(RC_VOLUME_NAME, volumes[0]['name'])
+        self.assertEqual(RC_VOLUME_NAME, resp.volumes[0].localVolumeName)
 
         # Remove volume from remote copy group
         self.cl.removeVolumeFromRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1,
                                                 RC_VOLUME_NAME)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp['volumes']
-        self.assertEqual([], volumes)
+        self.assertEqual([], resp.volumes)
 
         self.printFooter('remove_volume_from_remote_copy_group')
 
@@ -1416,7 +1412,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
@@ -1427,14 +1423,12 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                            RC_VOLUME_NAME,
                                            REMOTE_COPY_TARGETS)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp['volumes']
-        self.assertEqual(RC_VOLUME_NAME, volumes[0]['name'])
+        self.assertEqual(RC_VOLUME_NAME, resp.volumes[0].localVolumeName)
 
         # Start remote copy for the group
         self.cl.startRemoteCopy(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(RCOPY_STARTED, targets[0]['state'])
+        self.assertEqual(RCOPY_STARTED, resp.targets[0].state)
 
         self.printFooter('start_remote_copy')
 
@@ -1448,7 +1442,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
@@ -1459,20 +1453,17 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                            RC_VOLUME_NAME,
                                            REMOTE_COPY_TARGETS)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp['volumes']
-        self.assertEqual(RC_VOLUME_NAME, volumes[0]['name'])
+        self.assertEqual(RC_VOLUME_NAME, resp.volumes[0].localVolumeName)
 
         # Start remote copy for the group
         self.cl.startRemoteCopy(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(RCOPY_STARTED, targets[0]['state'])
+        self.assertEqual(RCOPY_STARTED, resp.targets[0].state)
 
         # Stop remote copy for the group
         self.cl.stopRemoteCopy(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(RCOPY_STOPPED, targets[0]['state'])
+        self.assertEqual(RCOPY_STOPPED, resp.targets[0].state)
 
         self.printFooter('stop_remote_copy')
 
@@ -1486,7 +1477,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
@@ -1497,20 +1488,17 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                            RC_VOLUME_NAME,
                                            REMOTE_COPY_TARGETS)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp['volumes']
-        self.assertEqual(RC_VOLUME_NAME, volumes[0]['name'])
+        self.assertEqual(RC_VOLUME_NAME, resp.volumes[0].localVolumeName)
 
         # Start remote copy for the group
         self.cl.startRemoteCopy(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(RCOPY_STARTED, targets[0]['state'])
+        self.assertEqual(RCOPY_STARTED, resp.targets[0].state)
 
         # Synchronize the remote copy group
         self.cl.synchronizeRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        assert targets[0]['groupLastSyncTime'] is not None
+        assert resp.targets[0].groupLastSyncTime is not None
 
         self.printFooter('synchronize_remote_copy_group')
 
@@ -1524,7 +1512,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
@@ -1535,20 +1523,17 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                            RC_VOLUME_NAME,
                                            REMOTE_COPY_TARGETS)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp['volumes']
-        self.assertEqual(RC_VOLUME_NAME, volumes[0]['name'])
-
+        self.assertEqual(RC_VOLUME_NAME, resp.volumes[0].localVolumeName)
         # Start remote copy for the group
         self.cl.startRemoteCopy(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(RCOPY_STARTED, targets[0]['state'])
+        self.assertEqual(RCOPY_STARTED, resp.targets[0].state)
 
         # Failover remote copy group
         self.cl.recoverRemoteCopyGroupFromDisaster(REMOTE_COPY_GROUP_NAME1,
                                                    FAILOVER_GROUP)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(True, resp['roleReversed'])
+        self.assertEqual(True, resp.targets[0].roleReversed)
 
         self.printFooter('failover_remote_copy_group')
 
@@ -2102,7 +2087,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
@@ -2113,16 +2098,14 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                            RC_VOLUME_NAME,
                                            REMOTE_COPY_TARGETS)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp['volumes']
-        self.assertEqual(RC_VOLUME_NAME, volumes[0]['name'])
+        self.assertEqual(RC_VOLUME_NAME, resp.volumes[0].localVolumeName)
 
         self.cl.createSnapshot(SNAP_NAME1, RC_VOLUME_NAME)
 
         # Stop remote copy for the group
         self.cl.stopRemoteCopy(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(RCOPY_STOPPED, targets[0]['state'])
+        self.assertEqual(RCOPY_STOPPED, resp.targets[0].state)
 
         optional = {'allowRemoteCopyParent': True}
         resp = self.cl.promoteVirtualCopy(SNAP_NAME1, optional)
@@ -2131,8 +2114,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         # Start remote copy for the group
         self.cl.startRemoteCopy(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(RCOPY_STARTED, targets[0]['state'])
+        self.assertEqual(RCOPY_STARTED, resp.targets[0].state)
 
         self.printFooter('promote_virtual_copy_on_replicated_volume')
 
@@ -2167,7 +2149,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
@@ -2178,16 +2160,14 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                            RC_VOLUME_NAME,
                                            REMOTE_COPY_TARGETS)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp['volumes']
-        self.assertEqual(RC_VOLUME_NAME, volumes[0]['name'])
+        self.assertEqual(RC_VOLUME_NAME, resp.volumes[0].localVolumeName)
 
         self.cl.createSnapshot(SNAP_NAME1, RC_VOLUME_NAME)
 
         # Stop remote copy for the group
         self.cl.stopRemoteCopy(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(RCOPY_STOPPED, targets[0]['state'])
+        self.assertEqual(RCOPY_STOPPED, resp.targets[0].state)
 
         self.assertRaises(
             exceptions.HTTPForbidden,
@@ -2199,8 +2179,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         # Start remote copy for the group
         self.cl.startRemoteCopy(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(RCOPY_STARTED, targets[0]['state'])
+        self.assertEqual(RCOPY_STARTED, resp.targets[0].state)
 
         self.printFooter('promote_vcopy_on_rep_vol_with_bad_param')
   
