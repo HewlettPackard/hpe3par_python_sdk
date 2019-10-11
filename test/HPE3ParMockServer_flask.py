@@ -78,6 +78,14 @@ FAILOVER_GROUP = 7
 RCOPY_STARTED = 3
 RCOPY_STOPPED = 5
 
+THIN_DEDUP_TYPE = 6
+COMPRESSION_ENABLED = 1
+TDVV_ENABLED = 1
+
+THIN_PROVISIONING_TYPE = 2
+COMPRESSION_DISABLED = 2
+THIN_PROVISIONING_ENABLED = 2
+
 parser = argparse.ArgumentParser()
 parser.add_argument("-debug", help="Turn on http debugging",
                     default=False, action="store_true")
@@ -876,7 +884,7 @@ def create_snapshot(volume_name):
         valid_online_param_keys = {'online': None, 'destCPG': None,
                                    'tpvv': None, 'tdvv': None,
                                    'snapCPG': None, 'saveSnapshot': None,
-                                   'priority': None}
+                                   'priority': None, 'reduce': None}
         params = data['parameters']
         if 'online' in params and params['online']:
             # we are checking online copy
@@ -974,7 +982,8 @@ def create_volumes():
                   'tpvv': None, 'usrSpcAllocWarningPct': None,
                   'usrSpcAllocLimitPct': None, 'isCopy': None,
                   'copyOfName': None, 'copyRO': None, 'expirationHours': None,
-                  'retentionHours': None, 'objectKeyValues': None}
+                  'retentionHours': None, 'objectKeyValues': None,
+				  'reduce': None}
     for key in list(data.keys()):
         if key not in list(valid_keys.keys()):
             throw_error(400, INV_INPUT, "Invalid Parameter '%s'" % key)
@@ -999,12 +1008,21 @@ def create_volumes():
             throw_error(400, TOO_LARGE,
                         'Volume size is above architectural limit : 16TiB')
 
+    if 'tpvv' in list(data.keys()):
+        if data['tpvv'] not in [True, False, None]:
+            throw_error(400, INV_INPUT_WRONG_TYPE,
+                        'Invalid input:wrong type for value - tpvv')
+
     if 'id' in list(data.keys()):
         for vol in volumes['members']:
             if vol['id'] == data['id']:
                 throw_error(409, EXISTENT_ID,
                             'Specified volume ID already exists.')
 
+    if 'reduce' in list(data.keys()):
+        data['provisioningType'] = 6
+        data['deduplicationState'] = 1
+        data['compressionState'] = 1
     volumes['members'].append(data)
     return flask.make_response("", 200)
 
@@ -1076,6 +1094,52 @@ def modify_volume(volume_name):
         resp = flask.make_response(json.dumps(task), 200)
         return resp
 
+    if data.get('action') == 6:
+        valid_keys = {'action': None, 'tuneOperation': None, 'userCPG': None,
+                      'snapCPG': None, 'conversionOperation': None,
+                      'keepVV': None, 'compression': None}
+
+        for key in list(data.keys()):
+            if key not in list(valid_keys.keys()):
+                throw_error(400, INV_INPUT, "Invalid Parameter '%s'" % key)
+
+        if 'conversionOperation' in list(data.keys()):
+            if data['conversionOperation'] not in [1, 2, 3, 4]:
+                throw_error(400, INV_INPUT_WRONG_TYPE,
+                            "Invalid input:wrong type for value"
+                            " - conversionOperation")
+
+        if 'compression' in list(data.keys()):
+            if data['compression'] not in [True, False, None]:
+                throw_error(400, INV_INPUT_WRONG_TYPE,
+                            "Invalid input:wrong type for value"
+                            " - compression")
+
+        if 'tuneOperation' in list(data.keys()):
+            if data['tuneOperation'] not in [1, 2]:
+                throw_error(400, INV_INPUT_WRONG_TYPE,
+                            "Invalid input:wrong type for value"
+                            " - tuneOperation")
+
+        if 'keepVV' in list(data.keys()) and len(data['keepVV']) > 31:
+            throw_error(400, INV_INPUT_EXCEEDS_LENGTH,
+                        'Invalid Input: String length exceeds limit : keepVV')
+
+        conversion_operation = data.get('conversionOperation')
+
+        if conversion_operation == 4:
+                volume['provisioningType'] = THIN_DEDUP_TYPE
+                volume['deduplicationState'] = TDVV_ENABLED
+                volume['compressionState'] = COMPRESSION_ENABLED
+        else:
+                volume['provisioningType'] = THIN_PROVISIONING_TYPE
+                volume['deduplicationState'] = THIN_PROVISIONING_ENABLED
+                volume['compressionState'] = COMPRESSION_DISABLED
+        #task['taskid'] = '123'
+        task['taskid'] = 123
+        tasks['members'].append({'id':123})
+        resp = flask.make_response(json.dumps(task), 200)
+        return resp
     _grow_volume(volume, data)
 
     # do volume renames last
