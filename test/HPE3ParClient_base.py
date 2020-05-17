@@ -23,7 +23,7 @@ import inspect
 from testconfig import config
 import datetime
 from functools import wraps
-from hpe3par_sdk import client
+from hpe3par_sdk import client, file_client
 #from hpe3parclient import client, file_client
 
 TIME = datetime.datetime.now().strftime('%H%M%S')
@@ -127,8 +127,8 @@ class HPE3ParClientBaseTestCase(unittest.TestCase):
 
             time.sleep(1)
             if self.withFilePersona:
-                pass
-                #self.cl = file_client.HPE3ParFilePersonaClient(self.flask_url)
+#                pass
+                self.cl = file_client.HPE3ParFilePersonaClient(self.flask_url)
             else:
                 self.cl = client.HPE3ParClient(self.flask_url)
 
@@ -209,10 +209,16 @@ class HPE3ParClientBaseTestCase(unittest.TestCase):
 
         if not self.port:
             ports = self.cl.getPorts()
-        for port in ports:
-            #print port.mode
-            ports = [port for port in ports if port.linkState == 4 and  ( port.device is not None or not port.device) and port.mode == 2]
-            self.port = ports[0].port_pos
+            if withFilePersona:
+                ports = [p for p in ports['members']
+                         if p['linkState'] == 4 and  # Ready
+                         ('device' not in p or not p['device']) and
+                         p['mode'] == self.cl.PORT_MODE_TARGET]
+                self.port = ports[0]['portPos']
+            else:
+                ports = [port for port in ports if port.linkState == 4 and  ( port.device is not None or not port.device) and port.mode == 2]
+                self.port = ports[0].port_pos
+
 
     def tearDown(self):
         self.cl.logout()
