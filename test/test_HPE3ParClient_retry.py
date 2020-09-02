@@ -43,7 +43,7 @@ class HPE3ParClientRetryTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         super(HPE3ParClientRetryTestCase, self).tearDown()
 
     def test_retry_exhaust_all_attempts_service_unavailable(self):
-        http = self.cl.http
+        http = self.cl.client.http
 
         # There should be 5 tries before anything is called.
         self.assertEqual(http.tries, 5)
@@ -64,7 +64,7 @@ class HPE3ParClientRetryTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.assertEqual(http.tries, 0)
 
     def test_retry_exhaust_all_attempts_connection_error(self):
-        http = self.cl.http
+        http = self.cl.client.http
 
         # There should be 5 tries before anything is called.
         self.assertEqual(http.tries, 5)
@@ -85,7 +85,7 @@ class HPE3ParClientRetryTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.assertEqual(http.tries, 0)
 
     def test_no_retry(self):
-        http = self.cl.http
+        http = self.cl.client.http
 
         # There should be 5 tries before anything is called.
         self.assertEqual(http.tries, 5)

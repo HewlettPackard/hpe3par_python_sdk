@@ -17,6 +17,7 @@
 import mock
 from test import HPE3ParClient_base
 from hpe3parclient import exceptions
+from hpe3parclient import client
 
 
 class HPE3ParClientStatsTestCase(HPE3ParClient_base.HPE3ParClientBaseTestCase):
@@ -33,11 +34,8 @@ class HPE3ParClientStatsTestCase(HPE3ParClient_base.HPE3ParClientBaseTestCase):
 
         # Find a cpg name
         cpgs = self.cl.getCPGs()
-        cpg = cpgs['members'][0]
-        name = cpg['name']
-        self.assertTrue(self.findInDict(cpgs['members'], 'name', name))
-        # Make srstatld give valid output
-        self.cl._run = mock.Mock(return_value=[
+        name = cpgs[0].name
+        return_value=[
             ',,---IO/s----,,,-KBytes/s--,,,---Svct ms----,,,-IOSz KBytes-,,,,',
             'Time,Secs,Rd,Wr,Tot,Rd,Wr,Tot,Rd,Wr,Tot,Rd,Wr,Tot,QLen,AvgBusy%',
             '2015-07-02 01:45:00 PDT,1435826700,1.3,6.2,7.5,4.6,89.3,93.9,'
@@ -48,18 +46,25 @@ class HPE3ParClientStatsTestCase(HPE3ParClient_base.HPE3ParClientBaseTestCase):
             '-----------------------------------------',
             ',144,1.3,6.7,8.0,4.7,95.6,100.4,0.59,10.24,8.69,3.7,14.2,12.5,'
             '0.9,0.1',
-        ])
-        # Get result
-        interval = 'daily'
-        history = '7d'
-        result = self.cl.getCPGStatData(name, interval, history)
-        # Check result
-        self.assertIsNotNone(result)
-        self.assertTrue(type(result) is dict)
+        ]
+        with mock.patch.object(client.HPE3ParClient,
+                               "_run") as mock_client_run:
+            mock_client_run.return_value = return_value
+
+            # Get result
+            interval = 'daily'
+            history = '7d'
+            result = self.cl.getCPGStatData(name, interval, history)
+            # Check result
+            self.assertIsNotNone(result)
+            self.assertTrue(type(result) is dict)
         # Make srstatld give invalid output
-        self.cl._run = mock.Mock(return_value=[''])
-        # Expect exception
-        self.assertRaises(exceptions.SrstatldException,
+        return_value=['']
+        with mock.patch.object(client.HPE3ParClient,
+                               "_run") as mock_client_run:
+            mock_client_run.return_value = return_value
+            # Expect exception
+            self.assertRaises(exceptions.SrstatldException,
                           self.cl.getCPGStatData,
                           name, interval, history)
         self.printFooter('getCPGStatData')

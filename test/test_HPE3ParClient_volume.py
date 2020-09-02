@@ -51,6 +51,20 @@ RCOPY_STARTED = 3
 RCOPY_STOPPED = 5
 FAILOVER_GROUP = 7
 RESTORE_GROUP = 10
+MODE = 'sync'
+TPVV = 1
+FPVV = 2
+TDVV = 3
+CONVERT_TO_DECO = 4
+INVALID_PROVISIONING_TYPE = 5
+THIN_DEDUP_TYPE = 6
+COMPRESSION_ENABLED = 1
+TDVV_ENABLED = 1
+THIN_PROVISIONING_TYPE = 2
+COMPRESSION_DISABLED = 2
+THIN_PROVISIONING_ENABLED = 2
+USR_CPG = 1
+INVALID_CPG = 3
 
 
 def is_live_test():
@@ -1276,7 +1290,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         self.printFooter('create_remote_copy_group')
 
@@ -1290,7 +1304,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Delete remote copy group
         self.cl.removeRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
@@ -1313,14 +1327,13 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         REMOTE_COPY_TARGETS[0]['syncPeriod'] = 300
         self.cl.modifyRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1,
                                       {'targets': REMOTE_COPY_TARGETS})
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(300, targets[0]['syncPeriod'])
+        self.assertEqual(300, resp.targets[0].syncPeriod)
 
         self.printFooter('modify_remote_copy_group')
 
@@ -1334,7 +1347,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
@@ -1345,8 +1358,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                            RC_VOLUME_NAME,
                                            REMOTE_COPY_TARGETS)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp['volumes']
-        self.assertEqual(RC_VOLUME_NAME, volumes[0]['name'])
+        self.assertEqual(RC_VOLUME_NAME, resp.volumes[0].localVolumeName)
 
         self.printFooter('add_volume_to_remote_copy_group')
 
@@ -1360,7 +1372,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Add non existent volume to remote copy group
         self.assertRaises(
@@ -1383,7 +1395,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
@@ -1394,15 +1406,13 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                            RC_VOLUME_NAME,
                                            REMOTE_COPY_TARGETS)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp['volumes']
-        self.assertEqual(RC_VOLUME_NAME, volumes[0]['name'])
+        self.assertEqual(RC_VOLUME_NAME, resp.volumes[0].localVolumeName)
 
         # Remove volume from remote copy group
         self.cl.removeVolumeFromRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1,
                                                 RC_VOLUME_NAME)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp['volumes']
-        self.assertEqual([], volumes)
+        self.assertEqual([], resp.volumes)
 
         self.printFooter('remove_volume_from_remote_copy_group')
 
@@ -1416,7 +1426,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
@@ -1427,14 +1437,12 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                            RC_VOLUME_NAME,
                                            REMOTE_COPY_TARGETS)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp['volumes']
-        self.assertEqual(RC_VOLUME_NAME, volumes[0]['name'])
+        self.assertEqual(RC_VOLUME_NAME, resp.volumes[0].localVolumeName)
 
         # Start remote copy for the group
         self.cl.startRemoteCopy(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(RCOPY_STARTED, targets[0]['state'])
+        self.assertEqual(RCOPY_STARTED, resp.targets[0].state)
 
         self.printFooter('start_remote_copy')
 
@@ -1448,7 +1456,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
@@ -1459,20 +1467,17 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                            RC_VOLUME_NAME,
                                            REMOTE_COPY_TARGETS)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp['volumes']
-        self.assertEqual(RC_VOLUME_NAME, volumes[0]['name'])
+        self.assertEqual(RC_VOLUME_NAME, resp.volumes[0].localVolumeName)
 
         # Start remote copy for the group
         self.cl.startRemoteCopy(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(RCOPY_STARTED, targets[0]['state'])
+        self.assertEqual(RCOPY_STARTED, resp.targets[0].state)
 
         # Stop remote copy for the group
         self.cl.stopRemoteCopy(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(RCOPY_STOPPED, targets[0]['state'])
+        self.assertEqual(RCOPY_STOPPED, resp.targets[0].state)
 
         self.printFooter('stop_remote_copy')
 
@@ -1486,7 +1491,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
@@ -1497,20 +1502,17 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                            RC_VOLUME_NAME,
                                            REMOTE_COPY_TARGETS)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp['volumes']
-        self.assertEqual(RC_VOLUME_NAME, volumes[0]['name'])
+        self.assertEqual(RC_VOLUME_NAME, resp.volumes[0].localVolumeName)
 
         # Start remote copy for the group
         self.cl.startRemoteCopy(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(RCOPY_STARTED, targets[0]['state'])
+        self.assertEqual(RCOPY_STARTED, resp.targets[0].state)
 
         # Synchronize the remote copy group
         self.cl.synchronizeRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        assert targets[0]['groupLastSyncTime'] is not None
+        assert resp.targets[0].groupLastSyncTime is not None
 
         self.printFooter('synchronize_remote_copy_group')
 
@@ -1524,7 +1526,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
@@ -1535,20 +1537,17 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                            RC_VOLUME_NAME,
                                            REMOTE_COPY_TARGETS)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp['volumes']
-        self.assertEqual(RC_VOLUME_NAME, volumes[0]['name'])
-
+        self.assertEqual(RC_VOLUME_NAME, resp.volumes[0].localVolumeName)
         # Start remote copy for the group
         self.cl.startRemoteCopy(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(RCOPY_STARTED, targets[0]['state'])
+        self.assertEqual(RCOPY_STARTED, resp.targets[0].state)
 
         # Failover remote copy group
         self.cl.recoverRemoteCopyGroupFromDisaster(REMOTE_COPY_GROUP_NAME1,
                                                    FAILOVER_GROUP)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(True, resp['roleReversed'])
+        self.assertEqual(True, resp.targets[0].roleReversed)
 
         self.printFooter('failover_remote_copy_group')
 
@@ -2102,7 +2101,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
@@ -2113,16 +2112,14 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                            RC_VOLUME_NAME,
                                            REMOTE_COPY_TARGETS)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp['volumes']
-        self.assertEqual(RC_VOLUME_NAME, volumes[0]['name'])
+        self.assertEqual(RC_VOLUME_NAME, resp.volumes[0].localVolumeName)
 
         self.cl.createSnapshot(SNAP_NAME1, RC_VOLUME_NAME)
 
         # Stop remote copy for the group
         self.cl.stopRemoteCopy(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(RCOPY_STOPPED, targets[0]['state'])
+        self.assertEqual(RCOPY_STOPPED, resp.targets[0].state)
 
         optional = {'allowRemoteCopyParent': True}
         resp = self.cl.promoteVirtualCopy(SNAP_NAME1, optional)
@@ -2131,8 +2128,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         # Start remote copy for the group
         self.cl.startRemoteCopy(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(RCOPY_STARTED, targets[0]['state'])
+        self.assertEqual(RCOPY_STARTED, resp.targets[0].state)
 
         self.printFooter('promote_virtual_copy_on_replicated_volume')
 
@@ -2167,7 +2163,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                       optional={"domain": DOMAIN})
 
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp['name'])
+        self.assertEqual(REMOTE_COPY_GROUP_NAME1, resp.name)
 
         # Create volume
         optional = {'comment': 'test volume', 'tpvv': True}
@@ -2178,16 +2174,14 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
                                            RC_VOLUME_NAME,
                                            REMOTE_COPY_TARGETS)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        volumes = resp['volumes']
-        self.assertEqual(RC_VOLUME_NAME, volumes[0]['name'])
+        self.assertEqual(RC_VOLUME_NAME, resp.volumes[0].localVolumeName)
 
         self.cl.createSnapshot(SNAP_NAME1, RC_VOLUME_NAME)
 
         # Stop remote copy for the group
         self.cl.stopRemoteCopy(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(RCOPY_STOPPED, targets[0]['state'])
+        self.assertEqual(RCOPY_STOPPED, resp.targets[0].state)
 
         self.assertRaises(
             exceptions.HTTPForbidden,
@@ -2199,8 +2193,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         # Start remote copy for the group
         self.cl.startRemoteCopy(REMOTE_COPY_GROUP_NAME1)
         resp = self.cl.getRemoteCopyGroup(REMOTE_COPY_GROUP_NAME1)
-        targets = resp['targets']
-        self.assertEqual(RCOPY_STARTED, targets[0]['state'])
+        self.assertEqual(RCOPY_STARTED, resp.targets[0].state)
 
         self.printFooter('promote_vcopy_on_rep_vol_with_bad_param')
   
@@ -2265,7 +2258,433 @@ schedule1 createsv svro-vol@h@@m@ test_volume 0* * * * 3paradm active Y 2"
         self.cl.suspendSchedule(SCHEDULE_NAME1)
         self.cl.resumeSchedule(SCHEDULE_NAME1)
         self.printFooter('suspend_resume_schedule')
-    
+
+    def test37_create_volume_with_primera_support_with_no_option(self):
+        self.printHeader('create_volume')
+        self.cl.client.primera_supported = True
+        # add volume with no options specified,
+        # it should create bydefault tpvv volume
+        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE)
+        # check
+        vol1 = self.cl.getVolume(VOLUME_NAME1)
+        self.assertIsNotNone(vol1)
+        volName = vol1.name
+        self.assertEqual(VOLUME_NAME1, volName)
+        self.printFooter('create_volume')
+
+    def test38_create_volume_with_primera_support_with_option(self):
+        self.printHeader('create_volume')
+        self.cl.client.primera_supported = True
+        # add one
+        optional = {'comment': 'test volume', 'tpvv': True}
+        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
+
+        # check
+        vol1 = self.cl.getVolume(VOLUME_NAME1)
+        self.assertIsNotNone(vol1)
+        volName = vol1.name
+        self.assertEqual(VOLUME_NAME1, volName)
+
+        # add another compressed volume
+        optional = {'comment': 'test volume2', 'compression': True,
+                    'tdvv': True}
+        self.cl.createVolume(VOLUME_NAME2, CPG_NAME2, 16384, optional)
+
+        # check
+        vol2 = self.cl.getVolume(VOLUME_NAME2)
+        self.assertIsNotNone(vol2)
+
+        volName = vol2.name
+        comment = vol2.comment
+        provision_type = vol2.provisioning_type
+        compression_state = vol2.compression_state
+        deduplication_state = vol2.deduplication_state
+
+        self.assertEqual(VOLUME_NAME2, volName)
+        self.assertEqual("test volume2", comment)
+        self.assertEqual(6, provision_type)
+        self.assertEqual(1, compression_state)
+        self.assertEqual(1, deduplication_state)
+
+    def test38_create_volume_with_primera_support_with_option_None(self):
+        self.printHeader('create_volume')
+        self.cl.client.primera_supported = True
+        # add one
+        optional = {'comment': 'test volume', 'tpvv': None,
+                    'compression': True, 'tdvv': True}
+        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, 16384, optional)
+        # check
+        vol1 = self.cl.getVolume(VOLUME_NAME1)
+        self.assertIsNotNone(vol1)
+        volName = vol1.name
+        provision_type = vol1.provisioning_type
+        compression_state = vol1.compression_state
+        deduplication_state = vol1.deduplication_state
+        comment = vol1.comment
+        self.assertEqual(VOLUME_NAME1, volName)
+        self.assertEqual("test volume", comment)
+        self.assertEqual(6, provision_type)
+        self.assertEqual(1, compression_state)
+        self.assertEqual(1, deduplication_state)
+        # add another one
+        optional = {'comment': 'test volume2', 'tpvv': True,
+                    'compression': None, 'tdvv': None}
+        self.cl.createVolume(VOLUME_NAME2, CPG_NAME1, SIZE, optional)
+
+        # check
+        vol2 = self.cl.getVolume(VOLUME_NAME2)
+        self.assertIsNotNone(vol2)
+        volName = vol2.name
+        comment = vol2.comment
+        self.assertEqual(VOLUME_NAME2, volName)
+        self.assertEqual("test volume2", comment)
+        self.printFooter('create_volume')
+
+    def test_39_create_volume_badParams(self):
+        self.printHeader('create_volume_badParams')
+        self.cl.client.primera_supported = True
+        optional = {'comment': 'test volume', 'tpvv': "junk"}
+        self.assertRaises(
+            exceptions.HTTPBadRequest,
+            self.cl.createVolume,
+            VOLUME_NAME1,
+            CPG_NAME1,
+            SIZE,
+            optional)
+        self.printFooter('create_volume_badParams')
+
+    def test_40_create_volume_badParams(self):
+        self.printHeader('create_volume_badParams')
+        self.cl.client.primera_supported = True
+        optional = {'comment': 'test volume', 'compression': "junk",
+                    'tdvv': "junk"}
+        self.assertRaises(
+            exceptions.HTTPBadRequest,
+            self.cl.createVolume,
+            VOLUME_NAME1,
+            CPG_NAME1,
+            SIZE,
+            optional)
+        self.printFooter('create_volume_badParams')
+
+    def test_41_create_volume_junk_values(self):
+        self.printHeader('create_volume_junkParams')
+        self.cl.client.primera_supported = True
+        optional = {'comment': 'test volume', 'tpvv': "junk",
+                    'compression': "junk"}
+        self.assertRaises(
+            exceptions.HTTPBadRequest,
+            self.cl.createVolume,
+            VOLUME_NAME1,
+            CPG_NAME1,
+            SIZE,
+            optional)
+        self.printFooter('create_volume_junkParams')
+
+    def test_42_create_volume_junk_compression(self):
+        self.printHeader('create_volume_junkParams')
+        self.cl.client.primera_supported = True
+        optional = {'comment': 'test volume', 'tpvv': None,
+                    'compression': "junk"}
+        self.assertRaises(
+            exceptions.HTTPBadRequest,
+            self.cl.createVolume,
+            VOLUME_NAME1,
+            CPG_NAME1,
+            SIZE,
+            optional)
+        self.printFooter('create_volume_junkParams')
+
+    def test_43_create_volume_parameter_absent(self):
+        self.printHeader('create_volume_noParams')
+        self.cl.client.primera_supported = True
+        optional = {'comment': 'test volume',
+                    'compression': False}
+        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
+        # check
+        vol1 = self.cl.getVolume(VOLUME_NAME1)
+        self.assertIsNotNone(vol1)
+        volName = vol1.name
+        comment = vol1.comment
+        self.assertEqual(VOLUME_NAME1, volName)
+        self.assertEqual("test volume", comment)
+
+        # add another one
+        optional = {'comment': 'test volume2',
+                    'tpvv': False}
+        self.cl.createVolume(VOLUME_NAME2, CPG_NAME1, SIZE, optional)
+        # check
+        vol2 = self.cl.getVolume(VOLUME_NAME2)
+        self.assertIsNotNone(vol2)
+        volName = vol2.name
+        comment = vol2.comment
+        self.assertEqual(VOLUME_NAME2, volName)
+        self.assertEqual("test volume2", comment)
+        self.printFooter('create_volume_noParams')
+
+    def test_44_offline_copy_volume_primera_support(self):
+        self.printHeader('copy_volume')
+        self.cl.client.primera_supported = True
+        # add one
+        optional = {'comment': 'test volume', 'tpvv': True,
+                    'snapCPG': CPG_NAME1}
+        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, 1024, optional)
+        self.cl.createVolume(VOLUME_NAME2, CPG_NAME1, 1024, optional)
+        # copy it
+        optional1 = {'online': False}
+        self.cl.copyVolume(VOLUME_NAME1, VOLUME_NAME2, CPG_NAME1, optional1)
+        vol2 = self.cl.getVolume(VOLUME_NAME2)
+        volName = vol2.name
+        self.assertEqual(VOLUME_NAME2, volName)
+        self.printFooter('copy_volume')
+
+    def test_45_online_copy_volume_primera_support(self):
+        self.printHeader('copy_volume')
+        self.cl.client.primera_supported = True
+        # TODO: Add support for ssh/stopPhysical copy in mock mode
+        if self.unitTest:
+            self.printFooter('copy_volume')
+            return
+        # add one
+        optional = {'comment': 'test volume', 'tpvv': True,
+                    'snapCPG': CPG_NAME1}
+        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
+
+        # copy it
+        # for online copy we need to specify the tpvv/reduce for merlin
+        optional = {'online': True, 'tpvv': True}
+        self.cl.copyVolume(VOLUME_NAME1, VOLUME_NAME2, CPG_NAME1, optional)
+        vol2 = self.cl.getVolume(VOLUME_NAME2)
+        volName = vol2['name']
+        self.assertEqual(VOLUME_NAME2, volName)
+        self.printFooter('copy_volume')
+
+    def test_46_copy_volume_interrupted_primera_support(self):
+        self.printHeader('copy_volume')
+        self.cl.client.primera_supported = True
+        # TODO: Add support for ssh/stopPhysical copy in mock mode
+        if self.unitTest:
+            self.printFooter('copy_volume')
+            return
+        # add one
+        optional = {'comment': 'test volume', 'tpvv': True,
+                    'snapCPG': CPG_NAME1}
+        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
+
+        # copy it
+        optional = {'online': True, 'tpvv': True}
+        self.cl.copyVolume(VOLUME_NAME1, VOLUME_NAME2, CPG_NAME1, optional)
+        self.cl.getVolume(VOLUME_NAME2)
+        self.cl.stopOnlinePhysicalCopy(VOLUME_NAME2)
+
+        self.assertRaises(
+            exceptions.HTTPNotFound,
+            self.cl.getVolume,
+            VOLUME_NAME2
+        )
+
+        self.printFooter('copy_volume')
+
+    def test_47_create_default_volume(self):
+        self.printHeader('create_volume')
+        self.cl.client.primera_supported = True
+        self.cl.client.compression_supported = True
+        # add one
+        optional = {'comment': 'test volume', 'tpvv': True,
+                    'compression': False}
+        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
+        # check
+        vol1 = self.cl.getVolume(VOLUME_NAME1)
+        self.assertIsNotNone(vol1)
+        volName = vol1.name
+        self.assertEqual(VOLUME_NAME1, volName)
+
+    def test_48_tune_volume_to_dedup_compressed_on_primera(self):
+        self.printHeader('convert_to_deco')
+        self.cl.client.primera_supported = True
+        self.cl.client.compression_supported = True
+        optional = {'comment': 'test volume', 'tpvv': True}
+        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
+        usr_cpg = USR_CPG
+        optional = {'userCPG': "UserCPG",
+                    'conversionOperation': CONVERT_TO_DECO,
+                    'keepVV': "keep_vv",
+                    'compression': False}
+        #convert from tpvv to deco
+        self.cl.tuneVolume(VOLUME_NAME1, usr_cpg, optional)
+        vol2 = self.cl.getVolume(VOLUME_NAME1)
+        provision_type = vol2.provisioning_type
+        compression_state = vol2.compression_state
+        deduplication_state = vol2.deduplication_state
+        self.assertEqual(THIN_DEDUP_TYPE, provision_type)
+        self.assertEqual(COMPRESSION_ENABLED, compression_state)
+        self.assertEqual(TDVV_ENABLED, deduplication_state)
+        optional = {'userCPG': "UserCPG",
+                    'conversionOperation': TPVV,
+                    'keepVV': "keep_vv",
+                    'compression': False}
+        #convert from deco to tpvv
+        self.cl.tuneVolume(VOLUME_NAME1, usr_cpg, optional)
+        vol2 = self.cl.getVolume(VOLUME_NAME1)
+        provision_type = vol2.provisioning_type
+        compression_state = vol2.compression_state
+        deduplication_state = vol2.deduplication_state
+        self.assertEqual(THIN_PROVISIONING_TYPE, provision_type)
+        self.assertEqual(COMPRESSION_DISABLED, compression_state)
+        self.assertEqual(THIN_PROVISIONING_ENABLED, deduplication_state)
+        self.printFooter('convert_to_deco')
+
+    def test_49_tune_volume_to_full_on_primera(self):
+        self.printHeader('convert_to_full')
+        self.cl.client.primera_supported = True
+        self.cl.client.compression_supported = True
+        optional = {'comment': 'test volume', 'tpvv': True}
+        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
+        usr_cpg = USR_CPG
+        optional = {'userCPG': "UserCPG",
+                    'conversionOperation': FPVV,
+                    'keepVV': "keep_vv",
+                    'compression': False}
+        self.assertRaises(
+            exceptions.HTTPBadRequest,
+            self.cl.tuneVolume,
+            VOLUME_NAME1,
+            usr_cpg,
+            optional)
+        self.printFooter('convert_to_full')
+
+    def test_50_tune_volume_to_dedup_on_primera(self):
+        self.printHeader('convert_to_dedup')
+        self.cl.client.primera_supported = True
+        self.cl.client.compression_supported = True
+        optional = {'comment': 'test volume', 'tpvv': True}
+        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
+        usr_cpg = USR_CPG
+        optional = {'userCPG': "UserCPG",
+                    'conversionOperation': TDVV,
+                    'keepVV': "keep_vv",
+                    'compression': False}
+        self.assertRaises(
+            exceptions.HTTPBadRequest,
+            self.cl.tuneVolume,
+            VOLUME_NAME1,
+            usr_cpg,
+            optional)
+        self.printFooter('convert_to_dedup')
+
+    def test_51_tune_volume_to_thin_compressed_on_primera(self):
+        self.printHeader('convert_to_thin_compressed')
+        self.cl.client.primera_supported = True
+        self.cl.client.compression_supported = True
+        optional = {'comment': 'test volume', 'tpvv': True}
+        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
+        usr_cpg = USR_CPG
+        optional = {'userCPG': "UserCPG",
+                    'conversionOperation': TPVV,
+                    'keepVV': "keep_vv",
+                    'compression': True}
+        self.assertRaises(
+            exceptions.HTTPBadRequest,
+            self.cl.tuneVolume,
+            VOLUME_NAME1,
+            usr_cpg,
+            optional)
+        self.printFooter('convert_to_thin_compressed')
+
+    def test_52_tune_volume_with_bad_parameter_primera(self):
+        self.printHeader('tune_volume_with_bad_param')
+        self.cl.client.primera_supported = True
+        self.cl.client.compression_supported = True
+        optional = {'comment': 'test volume', 'tpvv': True}
+        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
+        usr_cpg = USR_CPG
+        optional = {'xyz': "UserCPG",
+                    'conversionOperation': TPVV,
+                    'keepVV': "keep_vv",
+                    'compression': True}
+        self.assertRaises(
+            exceptions.HTTPBadRequest,
+            self.cl.tuneVolume,
+            VOLUME_NAME1,
+            usr_cpg,
+            optional)
+        self.printFooter('tune_volume_with_bad_param')
+
+    def test_53_tune_volume_with_invalid_conversion_operation(self):
+        self.printHeader('tune_volume_with_invalid_conversion_operation')
+        self.cl.client.primera_supported = True
+        self.cl.client.compression_supported = True
+        optional = {'comment': 'test volume', 'tpvv': True}
+        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
+        usr_cpg = USR_CPG
+        optional = {'userCPG': "UserCPG",
+                    'conversionOperation': INVALID_PROVISIONING_TYPE,
+                    'keepVV': "keep_vv",
+                    'compression': True}
+        self.assertRaises(
+            exceptions.HTTPBadRequest,
+            self.cl.tuneVolume,
+            VOLUME_NAME1,
+            usr_cpg,
+            optional)
+        self.printFooter('tune_volume_with_invalid_conversion_operation')
+
+    def test_54_tune_volume_with_invalid_compression_value(self):
+        self.printHeader('tune_volume_with_invalid_compression_value')
+        self.cl.client.primera_supported = True
+        self.cl.client.compression_supported = True
+        optional = {'comment': 'test volume', 'tpvv': True}
+        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
+        usr_cpg = USR_CPG
+        optional = {'userCPG': "UserCPG",
+                    'conversionOperation': FPVV,
+                    'keepVV': "keep_vv",
+                    'compression': "xyz"}
+        self.assertRaises(
+            exceptions.HTTPBadRequest,
+            self.cl.tuneVolume,
+            VOLUME_NAME1,
+            usr_cpg,
+            optional)
+        self.printFooter('tune_volume_with_invalid_compression_value')
+
+    def test_55_tune_volume_with_invalid_usercpg_value(self):
+        self.printHeader('tune_volume_with_invalid_usercpg_value')
+        self.cl.client.primera_supported = True
+        self.cl.client.compression_supported = True
+        optional = {'comment': 'test volume', 'tpvv': True}
+        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
+        usr_cpg = INVALID_CPG
+        optional = {'userCPG': "UserCPG",
+                    'conversionOperation': TPVV,
+                    'keepVV': "keep_vv",
+                    'compression': False}
+        self.assertRaises(
+            exceptions.HTTPBadRequest,
+            self.cl.tuneVolume,
+            VOLUME_NAME1,
+            usr_cpg,
+            optional)
+        self.printFooter('tune_volume_with_invalid_usercpg_value')
+
+    def test_56_tune_volume_with_exceeded_length_of_keepvv(self):
+        self.printHeader('tune_volume_with_exceeded_length_of_keepvv')
+        self.cl.client.primera_supported = True
+        self.cl.client.compression_supported = True
+        optional = {'comment': 'test volume', 'tpvv': True}
+        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
+        usr_cpg = USR_CPG
+        optional = {'userCPG': "UserCPG",
+                    'conversionOperation': TPVV,
+                    'keepVV': "asdfjslfjsldkjfasdjlksjdflsdjakjsdlkfjsdjdsdlf",
+                    'compression': False}
+        self.assertRaises(
+            exceptions.HTTPBadRequest,
+            self.cl.tuneVolume,
+            VOLUME_NAME1,
+            usr_cpg,
+            optional)
+        self.printFooter('tune_volume_with_exceeded_length_of_keepvv')
 # testing
 # suite = unittest.TestLoader().
 #   loadTestsFromTestCase(HPE3ParClientVolumeTestCase)
