@@ -252,6 +252,92 @@ def create_cpgs():
 
     return flask.make_response("", 200)
 
+@app.route('/api/v1/cpgs/<cpg_name>', methods=['PUT'])
+def modify_cpgs(cpg_name):
+    debugRequest(flask.request)
+    data = json.loads(flask.request.data.decode('utf-8'))
+
+    valid_keys = {'growthIncrementMiB': None,
+                  'growthLimitMiB': None,
+                  'usedLDWarningAlertMiB': None, 'LDLayout': None,
+                  'newName': None, 'disableAutoGrow': None,
+                  'rmGrowthLimit': None, 'rmWarningAlert': None}
+
+    valid_LDLayout_keys = {'RAIDType': None, 'setSize': None, 'HA': None,
+                           'chuckletPosRef': None, 'diskPatterns': None}
+
+    for key in list(data.keys()):
+        if key not in list(valid_keys.keys()):
+            throw_error(400, INV_INPUT, "Invalid Parameter '%s'" % key)
+        elif 'LDLayout' in list(data.keys()):
+            layout = data['LDLayout']
+            for subkey in list(layout.keys()):
+                if subkey not in valid_LDLayout_keys:
+                    throw_error(400, INV_INPUT,
+                                "Invalid Parameter '%s'" % subkey)
+
+
+    cpg_exist_flag = False
+    for cpg in cpgs['members']:
+        if cpg_name == cpg['name']:
+            cpg_exist_flag = True
+            break
+
+    if not cpg_exist_flag:
+        throw_error(404, NON_EXISTENT_CPG,
+                    "CPG '%s' does not exist." % data['name'])
+
+    if len(data['newName']) > 32:
+        throw_error(400, INV_INPUT_EXCEEDS_LENGTH,
+                    'new name is too long.')
+
+    if data.get('growthLimitMiB') is not None and data.get('rmGrowthLimit') == True:
+        throw_error(400, INV_INPUT_PARAM_CONFLICT,
+                    "invalid input: rmGrowthLimit can't be set to true while"
+                    " setting growthLimitMiB")
+    if data.get('growthIncrementMiB') is not None and data.get('disableAutoGrow') == True:
+        throw_error(400, INV_INPUT_PARAM_CONFLICT,
+                    "invalid input: disableAutoGrow can't be set to true while"
+                    " setting growthIncrementMiB")
+    if data.get('usedLDWarningAlertMiB') is not None and data.get('rmWarningAlert') == True:
+        throw_error(400, INV_INPUT_PARAM_CONFLICT,
+                    "invalid input: rmWarningAlert can't be set to true while"
+                    " setting usedLDWarningAlertMiB")
+
+    ld_layout_modify = dict()
+    if data.get('growthIncrementMiB') is not None:
+        if data.get('growthIncrementMiB') != cpg.get('growthIncrementMiB'):
+            cpg['growthIncrementMiB'] = data.get('growthIncrementMiB')
+    if data.get('growthLimitMiB') is not None:
+        if data.get('growthLimitMiB') != cpg.get('growthLimitMiB'):
+            cpg['growthLimitMiB'] = data.get('growthLimitMiB')
+    if data.get('usedLDWarningAlertMiB') is not None:
+        if data.get('usedLDWarningAlertMiB') != cpg.get('usedLDWarningAlertMiB'):
+            cpg['usedLDWarningAlertMiB'] = data.get('usedLDWarningAlertMiB')
+
+    if data.get('LDLayout') is not None:
+        if data.get('LDLayout').get('RAIDType') is not None:
+            ld_layout_modify['RAIDType'] = data.get('LDLayout').get('RAIDType')
+        if data.get('LDLayout').get('setSize') is not None:
+            ld_layout_modify['setSize'] = data.get('LDLayout').get('setSize')
+        if data.get('LDLayout').get('HA') is not None:
+            ld_layout_modify['HA'] = data.get('LDLayout').get('HA')
+        if data.get('LDLayout').get('diskPatterns') is not None:
+            if data['LDLayout']['diskPatterns'][0]['diskType'] is not None:
+                ld_layout_modify['diskPatterns'] = data['LDLayout']['diskPatterns']
+    if ld_layout_modify:
+        cpg['LDLayout'] = ld_layout_modify
+    if cpg.get('growthLimitMiB') is not None and data.get('rmGrowthLimit') == True:
+        cpg['rmGrowthLimit'] = data['rmGrowthLimit']
+    if cpg.get('growthIncrementMiB') is not None and data.get('disableAutoGrow') == True:
+        cpg['disableAutoGrow'] = data['disableAutoGrow']
+    if cpg.get('usedLDWarningAlertMiB') is not None and data.get('rmWarningAlert') == True:
+        cpg['rmWarningAlert'] = data['rmWarningAlert']
+    if data.get('newName') is not None:
+        cpg['name'] = data['newName']
+    resp = flask.make_response(json.dumps(cpg), 200)
+    return resp
+
 
 @app.route('/api/v1/cpgs', methods=['GET'])
 def get_cpgs():
