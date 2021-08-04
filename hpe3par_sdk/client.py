@@ -2340,8 +2340,8 @@ not supported.""" % (ex_message)
           - UNLICENSED_FEATURE - The system is not licensed for QoS.
         """
         if qosRules is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_SUPPORTED_VERSION:
-            if 'latencyGoaluSecs' in qos_rules.keys():
-                del qos_rules['latencyGoaluSecs']
+            if 'latencyGoaluSecs' in qosRules.keys():
+                del qosRules['latencyGoaluSecs']
         return self.client.createQoSRules(targetName, qosRules, target_type)
 
     def modifyQoSRules(self, targetName, qosRules, targetType='vvset'):
@@ -2431,8 +2431,8 @@ not supported.""" % (ex_message)
                      UNLICENSED_FEATURE - The system is not licensed for QoS.
         """
         if qosRules is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_SUPPORTED_VERSION:
-            if 'latencyGoaluSecs' in qos_rules.keys():
-                del qos_rules['latencyGoaluSecs']
+            if 'latencyGoaluSecs' in qosRules.keys():
+                del qosRules['latencyGoaluSecs']
         return self.client.modifyQoSRules(targetName, qosRules, targetType)
 
     def deleteQoSRules(self, targetName, targetType='vvset'):
