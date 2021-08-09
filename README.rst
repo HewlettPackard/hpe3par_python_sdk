@@ -1,6 +1,6 @@
-HPE 3PAR and HPE Primera Software Development Kit for Python
-============================================================
-This is a Client library that can talk to the HPE 3PAR and HPE Primera Storage array. The HPE 3PAR and HPE Primera storage array has a REST web service interface and a command line interface. This client library implements a simple interface for talking with either interface, as needed. The python Requests library is used to communicate with the REST interface. The python paramiko library is used to communicate with the command line interface over an SSH connection.
+HPE Alletra 9000 and Primera and 3PAR Software Development Kit for Python
+=========================================================================
+This is a Client library that can talk to the HPE Alletra 9000 and Primera and 3PAR Storage array. The HPE Alletra 9000 and Primera and 3PAR storage array has a REST web service interface and a command line interface. This client library implements a simple interface for talking with either interface, as needed. The python Requests library is used to communicate with the REST interface. The python paramiko library is used to communicate with the command line interface over an SSH connection.
 
 Requirements
 ============
@@ -11,7 +11,10 @@ Requirements
 * Primera OS
 
   * 4.0.0
-* WSAPI service should be enabled on the HPE 3PAR and HPE Primera storage array
+* Alletra OS
+
+  * 9.4.0
+* WSAPI service should be enabled on the HPE Alletra 9000 and Primera and 3PAR storage array
 
 Capabilities
 ============
