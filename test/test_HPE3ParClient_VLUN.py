@@ -198,8 +198,10 @@ class HPE3ParClientVLUNTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
     def test_2_get_VLUN_bad(self):
         self.printHeader('get_VLUN_bad')
+        self.cl.client.vlun_query_supported = False
         self.assertRaises(exceptions.HTTPNotFound, self.cl.getVLUN, 'badName')
         self.printFooter('get_VLUN_bad')
+
     def check_value_in_listof_objects(self, objects_list, key, value):
 	print "key"
 	print key

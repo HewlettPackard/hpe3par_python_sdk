@@ -452,7 +452,7 @@ not supported.""" % (ex_message)
             - EXISTENT_SV - Volume Exists already
 
         """
-        if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
+        if optional is not None and StrictVersion(self.CURRENT_WSAPI_VERSION) < StrictVersion(self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT):
             if 'compression' in optional.keys():
                 del optional['compression']
         object_key_values = {'objectKeyValues': [{'key': self.app_key, 'value': self.app_type}]}
@@ -785,7 +785,7 @@ not supported.""" % (ex_message)
             - NON_EXISTENT_VVCOPY - Physical copy not found.
 
         """
-        if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
+        if optional is not None and StrictVersion(self.CURRENT_WSAPI_VERSION) < StrictVersion(self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT):
             for attribute in ['compression', 'allowRemoteCopyParent', 'skipZero']:
                 if attribute in optional.keys():
                     del optional[attribute]
@@ -1034,7 +1034,7 @@ not supported.""" % (ex_message)
             - INV_OPERATION_VV_PROMOTE_IS_NOT_IN_PROGRESS - Volume promotion
             is not in progress.
         """
-        if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
+        if optional is not None and StrictVersion(self.CURRENT_WSAPI_VERSION) < StrictVersion(self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT):
             if 'allowRemoteCopyParent' in optional.keys():
                 del optional['allowRemoteCopyParent']
         return self.client.promoteVirtualCopy(snapshot, optional)
@@ -1165,7 +1165,7 @@ not supported.""" % (ex_message)
             - PERM_DENIED - Permission denied
 
         """
-        if optional is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT:
+        if optional is not None and StrictVersion(self.CURRENT_WSAPI_VERSION) < StrictVersion(self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT):
             if 'allowRemoteCopyParent' in optional.keys():
                 del optional['allowRemoteCopyParent']
         return self.client.createSnapshot(name, copyOfName, optional)
@@ -2339,9 +2339,9 @@ not supported.""" % (ex_message)
         :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
           - UNLICENSED_FEATURE - The system is not licensed for QoS.
         """
-        if qosRules is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_SUPPORTED_VERSION:
-            if 'latencyGoaluSecs' in qos_rules.keys():
-                del qos_rules['latencyGoaluSecs']
+        if qosRules is not None and StrictVersion(self.CURRENT_WSAPI_VERSION) < StrictVersion(self.WSAPI_MIN_SUPPORTED_VERSION):
+            if 'latencyGoaluSecs' in qosRules.keys():
+                del qosRules['latencyGoaluSecs']
         return self.client.createQoSRules(targetName, qosRules, target_type)
 
     def modifyQoSRules(self, targetName, qosRules, targetType='vvset'):
@@ -2430,9 +2430,9 @@ not supported.""" % (ex_message)
         :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
                      UNLICENSED_FEATURE - The system is not licensed for QoS.
         """
-        if qosRules is not None and self.CURRENT_WSAPI_VERSION < self.WSAPI_MIN_SUPPORTED_VERSION:
-            if 'latencyGoaluSecs' in qos_rules.keys():
-                del qos_rules['latencyGoaluSecs']
+        if qosRules is not None and StrictVersion(self.CURRENT_WSAPI_VERSION) < StrictVersion(self.WSAPI_MIN_SUPPORTED_VERSION):
+            if 'latencyGoaluSecs' in qosRules.keys():
+                del qosRules['latencyGoaluSecs']
         return self.client.modifyQoSRules(targetName, qosRules, targetType)
 
     def deleteQoSRules(self, targetName, targetType='vvset'):
