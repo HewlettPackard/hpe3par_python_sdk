@@ -312,8 +312,8 @@ class HPE3ParClientHostSetTestCase(HPE3ParClient_base
         test_prefix = 'UT_'
 
         # name too long
-        host_set_name = test_prefix + "HOST_SET_NAME_IS_TOOOOOOOOOO_LONG_"
-        + HPE3ParClient_base.TIME
+        host_set_name = (test_prefix + "HOST_SET_NAME_IS_TOOOOOOOOOO_LONG_"
+        + HPE3ParClient_base.TIME)
         host_sets_to_delete.append(host_set_name)
 
         pre_count = len(self.cl.getHostSets())
