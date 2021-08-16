@@ -151,7 +151,6 @@ class HPE3ParClientBaseTestCase(unittest.TestCase):
             if withFilePersona:
                 self.printHeader('Using 3PAR %s with File Persona' %
                                  self.url_3par)
-                #self.cl = file_client.HPE3ParFilePersonaClient(self.url_3par)
             else:
                 self.printHeader('Using 3PAR ' + self.url_3par)
                 self.cl = client.HPE3ParClient(self.url_3par)
@@ -210,14 +209,17 @@ class HPE3ParClientBaseTestCase(unittest.TestCase):
             ports = self.cl.getPorts()
             if withFilePersona:
                 ports = [p for p in ports['members']
-                         if p['linkState'] == 4 and  # Ready
-                         ('device' not in p or not p['device']) and
+                         # Ready
+                         if p['linkState'] == 4 and \
+                         ('device' not in p or not p['device']) and \
                          p['mode'] == self.cl.PORT_MODE_TARGET]
                 self.port = ports[0]['portPos']
             else:
-                ports = [port for port in ports if port.linkState == 4 and  ( port.device is not None or not port.device) and port.mode == 2]
+                ports = [port for port in ports
+                         if port.linkState == 4 and \
+                         (port.device is not None or not port.device) and \
+                         port.mode == 2]
                 self.port = ports[0].port_pos
-
 
     def tearDown(self):
         self.cl.logout()

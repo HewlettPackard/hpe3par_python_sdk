@@ -295,22 +295,6 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
         self.printFooter('get_volume_bad')
 
-#    def test_2_get_volumes(self):
-#        self.printHeader('get_volumes')
-#
-#        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE)
-#        self.cl.createVolume(VOLUME_NAME2, CPG_NAME1, SIZE)
-#
-#        vol1 = self.cl.getVolume(VOLUME_NAME1)
-#        vol2 = self.cl.getVolume(VOLUME_NAME2)
-#
-#        vols = self.cl.getVolumes()
-#
-#        self.assertTrue(self.findInDict(vols['members'], 'name', vol1['name']))
-#        self.assertTrue(self.findInDict(vols['members'], 'name', vol2['name']))
-#
-#        self.printFooter('get_volumes')
-#
     def test_3_delete_volume_nonExist(self):
         self.printHeader('delete_volume_nonExist')
 
@@ -593,8 +577,8 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         resp = self.cl.getVolumeSet(VOLUME_SET_NAME1)
         self.assertIsNotNone(resp)
 
-        #resp_members = resp['setmembers']
-        #self.assertIn(VOLUME_NAME1, resp_members)
+        # resp_members = resp['setmembers']
+        # self.assertIn(VOLUME_NAME1, resp_members)
 
         # Remove volume from volume set
         self.cl.removeVolumeFromVolumeSet(VOLUME_SET_NAME1, VOLUME_NAME1)
@@ -793,7 +777,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
     def test_10_modify_volume_set_add_members(self):
         self.printHeader('modify_volume_set_add_members')
-        #HPE3ParClient.SET_MEM_ADD = 1
+        # HPE3ParClient.SET_MEM_ADD = 1
         optional = {'comment': 'test volume 1', 'tpvv': True}
         self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
         optional = {'comment': 'test volume 2', 'tpvv': True}
@@ -819,8 +803,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
     def test_10_modify_volume_set_del_members(self):
         self.printHeader('modify_volume_del_members')
-        
-        #--------TODO----------
+        # --------TODO----------
         # Remove below declartion to use the parent class value
         self.cl.SET_MEM_REMOVE = 2
 
@@ -905,7 +888,7 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.cl.createQoSRules(VOLUME_SET_NAME1, qos1)
         self.cl.createQoSRules(VOLUME_SET_NAME2, qos2)
         all_qos = self.cl.queryQoSRules()
-        #self.assertGreaterEqual(all_qos['total'], 2)
+        # self.assertGreaterEqual(all_qos['total'], 2)
         self.assertIn(VOLUME_SET_NAME1,
                       [qos.name for qos in all_qos])
         self.assertIn(VOLUME_SET_NAME2,
@@ -2028,55 +2011,6 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
         self.printFooter('failover_remote_copy_group')
 
-
-# ---------------TODO-------------------
-# Below methods uses ssh connection. not tested
-
-#    def test_23_get_volume_snapshots(self):
-#        # Create volume and snaphot it
-#        optional = {'snapCPG': CPG_NAME1}
-#        self.cl.createVolume(VOLUME_NAME1, CPG_NAME1, SIZE, optional)
-#
-#        self.cl.createSnapshot(SNAP_NAME1, VOLUME_NAME1)
-#        self.cl.createSnapshot(SNAP_NAME2, VOLUME_NAME1)
-#
-#        # Get the volumes snapshots
-#        snapshots = self.cl.getVolumeSnapshots(VOLUME_NAME1)
-#
-#        # Set snapshot names. If the test is not against a live array, we
-#        # need to add the snapshot suffix.
-#        if not is_live_test():
-#            snapshots[0] = snapshots[0] + hpe3parbase.TIME
-#            snapshots[1] = snapshots[1] + hpe3parbase.TIME
-#
-#        # If the volume has snapshots, their names will be returned as
-#        # a list
-#        self.assertEqual([SNAP_NAME1, SNAP_NAME2], snapshots)
-#
-#        # Test where volume does not exist
-#        snapshots = self.cl.getVolumeSnapshots("BAD_VOL")
-#        # An empty list is returned if the volume does not exist
-#        self.assertEqual([], snapshots)
-
-#
-#    def test_24_set_qos(self):
-#        self.printHeader('set_qos')
-#        self.cl.createVolumeSet(VOLUME_SET_NAME4,
-#                                comment="Unit test volume set 4")
-#
-#        self.assertRaises(
-#            exceptions.SetQOSRuleException,
-#            self.cl.setQOSRule,
-#            VOLUME_SET_NAME4)
-#
-#        max_io = 300
-#        max_bw = 1024
-#        self.cl.setQOSRule(VOLUME_SET_NAME4, max_io, max_bw)
-#        self.cl.setQOSRule(VOLUME_SET_NAME4, max_io)
-#        self.cl.setQOSRule(VOLUME_SET_NAME4, max_bw)
-#
-#        self.printFooter('set_qos')
-#
     def test_25_promote_virtual_copy(self):
         self.printHeader('promote_virtual_copy')
 
@@ -2196,36 +2130,41 @@ class HPE3ParClientVolumeTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.assertEqual(RCOPY_STARTED, resp.targets[0].state)
 
         self.printFooter('promote_vcopy_on_rep_vol_with_bad_param')
-  
 
     @mock.patch('hpe3parclient.client.HPE3ParClient._run')
     @mock.patch('hpe3parclient.client.HPE3ParClient.check_response')
     def test_create_schedule(self, mock_res, mock_run):
         self.printHeader('schedule_test')
-        mock_run.return_value = "SchedName File/Command Min Hour DOM Month DOW CreatedBy Status Alert NextRunTim\
-schedule1 createsv svro-vol@h@@m@ test_volume 0* * * * 3paradm active Y 2"
+        mock_run.return_value = "SchedName File/Command Min Hour DOM " \
+            "Month DOW CreatedBy Status Alert " \
+            "NextRunTim schedule1 createsv " \
+            "svro-vol@h@@m@ test_volume 0* * * *" \
+            "3paradm active Y 2"
         mock_res.return_value = None
 
-        cmd = "createsv -ro snap-"+VOLUME_NAME1+" "+VOLUME_NAME1
-        self.cl.createSchedule(SCHEDULE_NAME1,cmd,'hourly')
+        cmd = "createsv -ro snap-" + VOLUME_NAME1 + " " + VOLUME_NAME1
+        self.cl.createSchedule(SCHEDULE_NAME1, cmd, 'hourly')
         res = self.cl.getSchedule(SCHEDULE_NAME1)
         self.assertIsNotNone(res)
         self.printFooter('create_schedule')
 
     @mock.patch('hpe3parclient.client.HPE3ParClient._run')
-    @mock.patch('hpe3parclient.client.HPE3ParClient.check_response')    
+    @mock.patch('hpe3parclient.client.HPE3ParClient.check_response')
     def test_delete_schedule(self, mock_res, mock_run):
         self.printHeader('delete_schedule')
-        mock_run.return_value = "SchedName File/Command Min Hour DOM Month DOW CreatedBy Status Alert NextRunTim\
-schedule1 createsv svro-vol@h@@m@ test_volume 0* * * * 3paradm active Y 2"
+        mock_run.return_value = "SchedName File/Command Min Hour DOM " \
+            "Month DOW CreatedBy Status Alert " \
+            "NextRunTim schedule1 createsv " \
+            "svro-vol@h@@m@ test_volume 0* * * *" \
+            "3paradm active Y 2"
         mock_res.return_value = None
 
-        cmd = "createsv -ro snap-"+VOLUME_NAME1+" "+VOLUME_NAME1
-        self.cl.createSchedule(SCHEDULE_NAME1,cmd,'hourly')
+        cmd = "createsv -ro snap-" + VOLUME_NAME1 + " " + VOLUME_NAME1
+        self.cl.createSchedule(SCHEDULE_NAME1, cmd, 'hourly')
         res = self.cl.getSchedule(SCHEDULE_NAME1)
         self.assertIsNotNone(res)
         mock_run.return_value = 'No scheduled tasks'
-        self.cl.deleteSchedule(SCHEDULE_NAME1)        
+        self.cl.deleteSchedule(SCHEDULE_NAME1)
         res = self.cl.getSchedule(SCHEDULE_NAME1)
         self.assertEqual(res, 'No scheduled tasks')
         self.printFooter('delete_schedule')
@@ -2234,12 +2173,15 @@ schedule1 createsv svro-vol@h@@m@ test_volume 0* * * * 3paradm active Y 2"
     @mock.patch('hpe3parclient.client.HPE3ParClient.check_response')
     def test_modify_schedule(self, mock_res, mock_run):
         self.printHeader('modify_schedule')
-        mock_run.return_value = "SchedName File/Command Min Hour DOM Month DOW CreatedBy Status Alert NextRunTim\
-schedule1 createsv svro-vol@h@@m@ test_volume 0* * * * 3paradm active Y 2"
+        mock_run.return_value = "SchedName File/Command Min Hour DOM " \
+            "Month DOW CreatedBy Status Alert " \
+            "NextRunTim schedule1 createsv " \
+            "svro-vol@h@@m@ test_volume 0* * * *" \
+            "3paradm active Y 2"
         mock_res.return_value = None
 
-        cmd = "createsv -ro snap-"+VOLUME_NAME1+" "+VOLUME_NAME1
-        self.cl.createSchedule(SCHEDULE_NAME1,cmd,'hourly')
+        cmd = "createsv -ro snap-" + VOLUME_NAME1 + " " + VOLUME_NAME1
+        self.cl.createSchedule(SCHEDULE_NAME1, cmd, 'hourly')
         self.cl.modifySchedule(SCHEDULE_NAME1, {'newName': SCHEDULE_NAME2})
         res = self.cl.getSchedule(SCHEDULE_NAME2)
         self.assertIsNotNone(res)
@@ -2249,12 +2191,15 @@ schedule1 createsv svro-vol@h@@m@ test_volume 0* * * * 3paradm active Y 2"
     @mock.patch('hpe3parclient.client.HPE3ParClient.check_response')
     def test_suspend_resume_schedule(self, mock_res, mock_run):
         self.printHeader('suspend_resume_schedule')
-        mock_run.return_value = "SchedName File/Command Min Hour DOM Month DOW CreatedBy Status Alert NextRunTim\
-schedule1 createsv svro-vol@h@@m@ test_volume 0* * * * 3paradm active Y 2"
+        mock_run.return_value = "SchedName File/Command Min Hour DOM " \
+            "Month DOW CreatedBy Status Alert " \
+            "NextRunTim schedule1 createsv " \
+            "svro-vol@h@@m@ test_volume 0* * * *" \
+            "3paradm active Y 2"
         mock_res.return_value = None
 
-        cmd = "createsv -ro snap-"+VOLUME_NAME1+" "+VOLUME_NAME1
-        self.cl.createSchedule(SCHEDULE_NAME1,cmd,'hourly')
+        cmd = "createsv -ro snap-" + VOLUME_NAME1 + " " + VOLUME_NAME1
+        self.cl.createSchedule(SCHEDULE_NAME1, cmd, 'hourly')
         self.cl.suspendSchedule(SCHEDULE_NAME1)
         self.cl.resumeSchedule(SCHEDULE_NAME1)
         self.printFooter('suspend_resume_schedule')
@@ -2510,7 +2455,7 @@ schedule1 createsv svro-vol@h@@m@ test_volume 0* * * * 3paradm active Y 2"
                     'conversionOperation': CONVERT_TO_DECO,
                     'keepVV': "keep_vv",
                     'compression': False}
-        #convert from tpvv to deco
+        # convert from tpvv to deco
         self.cl.tuneVolume(VOLUME_NAME1, usr_cpg, optional)
         vol2 = self.cl.getVolume(VOLUME_NAME1)
         provision_type = vol2.provisioning_type
@@ -2523,7 +2468,7 @@ schedule1 createsv svro-vol@h@@m@ test_volume 0* * * * 3paradm active Y 2"
                     'conversionOperation': TPVV,
                     'keepVV': "keep_vv",
                     'compression': False}
-        #convert from deco to tpvv
+        # convert from deco to tpvv
         self.cl.tuneVolume(VOLUME_NAME1, usr_cpg, optional)
         vol2 = self.cl.getVolume(VOLUME_NAME1)
         provision_type = vol2.provisioning_type
