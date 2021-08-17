@@ -11,7 +11,7 @@ with open('README.rst', 'r') as file:
 setup(
   name='hpe3par_sdk',
   version=hpe3par_sdk.version,
-  description="HPE 3PAR Software Development Kit for Python",
+  description="HPE Alletra 9000 and HPE Primera and HPE 3PAR Software Development Kit for Python",
   long_description=readme,
   author="Hewlett Packard Enterprise",
   author_email="ecostor@groups.ext.hpe.com",
