@@ -522,7 +522,6 @@ class HPE3ParClientHostTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.cl.modifyHost(HOST_NAME1, mod_request)
 
         newHost = self.cl.getHost(HOST_NAME1)
-        
         fc_paths = newHost.fcpaths
         for path in fc_paths:
             if path.wwn == WWN2.replace(':', ''):
@@ -586,76 +585,8 @@ class HPE3ParClientHostTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         newHost = self.cl.getHost(HOST_NAME1)
         iscsi_paths = newHost.iscsi_paths
         for path in iscsi_paths:
-            if path.name== IQN2:
+            if path.name == IQN2:
                 self.fail('Failed to remove iSCSI')
                 return
 
         self.printFooter('modify_host_remove_iscsi')
-
-#   def test_5_query_host_iqn(self):
-#        self.printHeader('query_host_iqn')
-#        optional = {'domain': DOMAIN}
-#        iscsi = [IQN1]
-#        self.cl.createHost(HOST_NAME1, iscsi, None, optional)
-#
-#        hosts = self.cl.queryHost(iqns=[iscsi.pop()])
-#        self.assertIsNotNone(hosts)
-#	print "===========HELLO******************==============="
-#	print hosts
-#        #self.assertEqual(1, hosts['total'])
-#        #self.assertEqual(hosts['members'].pop()['name'], HOST_NAME1)
-#
-#        self.printFooter('query_host_iqn')
-#
-#    def test_5_query_host_iqn2(self):
-#        # TODO test multiple iqns in one query
-#        pass
-#
-#    def test_5_query_host_wwn(self):
-#        self.printHeader('query_host_wwn')
-#        optional = {'domain': DOMAIN}
-#        fc = [WWN1]
-#        self.cl.createHost(HOST_NAME1, None, fc, optional)
-#
-#        hosts = self.cl.queryHost(wwns=[fc.pop().replace(':', '')])
-#        self.assertIsNotNone(hosts)
-#        #self.assertEqual(1, hosts['total'])
-#        self.assertEqual(hosts[0].name, HOST_NAME1)
-#
-#        self.printFooter('query_host_wwn')
-
-#    def test_5_query_host_wwn2(self):
-#        # TODO test multiple wwns in one query
-#        pass
-#
-#    def test_5_query_host_iqn_and_wwn(self):
-#        self.printHeader('query_host_iqn_and_wwn')
-#
-#        optional = {'domain': DOMAIN}
-#        iscsi = [IQN1]
-#        self.cl.createHost(HOST_NAME1, iscsi, None, optional)
-#        fc = [WWN1]
-#        self.cl.createHost(HOST_NAME2, None, fc, optional)
-#
-#        hosts = self.cl.queryHost(iqns=[IQN1],
-#                                  wwns=[WWN1.replace(':', '')])
-#
-#        self.assertIsNotNone(hosts)
-#        self.assertEqual(2, hosts['total'])
-#        self.assertIn(HOST_NAME1, [host['name'] for host in hosts['members']])
-#        self.assertIn(HOST_NAME2, [host['name'] for host in hosts['members']])
-#        self.printFooter('query_host_iqn_and_wwn')
-#
-#    def test_6_find_host(self):
-#        self.printHeader('find_host_wwn')
-#
-#        hosts = self.cl.findHost(wwn=WWN1)
-#
-#        if hosts is not None:
-#            # host found
-#            self.assertIsNotNone(hosts)
-#        else:
-#            # host not found
-#            self.assertIsNone(hosts)
-#
-#        self.printFooter('find_host_wwn')

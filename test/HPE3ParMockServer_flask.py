@@ -1,11 +1,11 @@
 # (C) Copyright 2018 Hewlett Packard Enterprise Development LP
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
 # a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -380,8 +380,8 @@ def modify_host_set(host_set_name):
     debugRequest(flask.request)
 
     if len(host_set_name) > 31:
-            throw_error(400, INV_INPUT_EXCEEDS_LENGTH,
-                        'invalid input: string length exceeds limit')
+        throw_error(400, INV_INPUT_EXCEEDS_LENGTH,
+                    'invalid input: string length exceeds limit')
 
     data = json.loads(flask.request.data.decode('utf-8'))
 
@@ -692,7 +692,7 @@ def get_hosts():
 
 def _parse_query(query):
     wwns = re.findall("wwn==([0-9A-Z]*)", query)
-    iqns = re.findall("name==([\w.:-]*)", query)
+    iqns = re.findall("name==([\\w.:-]*)", query)
     parsed_query = {"wwns": wwns, "iqns": iqns}
     return parsed_query
 
@@ -983,7 +983,7 @@ def create_volumes():
                   'usrSpcAllocLimitPct': None, 'isCopy': None,
                   'copyOfName': None, 'copyRO': None, 'expirationHours': None,
                   'retentionHours': None, 'objectKeyValues': None,
-				  'reduce': None}
+                  'reduce': None}
     for key in list(data.keys()):
         if key not in list(valid_keys.keys()):
             throw_error(400, INV_INPUT, "Invalid Parameter '%s'" % key)
@@ -1128,16 +1128,15 @@ def modify_volume(volume_name):
         conversion_operation = data.get('conversionOperation')
 
         if conversion_operation == 4:
-                volume['provisioningType'] = THIN_DEDUP_TYPE
-                volume['deduplicationState'] = TDVV_ENABLED
-                volume['compressionState'] = COMPRESSION_ENABLED
+            volume['provisioningType'] = THIN_DEDUP_TYPE
+            volume['deduplicationState'] = TDVV_ENABLED
+            volume['compressionState'] = COMPRESSION_ENABLED
         else:
-                volume['provisioningType'] = THIN_PROVISIONING_TYPE
-                volume['deduplicationState'] = THIN_PROVISIONING_ENABLED
-                volume['compressionState'] = COMPRESSION_DISABLED
-        #task['taskid'] = '123'
+            volume['provisioningType'] = THIN_PROVISIONING_TYPE
+            volume['deduplicationState'] = THIN_PROVISIONING_ENABLED
+            volume['compressionState'] = COMPRESSION_DISABLED
         task['taskid'] = 123
-        tasks['members'].append({'id':123})
+        tasks['members'].append({'id': 123})
         resp = flask.make_response(json.dumps(task), 200)
         return resp
     _grow_volume(volume, data)
@@ -1226,7 +1225,10 @@ def delete_remote_copy_group(rcg_name):
     throw_error(404, NON_EXISTENT_RCOPY_GROUP,
                 "The remote copy group '%s' does not exist." % rcg_name)
 
-@app.route('/api/v1/remotecopygroups/<rcg_name>/volumes/<volume_name>', methods=['DELETE'])
+
+@app.route(
+    '/api/v1/remotecopygroups/<rcg_name>/volumes/<volume_name>',
+    methods=['DELETE'])
 def remove_volume_from_remote_copy_group(rcg_name, volume_name):
     debugRequest(flask.request)
     for rcg in remote_copy_groups['members']:
@@ -1239,6 +1241,7 @@ def remove_volume_from_remote_copy_group(rcg_name, volume_name):
 
     throw_error(404, NON_EXISTENT_RCOPY_GROUP,
                 "The remote copy group '%s' does not exist." % rcg_name)
+
 
 @app.route('/api/v1/remotecopygroups/<rcg_name>', methods=['PUT'])
 def modify_remote_copy_group(rcg_name):
@@ -1312,6 +1315,7 @@ def modify_remote_copy_group(rcg_name):
     throw_error(404, NON_EXISTENT_RCOPY_GROUP,
                 "remote copy group doesn't exist")
 
+
 @app.route('/api/v1/remotecopygroups/<rcg_name>/volumes', methods=['POST'])
 def modify_remote_copy_group_post(rcg_name):
     debugRequest(flask.request)
@@ -1334,7 +1338,6 @@ def modify_remote_copy_group_post(rcg_name):
         if key not in list(valid_keys.keys()):
             throw_error(400, INV_INPUT, "Invalid Parameter '%s'" % key)
 
-    action = data.get('action')
     for rcg in remote_copy_groups['members']:
         if rcg['name'] == rcg_name:
             vol_found = False
@@ -1342,7 +1345,8 @@ def modify_remote_copy_group_post(rcg_name):
                 if data['volumeName'] == vol['name']:
                     vol_found = True
                     vol['localVolumeName'] = data['volumeName']
-                    vol['remoteVolumes'] = [{ 'targetName': data['targets'][0]['targetName']}]
+                    vol['remoteVolumes'] = \
+                        [{'targetName': data['targets'][0]['targetName']}]
                     rcg['volumes'].append(vol)
             if not vol_found:
                 throw_error(404, NON_EXISTENT_VOL, "volume doesn't exist")
@@ -1352,6 +1356,7 @@ def modify_remote_copy_group_post(rcg_name):
 
     throw_error(404, NON_EXISTENT_RCOPY_GROUP,
                 "remote copy group doesn't exist")
+
 
 @app.route('/api/v1/remotecopygroups/<rcg_name>', methods=['POST'])
 def recover_remote_copy_group(rcg_name):
@@ -2358,3 +2363,4 @@ if __name__ == "__main__":
                "finishTime": "2014-02-06 13:27:03 PST", "priority": -1,
                "user": "3parsvc"}]}
     app.run(port=args.port, debug=debugRequests)
+

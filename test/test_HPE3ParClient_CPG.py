@@ -130,6 +130,7 @@ class HPE3ParClientCPGTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.assertRaises(exceptions.HTTPNotFound, self.cl.getCPG, 'BadName')
 
         self.printFooter('get_CPG_bad')
+
     def test_2_get_CPGs(self):
         self.printHeader('get_CPGs')
 
@@ -139,7 +140,6 @@ class HPE3ParClientCPGTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
 
         cpgs = self.cl.getCPGs()
         self.assertGreater(len(cpgs), 0, 'getCPGs failed with no CPGs')
-        #self.assertTrue(self.findInDict(cpgs['members'], 'name', CPG_NAME1))
 
         self.printFooter('get_CPGs')
 
@@ -164,8 +164,7 @@ class HPE3ParClientCPGTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         cpgs = self.cl.getCPGs()
         if cpgs and len(cpgs) > 0:
             for cpg in cpgs:
-                if cpg.name== CPG_NAME1:
-                    # pprint.pprint("Deleting CPG %s " % cpg['name'])
+                if cpg.name == CPG_NAME1:
                     self.cl.deleteCPG(cpg.name)
 
         # check

@@ -776,8 +776,6 @@ class ParamikoServer(paramiko.ServerInterface):
         return paramiko.AUTH_SUCCESSFUL
 
     def check_auth_password(self, username, password):
-        # if (username == '3paradm') and (password == '3pardata'):
-            # return paramiko.AUTH_SUCCESSFUL
         return paramiko.AUTH_SUCCESSFUL
 
     def check_auth_publickey(self, username, key):

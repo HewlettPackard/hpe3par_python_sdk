@@ -22,7 +22,6 @@ from hpe3parclient import exceptions
 from hpe3parclient import ssh
 from hpe3parclient import client
 from hpe3par_sdk  import client as sdk_client
-
 # Python 3+ override
 try:
     basestring
@@ -83,7 +82,8 @@ class HPE3ParClientMockSSHTestCase(HPE3ParClient_base
                     self.assertEqual(actual, expected)
 
     @mock.patch('hpe3parclient.client.ssh.HPE3PARSSHClient', spec=True)
-    def do_mock_create_ssh(self, known_hosts_file, missing_key_policy, mock_ssh_client):
+    def do_mock_create_ssh(self, known_hosts_file, missing_key_policy,
+                           mock_ssh_client):
         """Verify that params are getting forwarded to _create_ssh()."""
 
         mock_ssh = mock.Mock()
@@ -91,8 +91,8 @@ class HPE3ParClientMockSSHTestCase(HPE3ParClient_base
                         mock_ssh, create=True):
 
             client.ssh.HPE3PARSSHClient._create_ssh(
-                                  known_hosts_file=known_hosts_file,
-                                  missing_key_policy=missing_key_policy)
+                known_hosts_file=known_hosts_file,
+                missing_key_policy=missing_key_policy)
             mock_ssh_client.close.return_value = True
             mock_ssh.assert_called_with(missing_key_policy=missing_key_policy,
                                         known_hosts_file=known_hosts_file)
@@ -109,7 +109,6 @@ class HPE3ParClientMockSSHTestCase(HPE3ParClient_base
         self.cl.client.setSSHOptions(ip, user, password, 22, None, None,
                                      known_hosts_file=known_hosts_file,
                                      missing_key_policy=missing_key_policy)
-
 
         mock_ssh_client.assert_called_with(
             ip, user, password, 22, None, None,
@@ -167,11 +166,11 @@ class HPE3ParClientMockSSHTestCase(HPE3ParClient_base
                               known_hosts_file=None,
                               missing_key_policy=paramiko.AutoAddPolicy)
 
-
         self.cl.client.ssh.ssh = mock.Mock()
         self.cl.client.ssh.ssh.invoke_shell.side_effect = Exception('boom')
         cmd = ['fake']
-        self.assertRaises(exceptions.SSHException, self.cl.client.ssh._run_ssh, cmd)
+        self.assertRaises(exceptions.SSHException,
+                          self.cl.client.ssh._run_ssh, cmd)
 
         self.cl.client.ssh.ssh.assert_has_calls(
             [

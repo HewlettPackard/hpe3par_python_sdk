@@ -677,7 +677,7 @@ class HPE3ParFilePersonaClientTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
             self.assertIsInstance(member['fspoolName'], str)
             self.assertIsInstance(member['fstoreName'], str)
             self.assertTrue(member['overallStateInt'].isdigit())
-            uid_match = '^[\-0-f]*$'
+            uid_match = '^[\\-0-f]*$'
             self.assertIsNotNone(re.match(uid_match, member['uuid']))
             self.assertIsInstance(member['vfsName'], str)
 
@@ -690,7 +690,7 @@ class HPE3ParFilePersonaClientTestCase(hpe3parbase.HPE3ParClientBaseTestCase):
         self.assertEqual(fpgname, member['fspoolName'])
         self.assertEqual(fstore, member['fstoreName'])
         self.assertTrue(member['overallStateInt'].isdigit())
-        uid_match = '^[\-0-f]*$'
+        uid_match = '^[\\-0-f]*$'
         self.assertIsNotNone(re.match(uid_match, member['uuid']))
         self.assertEqual(vfsname, member['vfsName'])
 
