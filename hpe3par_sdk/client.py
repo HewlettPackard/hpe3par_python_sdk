@@ -15,7 +15,7 @@
 from hpe3parclient import client
 from hpe3parclient import exceptions
 from hpe3parclient import http
-from distutils.version import StrictVersion
+from distutils.version import Version
 
 from hpe3par_sdk.models import FlashCache
 from hpe3par_sdk.models import VirtualVolume
@@ -123,7 +123,7 @@ class HPE3ParClient(object):
                  suppress_ssl_warnings=False):
         self.api_url = api_url
         self.client = client.HPE3ParClient(api_url, debug, secure, timeout, suppress_ssl_warnings)
-        self.check_WSAPI_version()
+        #self.check_WSAPI_version()
         self.app_type = app_type
         self.app_key = 'hpe_ecosystem_product'
         
@@ -145,14 +145,14 @@ not supported.""" % (ex_message)
                 
     def compare_version(self, api_version):
         self.CURRENT_WSAPI_VERSION = '{}.{}.{}'.format(api_version['major'], api_version['minor'], api_version['revision'])
-        if StrictVersion(self.CURRENT_WSAPI_VERSION) < StrictVersion(self.WSAPI_MIN_SUPPORTED_VERSION):
+        if Version(str(self.CURRENT_WSAPI_VERSION)) < Version(str(self.WSAPI_MIN_SUPPORTED_VERSION)):
             err_msg = 'Unsupported 3PAR WS API version %s, min supported version is %s' % (self.CURRENT_WSAPI_VERSION, self.WSAPI_MIN_SUPPORTED_VERSION)
             raise exceptions.UnsupportedVersion(err_msg)
             
-        if StrictVersion(self.CURRENT_WSAPI_VERSION) >= StrictVersion(self.WSAPI_MIN_VERSION_VLUN_QUERY_SUPPORT):
+        if Version(str(self.CURRENT_WSAPI_VERSION)) >= Version(str(self.WSAPI_MIN_VERSION_VLUN_QUERY_SUPPORT)):
             self.VLUN_QUERY_SUPPORTED = True
             
-        if StrictVersion(self.CURRENT_WSAPI_VERSION) >=  StrictVersion(self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT):
+        if Version(str(self.CURRENT_WSAPI_VERSION)) >=  Version(str(self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT)):
             self.HOST_AND_VV_SET_FILTER_SUPPORTED = True
             
 
@@ -452,7 +452,7 @@ not supported.""" % (ex_message)
             - EXISTENT_SV - Volume Exists already
 
         """
-        if optional is not None and StrictVersion(self.CURRENT_WSAPI_VERSION) < StrictVersion(self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT):
+        if optional is not None:
             if 'compression' in optional.keys():
                 del optional['compression']
         object_key_values = {'objectKeyValues': [{'key': self.app_key, 'value': self.app_type}]}
@@ -785,7 +785,7 @@ not supported.""" % (ex_message)
             - NON_EXISTENT_VVCOPY - Physical copy not found.
 
         """
-        if optional is not None and StrictVersion(self.CURRENT_WSAPI_VERSION) < StrictVersion(self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT):
+        if optional is not None:
             for attribute in ['compression', 'allowRemoteCopyParent', 'skipZero']:
                 if attribute in optional.keys():
                     del optional[attribute]
@@ -1034,7 +1034,7 @@ not supported.""" % (ex_message)
             - INV_OPERATION_VV_PROMOTE_IS_NOT_IN_PROGRESS - Volume promotion
             is not in progress.
         """
-        if optional is not None and StrictVersion(self.CURRENT_WSAPI_VERSION) < StrictVersion(self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT):
+        if optional is not None:
             if 'allowRemoteCopyParent' in optional.keys():
                 del optional['allowRemoteCopyParent']
         return self.client.promoteVirtualCopy(snapshot, optional)
@@ -1165,7 +1165,7 @@ not supported.""" % (ex_message)
             - PERM_DENIED - Permission denied
 
         """
-        if optional is not None and StrictVersion(self.CURRENT_WSAPI_VERSION) < StrictVersion(self.WSAPI_MIN_VERSION_COMPRESSION_SUPPORT):
+        if optional is not None:
             if 'allowRemoteCopyParent' in optional.keys():
                 del optional['allowRemoteCopyParent']
         return self.client.createSnapshot(name, copyOfName, optional)
@@ -2339,7 +2339,7 @@ not supported.""" % (ex_message)
         :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
           - UNLICENSED_FEATURE - The system is not licensed for QoS.
         """
-        if qosRules is not None and StrictVersion(self.CURRENT_WSAPI_VERSION) < StrictVersion(self.WSAPI_MIN_SUPPORTED_VERSION):
+        if qosRules is not None:
             if 'latencyGoaluSecs' in qosRules.keys():
                 del qosRules['latencyGoaluSecs']
         return self.client.createQoSRules(targetName, qosRules, target_type)
@@ -2430,7 +2430,7 @@ not supported.""" % (ex_message)
         :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
                      UNLICENSED_FEATURE - The system is not licensed for QoS.
         """
-        if qosRules is not None and StrictVersion(self.CURRENT_WSAPI_VERSION) < StrictVersion(self.WSAPI_MIN_SUPPORTED_VERSION):
+        if qosRules is not None:
             if 'latencyGoaluSecs' in qosRules.keys():
                 del qosRules['latencyGoaluSecs']
         return self.client.modifyQoSRules(targetName, qosRules, targetType)
