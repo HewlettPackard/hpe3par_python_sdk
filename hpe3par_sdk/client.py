@@ -1756,6 +1756,62 @@ not supported.""" % (ex_message)
         """
         return self.client.createCPG(name, optional)
 
+    def modifyCPG(self, name, optional=None):
+        """Modify a CPG.
+
+        :param name: CPG Name
+        :type name: str
+        :param optional: Optional parameters
+        :type optional: dict
+
+        .. code-block:: python
+
+            optional = {
+                'growthIncrementMiB': 100,    # Growth increment in MiB for
+                                              # each auto-grown operation
+                'growthLimitMiB': 1024,       # Auto-grow operation is limited
+                                              # to specified storage amount
+                'usedLDWarningAlertMiB': 200, # Threshold to trigger warning
+                                              # of used logical disk space
+                'LDLayout': {
+                    'RAIDType': 1,            # Disk Raid Type
+                    'setSize': 100,           # Size in number of chunklets
+                    'HA': 0,                  # Layout supports failure of
+                                              # one port pair (1),
+                                              # one cage (2),
+                                              # or one magazine (3)
+                    'chunkletPosPref': 2,     # Chunklet location perference
+                                              # characteristics.
+                                              # Lowest Number/Fastest transfer
+                                              # = 1
+                                              # Higher Number/Slower transfer
+                                              # = 2
+                    'diskPatterns': []}       # Patterns for candidate disks
+                'newName': 'TestNewName',     # Specifies the name of the
+                                              # CPG to update.
+                'disableAutoGrow': false,     # Enables (false) or disables
+                                              # (true) CPG auto grow. Defaults
+                                              # to false.
+                'rmGrowthLimit': false,       # Enables (false) or disables
+                                              # (true) auto grow limit.
+                                              # Defaults to false.
+                'rmWarningAlert': false       # Enables (false) or disables
+                                              # (true) warning limit enforce-
+                                              # ment. Defaults to false.
+            }
+
+        :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
+            - INV_INPUT Invalid URI Syntax.
+        :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
+            - NO_SPACE - Not Enough space is available.
+        :raises: :class:`~hpe3parclient.exceptions.HTTPBadRequest`
+            - BAD_CPG_PATTERN  A Pattern in a CPG specifies illegal values.
+        :raises: :class:`~hpe3parclient.exceptions.HTTPForbidden`
+            - PERM_DENIED - Permission denied
+
+        """
+        return self.client.modifyCPG(name, optional)
+
     def deleteCPG(self, name):
         """Delete a CPG.
 
