@@ -1374,7 +1374,7 @@ not supported.""" % (ex_message)
         """
         return Host(self.client.getHost(name))
 
-    def createHost(self, name, iscsiNames=None, FCWwns=None, optional=None):
+    def createHost(self, name, iscsiNames=None, FCWwns=None, nqn=None, optional=None):
         """Create a new Host entry.
 
         :param name: The name of the host
@@ -1383,6 +1383,8 @@ not supported.""" % (ex_message)
         :type name: array
         :param FCWwns: Array if Fibre Channel World Wide Names
         :type name: array
+        :param nqn: String if NVMe Qualified Name
+        :type name: str
         :param optional: The optional stuff
         :type optional: dict
 
@@ -1438,7 +1440,7 @@ not supported.""" % (ex_message)
             - NO_SPACE - No space to create host.
 
         """
-        return self.client.createHost(name, iscsiNames, FCWwns, optional)
+        return self.client.createHost(name, iscsiNames, FCWwns, nqn, optional)
 
     def modifyHost(self, name, mod_request):
         """Modify an existing Host entry.
